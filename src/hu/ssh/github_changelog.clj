@@ -24,10 +24,10 @@
 (defn changelog
   "Fetches the changelog"
   [user repo]
-  (let [tags (map #(assoc % :version (parse-semver %)) (repos/tags user repo))
-        pulls (pulls/pulls user repo {:state "closed"})
-        commits (repos/commits user repo)]
-    (println (first tags))))
+  (let [tags (delay (map #(assoc % :version (parse-semver %)) (repos/tags user repo)))
+        pulls (delay (pulls/pulls user repo {:state "closed"}))
+        commits (delay (repos/commits user repo))]
+    (println (first @tags))))
 
 (core/with-defaults {:oauth-token (env :github-token) :all_pages true}
                     (changelog "raszi" "node-tmp"))
