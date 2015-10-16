@@ -17,9 +17,10 @@
   (let [version (:name tag)
         parse #(try (semver/parse %)
                     (catch java.lang.AssertionError _e nil))]
-    (if (= \v (first version))
-      (parse (apply str (rest version)))
-      (parse version))))
+    (parse
+      (if (= \v (first version))
+        (subs version 1)
+        version))))
 
 (defn changelog
   "Fetches the changelog"
