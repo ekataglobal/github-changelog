@@ -8,8 +8,8 @@
 
 (defn repo
   "Gets the repository from its name"
-  [name]
-  (vector "pro" name))
+  ([name] (repo "pro" name))
+  ([org repo] [org repo]))
 
 (defn parse-semver
   "Checks for semantic versions with or without v predicate"
