@@ -31,7 +31,10 @@
   "Fetch the version tags in the correct order"
   [user repo]
   (let [sort-fn #(semver/older? (:version %1) (:version %2))]
-    (sort sort-fn (filter :version (map-semver (repos/tags user repo))))))
+    (->> (repos/tags user repo)
+         map-semver
+         (filter :version)
+         (sort sort-fn))))
 
 (defn changelog
   "Fetches the changelog"
