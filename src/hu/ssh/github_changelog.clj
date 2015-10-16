@@ -1,5 +1,6 @@
 (ns hu.ssh.github-changelog
   (:require
+    [environ.core :refer [env]]
     [tentacles.core :as core]
     [tentacles.repos :as repos]
     [tentacles.pulls :as pulls]
@@ -28,5 +29,5 @@
         commits (repos/commits user repo)]
     (println (first tags))))
 
-(core/with-defaults {:oauth-token "9437b011403cfa07714ef2269a62a3ce211b4b5d" :all_pages true}
+(core/with-defaults {:oauth-token (env :github-token) :all_pages true}
                     (changelog "raszi" "node-tmp"))
