@@ -38,27 +38,42 @@
          (filter :version)
          (sort sort-fn))))
 
-(defn- fetch-commits
-  "Fetches commits for a tag"
-  [tag]
-  (let [sha (get-in tag [:commit :sha])]
-    (repos/commits *user* *repo* {:sha sha})))
-
 (defn- fetch-pulls
   "Fetches the pull-requests"
   []
   (pulls/pulls *user* *repo* {:state "closed"}))
 
+(defn- merge-sha
+  "Gets the merge commit from a tag"
+  [tag]
+  (get-in tag [:commit :sha]))
+
+(defn- commits-until
+  [commits sha]
+  (take-while #(not= (:sha %) sha) commits))
+
+(defn- partition-commits [tags commits]
+  (if (empty? commits)
+    []
+    (let [related-commits (commits-until commits (merge-sha (second tags)))]
+      (cons related-commits (lazy-seq (partition-commits (rest tags) (drop (count related-commits) commits)))))))
+
+(defn- fetch-commits
+  [& {:keys [sha]}]
+  (repos/commits *user* *repo* {:sha sha}))
+
 (defn- map-commits
   "Maps commits into tags"
   [tags]
-  (map #(assoc % :commits (fetch-commits %)) tags))
+  (let [last-sha (merge-sha (first tags))
+        all-commits (fetch-commits :sha last-sha)]
+    (map #(assoc %1 :commits %2) tags (partition-commits tags all-commits))))
 
 (defn- map-pulls
   "Maps pull-pull-requests to tags"
   [tags]
   (let [pulls (fetch-pulls)]
-       tags))
+    tags))
 
 (defn changelog
   "Fetches the changelog"
@@ -68,4 +83,4 @@
        map-pulls))
 
 (with-defaults {:oauth-token (env :github-token) :all_pages true}
-                    (with-repo "raszi" "changelog-test" (println (changelog))))
+               (with-repo "raszi" "changelog-test" (changelog)))
