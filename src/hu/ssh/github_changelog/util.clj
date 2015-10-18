@@ -1,4 +1,4 @@
-(ns hu.ssh.github_changelog.util
+(ns hu.ssh.github-changelog.util
   (:require [clj-semver.core :refer [parse]]))
 
 (defn value-at

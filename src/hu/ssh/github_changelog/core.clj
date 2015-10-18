@@ -1,6 +1,6 @@
-(ns hu.ssh.github_changelog.core
+(ns hu.ssh.github-changelog.core
   (:require
-    [hu.ssh.github_changelog.util :refer [value-at extract-semver sort-semver-at]]
+    [hu.ssh.github-changelog.util :refer [value-at extract-semver]]
     [environ.core :refer [env]]
     [tentacles.core :refer [with-defaults with-url]]
     [tentacles.repos :as repos]
@@ -82,12 +82,13 @@
 
 (defn changelog
   "Fetches the changelog"
-  []
+  [user repo {:keys [token]}]
+  {:pre [(every? string? [user repo token])]}
   (->> (fetch-version-tags)
        map-commits
        map-pulls))
 
 (def result (atom {}))
 
-(with-options {:oauth-token (env :github-token) :all-pages true}
-              (reset! result (changelog)))
+;(with-options {:oauth-token (env :oauth-token) :all-pages true}
+;              (reset! result (changelog)))
