@@ -2,7 +2,8 @@
   (:require
     [clj-jgit.porcelain :as git]
     [clj-jgit.util :as util])
-  (:import (java.io FileNotFoundException)))
+  (:import (java.io FileNotFoundException)
+           (org.eclipse.jgit.lib Ref)))
 
 (defn- repo? [x] (instance? org.eclipse.jgit.api.Git x))
 
@@ -27,11 +28,13 @@
     repo))
 
 (defn- get-merge-sha [tag]
-  {:post [(string? %)]}
-  (. (if-let [object-id (. tag getPeeledObjectId)] object-id (. tag getPeeledObjectId)) name))
+  {:pre  (instance? Ref repo)
+   :post [(string? %)]}
+  (. (if-let [peeled-id (. tag getPeeledObjectId)] peeled-id (. tag getObjectId)) name))
 
 (defn- map-tag [repo tag]
-  {:post [(map? %)]}
+  {:pre  (instance? Ref repo)
+   :post [(map? %)]}
   (let [peeled (. repo peel tag)]
     {:name (. tag getName) :sha (get-merge-sha peeled)}))
 
