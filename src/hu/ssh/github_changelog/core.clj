@@ -1,6 +1,7 @@
 (ns hu.ssh.github-changelog.core
   (:require
-    [hu.ssh.github-changelog.util :refer [value-at extract-semver]]
+    [hu.ssh.github-changelog.util :as util]
+    [hu.ssh.github-changelog.git :as git]
     [environ.core :refer [env]]
     [tentacles.core :refer [with-defaults with-url]]
     [tentacles.repos :as repos]
@@ -24,7 +25,7 @@
   [tag]
   {:pre  [(map? tag) (:name tag)]
    :post [(contains? % :version)]}
-  (assoc tag :version (extract-semver tag)))
+  (assoc tag :version (util/extract-semver tag)))
 
 (defn- fetch-version-tags
   "Fetch the version tags in the semver order"
@@ -39,8 +40,8 @@
   []
   (pulls/pulls *user* *repo* (merge *options* {:state "closed"})))
 
-(def pull-sha (partial value-at [:head :sha]))
-(def merge-sha (partial value-at [:commit :sha]))
+(def pull-sha (partial util/value-at [:head :sha]))
+(def merge-sha (partial util/value-at [:commit :sha]))
 
 (defn- commits-until
   [commits sha]
@@ -80,10 +81,14 @@
                         (remove nil?))]
     (map #(assoc % :pulls (pulls-for %)) tags)))
 
+(def prefix "https://github.com")
+
 (defn changelog
   "Fetches the changelog"
   [user repo {:keys [token]}]
   {:pre [(every? string? [user repo token])]}
+  (let [repo (git/clone (util/git-url prefix user repo))]
+    (git/tags repo))
   (->> (fetch-version-tags)
        map-commits
        map-pulls))
