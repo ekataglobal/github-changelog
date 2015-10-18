@@ -26,8 +26,19 @@
     (git/git-fetch-all repo)
     repo))
 
+(defn- get-merge-sha [tag]
+  {:post [(string? %)]}
+  (. (if-let [object-id (. tag getPeeledObjectId)] object-id (. tag getPeeledObjectId)) name))
+
+(defn- map-tag [repo tag]
+  {:post [(map? %)]}
+  (let [peeled (. repo peel tag)]
+    {:name (. tag getName) :sha (get-merge-sha peeled)}))
+
 (defn tags [repo]
   {:pre  [(repo? repo)]
-   :post [(every? string? %)]}
+   :post [(every? map? %)]}
   (let [tags (.. repo tagList call)]
-    (map #(. % getName) tags)))
+    (map (partial map-tag (. repo getRepository)) tags)))
+
+; TODO (git/git-log repo (:sha (first taglist)) (:sha (second taglist)))
