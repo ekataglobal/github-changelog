@@ -1,21 +1,26 @@
 (ns hu.ssh.github-changelog.git
   (:require
+    [hu.ssh.github-changelog.semver :as semver]
+    [clojure.string :as string]
     [clj-jgit.porcelain :as git]
-    [clj-jgit.util :as util])
+    [clj-jgit.util :refer [name-from-uri]])
   (:import (java.io FileNotFoundException)
-           (org.eclipse.jgit.lib Ref)
-           (org.eclipse.jgit.api Git)))
+           (org.eclipse.jgit.api Git)
+           (org.eclipse.jgit.lib Repository Ref)
+           (org.eclipse.jgit.revwalk RevCommit)))
 
-(defn- repo? [x] (instance? Git x))
+(defn- git? [x] (instance? Git x))
+(defn- repo? [x] (instance? Repository x))
 (defn- ref? [x] (instance? Ref x))
+(defn- commit? [x] (instance? RevCommit x))
 
 (defn- git-path [uri]
   {:pre [(string? uri)]}
-  (util/name-from-uri uri))
+  (name-from-uri uri))
 
 (defn- clone-or-load [uri]
   {:pre  [(string? uri)]
-   :post [(repo? %)]}
+   :post [(git? %)]}
   (let [path (git-path uri)]
     (try
       (git/load-repo path)
@@ -24,26 +29,52 @@
 
 (defn clone [uri]
   {:pre  [(string? uri)]
-   :post [(repo? %)]}
+   :post [(git? %)]}
   (let [repo (clone-or-load uri)]
     (git/git-fetch-all repo)
     repo))
 
-(defn- get-merge-sha [tag]
-  {:pre  (ref? repo)
+(defn- get-merge-sha [repo tag]
+  {:pre  [(repo? repo) (ref? tag)]
    :post [(string? %)]}
-  (. (if-let [peeled-id (. tag getPeeledObjectId)] peeled-id (. tag getObjectId)) name))
+  (let [peeled (. repo peel tag)]
+    (. (if-let [peeled-id (. peeled getPeeledObjectId)] peeled-id (. peeled getObjectId)) name)))
+
+(defn- map-tag-name [tag]
+  {:pre [(ref? tag)]}
+  (string/replace (. tag getName) #"^refs/tags/", ""))
 
 (defn- map-tag [repo tag]
-  {:pre  (ref? repo)
-   :post [(map? %)]}
-  (let [peeled (. repo peel tag)]
-    {:name (. tag getName) :sha (get-merge-sha peeled)}))
-
-(defn tags [repo]
   {:pre  [(repo? repo)]
-   :post [(every? map? %)]}
-  (let [tags (.. repo tagList call)]
-    (map (partial map-tag (. repo getRepository)) tags)))
+   :post [(map? %)]}
+  {:name (map-tag-name tag) :sha (get-merge-sha repo tag)})
 
-; TODO (git/git-log repo (:sha (first taglist)) (:sha (second taglist)))
+(defn- assoc-semver [tag]
+  {:pre  [(map? tag) (:name tag)]
+   :post [(contains? % :version)]}
+  (assoc tag :version (semver/extract (:name tag))))
+
+(defn tags [git]
+  {:pre  [(git? git)]
+   :post [(every? map? %)]}
+  (let [repo (. git getRepository)
+        tags (.. git tagList call)]
+    (map (partial map-tag repo) tags)))
+
+(defn version-tags [git]
+  {:pre  [(git? git)]
+   :post [(every? map? %)]}
+  (->> (tags git)
+       (map assoc-semver)
+       (filter :version)
+       (sort-by :version semver/newer?)))
+
+(defn- get-commit-sha [log]
+  {:pre  [(commit? log)]
+   :post [(string? %)]}
+  (. log name))
+
+(defn commits [git from until]
+  {:pre  [(git? git) (string? until) (or (nil? from) (string? from))]
+   :post [(seq? %)]}
+   (map get-commit-sha (if (nil? from) (git/git-log git until) (git/git-log git from until))))

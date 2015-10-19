@@ -2,69 +2,8 @@
   (:require
     [hu.ssh.github-changelog.util :as util]
     [hu.ssh.github-changelog.git :as git]
-    [environ.core :refer [env]]
-    [tentacles.core :refer [with-defaults with-url]]
-    [tentacles.repos :as repos]
-    [tentacles.pulls :as pulls]
-    [clj-semver.core :refer [newer?]]))
-
-(def ^:dynamic *user* "raszi")
-;(def ^:dynamic *repo* "changelog-test")
-(def ^:dynamic *repo* "node-tmp")
-(def ^:dynamic *options* {})
-
-(defmacro with-repo [new-user new-repo & body]
-  `(binding [*user* ~new-user *repo* ~new-repo]
-     ~@body))
-
-(defmacro with-options [new-options & body]
-  `(binding [*options* ~new-options]
-     ~@body))
-
-(defn- assoc-semver
-  [tag]
-  {:pre  [(map? tag) (:name tag)]
-   :post [(contains? % :version)]}
-  (assoc tag :version (util/extract-semver tag)))
-
-(defn- fetch-version-tags
-  "Fetch the version tags in the semver order"
-  []
-  (->> (repos/tags *user* *repo* *options*)
-       (map assoc-semver)
-       (filter :version)
-       (sort-by :version newer?)))
-
-(defn- fetch-pulls
-  "Fetches the pull-requests"
-  []
-  (pulls/pulls *user* *repo* (merge *options* {:state "closed"})))
-
-(def pull-sha (partial util/value-at [:head :sha]))
-(def merge-sha (partial util/value-at [:commit :sha]))
-
-(defn- commits-until
-  [commits sha]
-  {:pre [(seq? commits) (or (string? sha) (nil? sha))]}
-  (println sha)
-  (take-while #(not= (:sha %) sha) commits))
-
-(defn- partition-commits [tags commits]
-  (if (empty? commits)
-    []
-    (let [related-commits (commits-until commits (let [second-tag (second tags)] (if second-tag (merge-sha second-tag))))]
-      (cons related-commits (lazy-seq (partition-commits (rest tags) (drop (count related-commits) commits)))))))
-
-(defn- fetch-commits
-  [& {:keys [sha]}]
-  (repos/commits *user* *repo* (merge *options* {:sha sha})))
-
-(defn- map-commits
-  "Maps commits into tags"
-  [tags]
-  (let [latest-sha (merge-sha (first tags))
-        all-commits (fetch-commits :sha latest-sha)]
-    (map #(assoc %1 :commits %2) tags (partition-commits tags all-commits))))
+    [hu.ssh.github-changelog.github :as github]
+    [environ.core :refer [env]]))
 
 (defn- find-pull
   [pulls sha]
@@ -72,14 +11,30 @@
    :post [(or (map? %) (nil? %))]}
   (first (filter #(= (pull-sha %) sha) pulls)))
 
-(defn- map-pulls
-  "Maps pull-pull-requests to tags"
-  [tags]
-  (let [pulls (fetch-pulls)
-        pulls-for #(->> (map :sha (:commits %))
-                        (map (partial find-pull pulls))
-                        (remove nil?))]
-    (map #(assoc % :pulls (pulls-for %)) tags)))
+(defn- assoc-pulls [pulls tag]
+  {:pre [(map? tag) (seq? pulls)]}
+  (let [related-pulls (->> (:commits tag)
+                           (map (partial find-pull pulls))
+                           (remove nil?))]
+    (assoc tag :pulls related-pulls)))
+
+(defn- assoc-ranges [tags]
+  {:pre [(seq? tags)]}
+  (let [previous-shas (concat (map :sha (rest tags)) [nil])]
+    (map #(assoc %1 :from %2) tags previous-shas)))
+
+(defn- assoc-commits [git tag]
+  {:pre  [(map? tag)]
+   :post [(:commits %)]}
+  (assoc tag :commits (git/commits git (:from tag) (:sha tag))))
+
+(defn- load-tags [user repo]
+  {:pre  [(string? user) (string? repo)]
+   :post [(seq? %)]}
+  (let [git (git/clone (util/git-url prefix user repo))
+        tags (git/version-tags git)]
+    (->> (assoc-ranges tags)
+         (map (partial assoc-commits git)))))
 
 (def prefix "https://github.com")
 
@@ -87,13 +42,7 @@
   "Fetches the changelog"
   [user repo {:keys [token]}]
   {:pre [(every? string? [user repo token])]}
-  (let [repo (git/clone (util/git-url prefix user repo))]
-    (git/tags repo))
-  (->> (fetch-version-tags)
-       map-commits
-       map-pulls))
-
-(def result (atom {}))
-
-;(with-options {:oauth-token (env :oauth-token) :all-pages true}
-;              (reset! result (changelog)))
+  (let [pulls (github/fetch-pulls user repo {:token token})]
+    (->> (load-tags user repo)
+         (map (partial assoc-pulls pulls))
+         (println))))
