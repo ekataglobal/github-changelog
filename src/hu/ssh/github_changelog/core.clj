@@ -9,7 +9,7 @@
   [pulls sha]
   {:pre  [(seq? pulls) (string? sha)]
    :post [(or (map? %) (nil? %))]}
-  (first (filter #(= (pull-sha %) sha) pulls)))
+  (first (filter #(= (:sha %) sha) pulls)))
 
 (defn- assoc-pulls [pulls tag]
   {:pre [(map? tag) (seq? pulls)]}
