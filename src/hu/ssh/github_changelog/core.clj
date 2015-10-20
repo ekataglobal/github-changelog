@@ -33,8 +33,7 @@
    :post [(seq? %)]}
   (let [git (git/clone (util/git-url prefix user repo))
         tags (git/version-tags git)]
-    (->> (assoc-ranges tags)
-         (map (partial assoc-commits git)))))
+    (map (partial assoc-commits git) (assoc-ranges tags))))
 
 (def prefix "https://github.com")
 
