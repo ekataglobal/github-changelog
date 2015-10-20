@@ -25,11 +25,12 @@
    ["-h" "--help"]])
 
 (defn- usage [summary]
-  (->> ["Usage: program-name [options...] <user/repo>"
-        ""
-        "Options:"
-        summary]
-       (join \newline)))
+  (join
+    \newline
+    ["Usage: program-name [options...] <user/repo>"
+     ""
+     "Options:"
+     summary]))
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-options)
