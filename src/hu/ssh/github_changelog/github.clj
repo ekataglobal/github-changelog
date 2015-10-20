@@ -8,5 +8,6 @@
 (defn fetch-pulls [user repo {:keys [token]}]
   {:pre  [(string? user) (string? repo)]
    :post [(seq? %)]}
-  (->> (pulls/pulls user repo (merge {:token token :all-pages true :state "closed"}))
-       (map #(assoc % :sha (pull-sha %)))))
+  (map
+    #(assoc % :sha  (pull-sha %))
+    (pulls/pulls user repo (merge {:token token, :all-pages true, :state  "closed"}))))
