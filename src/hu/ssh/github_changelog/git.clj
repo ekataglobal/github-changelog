@@ -36,12 +36,12 @@
 (defn- get-merge-sha [repo tag]
   {:pre  [(repo? repo) (ref? tag)]
    :post [(string? %)]}
-  (let [peeled (. repo peel tag)]
-    (. (if-let [peeled-id (. peeled getPeeledObjectId)] peeled-id (. peeled getObjectId)) name)))
+  (let [peeled (.peel repo tag)]
+    (.name (if-let [peeled-id (.getPeeledObjectId peeled)] peeled-id (.getObjectId peeled)))))
 
 (defn- map-tag-name [tag]
   {:pre [(ref? tag)]}
-  (string/replace (. tag getName) #"^refs/tags/", ""))
+  (string/replace (.getName tag) #"^refs/tags/", ""))
 
 (defn- map-tag [repo tag]
   {:pre  [(repo? repo)]
@@ -51,14 +51,14 @@
 (defn tags [git]
   {:pre  [(git? git)]
    :post [(every? map? %)]}
-  (let [repo (. git getRepository)
+  (let [repo (.getRepository git)
         tags (.. git tagList call)]
     (map (partial map-tag repo) tags)))
 
 (defn- get-commit-sha [log]
   {:pre  [(commit? log)]
    :post [(string? %)]}
-  (. log name))
+  (.name log))
 
 (defn commits [git from until]
   {:pre  [(git? git) (string? until) (or (nil? from) (string? from))]

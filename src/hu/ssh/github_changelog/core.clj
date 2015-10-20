@@ -34,8 +34,7 @@
    :post [(seq? %)]}
   (let [git (git/clone (util/git-url prefix user repo))
         tags (git/version-tags git)]
-    (->> (parse-tags tags)
-         (map (partial assoc-commits git)))))
+    (map (partial assoc-commits git) (parse-tags tags))))
 
 (defn- find-pull
   [pulls sha]
