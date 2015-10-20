@@ -1,6 +1,5 @@
 (ns hu.ssh.github-changelog.git
   (:require
-    [hu.ssh.github-changelog.semver :as semver]
     [clojure.string :as string]
     [clj-jgit.porcelain :as git]
     [clj-jgit.util :refer [name-from-uri]])
@@ -49,25 +48,12 @@
    :post [(map? %)]}
   {:name (map-tag-name tag) :sha (get-merge-sha repo tag)})
 
-(defn- assoc-semver [tag]
-  {:pre  [(map? tag) (:name tag)]
-   :post [(contains? % :version)]}
-  (assoc tag :version (semver/extract (:name tag))))
-
 (defn tags [git]
   {:pre  [(git? git)]
    :post [(every? map? %)]}
   (let [repo (.getRepository git)
         tags (.. git tagList call)]
     (map (partial map-tag repo) tags)))
-
-(defn version-tags [git]
-  {:pre  [(git? git)]
-   :post [(every? map? %)]}
-  (->> (tags git)
-       (map assoc-semver)
-       (filter :version)
-       (sort-by :version semver/newer?)))
 
 (defn- get-commit-sha [log]
   {:pre  [(commit? log)]
