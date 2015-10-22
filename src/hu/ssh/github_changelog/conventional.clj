@@ -1,6 +1,7 @@
 (ns hu.ssh.github-changelog.conventional
   (:require [clojure.string :as string]))
 
+; https://help.github.com/articles/closing-issues-via-commit-messages/
 (defn- fixes-pattern [pattern]
   (let [close-keywords ["close" "closes" "closed" "fix" "fixes" "fixed" "resolve" "resolves" "resolved"]]
     (re-pattern (format "(?i:%s) %s" (string/join \| close-keywords) pattern))))
