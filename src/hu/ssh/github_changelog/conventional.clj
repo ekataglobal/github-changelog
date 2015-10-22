@@ -9,10 +9,9 @@
 (def header-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
 
 (defn- collect-issues [pull base pattern]
-  (let [body (if-let [body (get pull :body "")] body "")]
-    (->> (re-seq (fixes-pattern pattern) body)
-         (map second)
-         (map #(vector % (str base %))))))
+  (->> (re-seq (fixes-pattern pattern) (str (:body pull)))
+       (map second)
+       (map #(vector % (str base %)))))
 
 (defn- jira-issues [config pull]
   (let [base (str (:jira config) "/browse/")]
