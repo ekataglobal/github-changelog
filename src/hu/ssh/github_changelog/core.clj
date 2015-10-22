@@ -4,6 +4,7 @@
     [hu.ssh.github-changelog.git :as git]
     [hu.ssh.github-changelog.semver :as semver]
     [hu.ssh.github-changelog.github :as github]
+    [hu.ssh.github-changelog.conventional :as conventional]
     [environ.core :refer [env]]))
 
 (defn- assoc-semver [tag]
@@ -49,13 +50,12 @@
                            (remove nil?))]
     (assoc tag :pulls related-pulls)))
 
-(def prefix "https://github.com")
-
 (defn changelog
   "Fetches the changelog"
   [user repo {:keys [token]}]
   {:pre [(every? string? [user repo token])]}
-  (let [pulls (github/fetch-pulls user repo {:token token})]
+  (let [pulls (github/fetch-pulls user repo {:token token})
+        config {:github "" :jira ""}]
     (->> (load-tags user repo)
          (map (partial assoc-pulls pulls))
-         (println))))
+         (map (partial conventional/parse-changes config)))))
