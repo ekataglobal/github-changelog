@@ -24,10 +24,6 @@
 (defn- parse-issues [config pull]
   (apply concat ((juxt jira-issues github-issues) config pull)))
 
-(defn- parse-body [config pull]
-  {:pre [(:base pull)]}
-  (assoc pull :jira-issues (jira-issues config pull)))
-
 (defn- parse-pull [config pull]
   {:pre  [(:title pull)]
    :post [(every? % [:type :scope :subject])]}
