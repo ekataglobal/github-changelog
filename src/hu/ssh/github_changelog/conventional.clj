@@ -8,18 +8,18 @@
 
 (def header-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
 
-(defn- collect-issues [pull base pattern]
+(defn- collect-issues [pull pattern link-fn]
   (->> (re-seq (fixes-pattern pattern) (str (:body pull)))
        (map second)
-       (map #(vector % (str base %)))))
+       (map #(vector % (link-fn %)))))
 
 (defn- jira-issues [config pull]
   (let [base (str (:jira config) "/browse/")]
-    (collect-issues pull base "([A-Z]+-\\d+)")))
+    (collect-issues pull "([A-Z]+-\\d+)" (partial str base))))
 
 (defn- github-issues [_config pull]
   (let [base (str (get-in pull [:base :repo :html_url]) "/issues/")]
-    (collect-issues pull base "#(\\d+)")))
+    (collect-issues pull "#(\\d+)" (partial str base))))
 
 (defn- parse-issues [config pull]
   (apply concat ((juxt jira-issues github-issues) config pull)))
