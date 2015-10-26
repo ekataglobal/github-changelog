@@ -1,5 +1,7 @@
 (ns hu.ssh.github-changelog.conventional
-  (:require [clojure.string :as string]))
+  (:require
+    [hu.ssh.github-changelog.util :as util]
+    [clojure.string :as string]))
 
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
 (defn- fixes-pattern [pattern]
@@ -15,11 +17,11 @@
 
 (defn- jira-issues [config pull]
   (let [base (str (:jira config) "/browse/")]
-    (collect-issues pull "([A-Z]+-\\d+)" (partial str base))))
+    (collect-issues pull "([A-Z]+-\\d+)" (util/prepend base))))
 
 (defn- github-issues [_config pull]
   (let [base (str (get-in pull [:base :repo :html_url]) "/issues/")]
-    (collect-issues pull "#(\\d+)" (partial str base))))
+    (collect-issues pull "#(\\d+)" (util/prepend base))))
 
 (defn- parse-issues [config pull]
   (apply concat ((juxt jira-issues github-issues) config pull)))
