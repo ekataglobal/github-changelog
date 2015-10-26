@@ -1,46 +1,59 @@
 (ns hu.ssh.github-changelog.conventional
   (:require
     [hu.ssh.github-changelog.util :as util]
+    [hu.ssh.github-changelog.schema :refer [Config Tag Issue Pull Change Fn]]
+    [schema.core :as s]
     [clojure.string :as string]))
 
+(s/set-fn-validation! true)
+
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
-(defn- fixes-pattern [pattern]
+(s/defn fixes-pattern :- s/Regex
+  [pattern :- s/Str]
   (let [close-keywords ["close" "closes" "closed" "fix" "fixes" "fixed" "resolve" "resolves" "resolved"]]
     (re-pattern (format "(?i:%s) %s" (string/join \| close-keywords) pattern))))
 
 (def header-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
 
-(defn- collect-issues [pull pattern link-fn]
+(s/defn collect-issues :- [Issue]
+  [pull :- Pull
+   pattern :- s/Str
+   link-fn :- Fn]
   (->> (re-seq (fixes-pattern pattern) (str (:body pull)))
        (map second)
        (map #(vector % (link-fn %)))))
 
-(defn- jira-issues [config pull]
+(s/defn jira-issues :- [Issue]
+  [config :- Config
+   pull :- Pull]
   (let [base (str (:jira config) "/browse/")]
     (collect-issues pull "([A-Z]+-\\d+)" (util/prepend base))))
 
-(defn- github-issues [_config pull]
+(s/defn github-issues :- [Issue]
+  [_config :- Config
+   pull :- Pull]
   (let [base (str (get-in pull [:base :repo :html_url]) "/issues/")]
     (collect-issues pull "#(\\d+)" (util/prepend base))))
 
-(defn- parse-issues [config pull]
+(s/defn parse-issues :- [Issue]
+  [config :- Config
+   pull :- Pull]
   (apply concat ((juxt jira-issues github-issues) config pull)))
 
-(defn- conventional-pull? [pull]
-  {:pre [(map? pull)]
-   :post [(util/bool? %)]}
+(s/defn conventional-pull? :- s/Bool
+  [pull :- Pull]
   (boolean (re-matches header-pattern (str (:title pull)))))
 
-(defn- parse-pull [config pull]
-  {:pre  [(:title pull)]
-   :post [(every? % [:type :scope :subject])]}
+(s/defn parse-pull :- Change
+  [config :- Config
+   pull :- Pull]
   (let [[_ type scope subject] (re-find header-pattern (:title pull))]
     {:type type :scope scope :subject subject :issues (parse-issues config pull)}))
 
-(defn parse-changes [config tag]
-  {:pre  [(:pulls tag)]
-   :post [(:changes %)]}
+(s/defn parse-changes :- Tag
+  [config :- Config
+   tag :- Tag]
   (->> (:pulls tag)
        (filter conventional-pull?)
-       (map parse-pull config)
+       (map (partial parse-pull config))
        (assoc tag :changes)))

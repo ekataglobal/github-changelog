@@ -1,17 +1,18 @@
 (ns hu.ssh.github-changelog.semver
-  (:require [clj-semver.core :as semver]))
+  (:require
+    [hu.ssh.github-changelog.schema :refer [Semver]]
+    [clj-semver.core :as semver]
+    [schema.core :as s]))
 
-(defn semver? [x] (or (nil? x) (every? x [:major :minor :patch])))
+(s/set-fn-validation! true)
 
 (def newer? semver/newer?)
 
-(defn- parse [version]
-  {:pre  [(string? version)]
-   :post [(semver? %)]}
+(s/defn parse :- (s/maybe Semver)
+  [version :- s/Str]
   (try (semver/parse version)
        (catch java.lang.AssertionError _e nil)))
 
-(defn extract [tag-name]
-  {:pre  [(string? tag-name)]
-   :post [(semver? %)]}
+(s/defn extract :- (s/maybe Semver)
+  [tag-name :- s/Str]
   (parse (if (= \v (first tag-name)) (subs tag-name 1) tag-name)))
