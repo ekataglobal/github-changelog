@@ -4,6 +4,8 @@
 
 (defn prepend [s] (partial str s))
 
+(defn bool? [x] (or (true? x) (false? x)))
+
 (defn value-at
   [ks m]
   {:pre  [(map? m) (vector? ks)]

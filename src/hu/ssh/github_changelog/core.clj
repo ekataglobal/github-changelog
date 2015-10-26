@@ -30,11 +30,12 @@
    :post [(:commits %)]}
   (assoc tag :commits (git/commits git (:from tag) (:sha tag))))
 
-(defn- load-tags [user repo]
-  {:pre  [(string? user) (string? repo)]
+(defn- load-tags [config user repo]
+  {:pre  [(map? config) (string? user) (string? repo)]
    :post [(seq? %)]}
-  (let [git (git/clone (util/git-url prefix user repo))
-        tags (git/version-tags git)]
+  (let [prefix (:github config)
+        git (git/clone (util/git-url prefix user repo))
+        tags (git/tags git)]
     (map (partial assoc-commits git) (parse-tags tags))))
 
 (defn- find-pull
@@ -56,6 +57,6 @@
   {:pre [(every? string? [user repo token])]}
   (let [pulls (github/fetch-pulls user repo {:token token})
         config {:github "" :jira ""}]
-    (->> (load-tags user repo)
+    (->> (load-tags config user repo)
          (map (partial assoc-pulls pulls))
          (map (partial conventional/parse-changes config)))))

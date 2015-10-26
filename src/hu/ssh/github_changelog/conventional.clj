@@ -26,6 +26,11 @@
 (defn- parse-issues [config pull]
   (apply concat ((juxt jira-issues github-issues) config pull)))
 
+(defn- conventional-pull? [pull]
+  {:pre [(map? pull)]
+   :post [(util/bool? %)]}
+  (boolean (re-matches header-pattern (str (:title pull)))))
+
 (defn- parse-pull [config pull]
   {:pre  [(:title pull)]
    :post [(every? % [:type :scope :subject])]}
@@ -35,4 +40,7 @@
 (defn parse-changes [config tag]
   {:pre  [(:pulls tag)]
    :post [(:changes %)]}
-  (assoc tag :changes (map parse-pull config (:pulls tag))))
+  (->> (:pulls tag)
+       (filter conventional-pull?)
+       (map parse-pull config)
+       (assoc tag :changes)))
