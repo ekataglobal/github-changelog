@@ -28,6 +28,7 @@
 (s/defschema Change {:type s/Str
                      :scope (s/maybe s/Str)
                      :subject s/Str
+                     :pull-request Pull
                      :issues [Issue]})
 
 (s/defschema Tag {:name s/Str

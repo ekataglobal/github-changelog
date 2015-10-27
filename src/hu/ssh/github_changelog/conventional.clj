@@ -44,7 +44,11 @@
   [config :- Config
    pull :- Pull]
   (if-let [[_ type scope subject] (re-find header-pattern (:title pull))]
-    {:type type :scope scope :subject subject :issues (parse-issues config pull)}))
+    {:type type
+     :scope scope
+     :subject subject
+     :pull-request pull
+     :issues (parse-issues config pull)}))
 
 (s/defn parse-changes :- Tag
   [config :- Config
