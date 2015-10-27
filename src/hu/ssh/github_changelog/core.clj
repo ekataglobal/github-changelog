@@ -57,12 +57,10 @@
 
 (s/defn changelog :- [Tag]
   "Fetches the changelog"
-  [user :- s/Str
-   repo :- s/Str
-   {:keys [token]}]
-  {:pre [(every? string? [user repo token])]}
-  (let [pulls (github/fetch-pulls user repo {:token token})
-        config {:github "" :jira ""}]
+  [config :- Config
+   user :- s/Str
+   repo :- s/Str]
+  (let [pulls (github/fetch-pulls config user repo)]
     (->> (load-tags config user repo)
          (map (partial assoc-pulls pulls))
          (map (partial conventional/parse-changes config)))))

@@ -40,20 +40,16 @@
    pull :- Pull]
   (apply concat ((juxt jira-issues github-issues) config pull)))
 
-(s/defn conventional-pull? :- s/Bool
-  [pull :- Pull]
-  (boolean (re-matches header-pattern (str (:title pull)))))
-
-(s/defn parse-pull :- Change
+(s/defn parse-pull :- (s/maybe Change)
   [config :- Config
    pull :- Pull]
-  (let [[_ type scope subject] (re-find header-pattern (:title pull))]
-    {:type type :scope scope :subject subject :issues (parse-issues config pull)}))
+  (if-let [[_ type scope subject] (re-find header-pattern (:title pull))]
+    {:type type :scope scope :subject subject :issues (parse-issues config pull)} nil))
 
 (s/defn parse-changes :- Tag
   [config :- Config
    tag :- Tag]
   (->> (:pulls tag)
-       (filter conventional-pull?)
        (map (partial parse-pull config))
+       (remove nil?)
        (assoc tag :changes)))

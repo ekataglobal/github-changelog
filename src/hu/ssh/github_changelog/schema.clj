@@ -25,12 +25,15 @@
 
 (s/defschema Issue (s/pair s/Str 'name s/Str 'link))
 
-(s/defschema Change {:type s/Str :scope s/Str :subject s/Str :issues [Issue]})
+(s/defschema Change {:type s/Str
+                     :scope (s/maybe s/Str)
+                     :subject s/Str
+                     :issues [Issue]})
 
 (s/defschema Tag {:name s/Str
                   :sha Sha
                   (s/optional-key :from) (s/maybe Sha)
-                  (s/optional-key :version) Semver
+                  (s/optional-key :version) (s/maybe Semver)
                   (s/optional-key :commits) [Sha]
                   (s/optional-key :pulls) [Pull]
                   (s/optional-key :changes) [Change]})
