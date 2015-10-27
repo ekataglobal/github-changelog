@@ -5,3 +5,5 @@
 (defn link
   ([url] (link url url))
   ([text url] (format "[%s](%s)" text url)))
+
+(defn emphasis [text] (format "**%s**" text))

@@ -11,3 +11,6 @@
 (deftest link
   (is (= "[foo bar](http://example.com/)" (markdown/link "foo bar" "http://example.com/")))
   (is (= "[http://example.com/](http://example.com/)" (markdown/link "http://example.com/"))))
+
+(deftest emphasis
+  (is (= "**foo bar**" (markdown/emphasis "foo bar"))))
