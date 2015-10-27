@@ -10,7 +10,8 @@
                  [org.clojure/tools.cli "0.3.3"]
                  [clj-jgit "0.8.8"]
                  [tentacles "0.3.0"]
-                 [grimradical/clj-semver "0.3.0-20130920.191002-3" :exclusions [org.clojure/clojure]]]
+                 [grimradical/clj-semver "0.3.0-20130920.191002-3" :exclusions [org.clojure/clojure]]
+                 [org.clojure/test.check "0.8.2"]]
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]]
                    :source-paths ["dev"]}
              :uberjar {:aot :all}})

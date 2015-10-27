@@ -3,15 +3,19 @@
 
 (s/defschema Config {s/Keyword s/Any})
 
-(defn- sha? [x] (= (count x) 40))
-
 (s/defschema Fn (s/conditional fn? s/Any))
+
+(defn- sha? [x] (= (count x) 40))
 
 (s/defschema Sha (s/conditional sha? s/Str))
 
-(s/defschema Semver {:major s/Int
-                     :minor s/Int
-                     :patch s/Int
+(defn- natural? [x] (>= x 0))
+
+(s/defschema Natural (s/conditional natural? s/Int))
+
+(s/defschema Semver {:major Natural
+                     :minor Natural
+                     :patch Natural
                      :pre-release (s/maybe s/Str)
                      :build (s/maybe s/Str)})
 
