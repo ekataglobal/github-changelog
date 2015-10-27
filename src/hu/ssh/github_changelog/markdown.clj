@@ -3,6 +3,11 @@
 
 (defn header [n body] (str (join (repeat n "#")) " " body \newline \newline))
 
+(def h1 (partial header 1))
+(def h2 (partial header 2))
+(def h3 (partial header 3))
+(def h4 (partial header 4))
+
 (defn link
   ([url] (link url url))
   ([text url] (format "[%s](%s)" text url)))
