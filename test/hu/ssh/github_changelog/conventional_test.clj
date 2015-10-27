@@ -34,4 +34,13 @@
   (testing "with invalid formats"
     (are [title] (nil? (conventional/parse-pull config (create-pull title)))
                  "this is just a PR"
-                 "does not follow the rules")))
+                 "does not follow the rules"))
+  (testing "with a full test"
+    (let [pull (merge (create-pull "feat(the scope): subject line") {:body "Fixes #1, Closes JIRA-2"})
+          change (conventional/parse-pull config pull)]
+      (is (s/validate Change change))
+      (is (= "feat" (:type change)))
+      (is (= "the scope" (:scope change)))
+      (is (= "subject line" (:subject change)))
+      (is (= pull (:pull-request change)))
+      (is (= 2 (count (:issues change)))))))
