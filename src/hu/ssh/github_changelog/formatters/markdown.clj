@@ -1,9 +1,13 @@
 (ns hu.ssh.github-changelog.formatters.markdown
   (:require
     [hu.ssh.github-changelog.util :refer [str-map]]
-    [hu.ssh.github-changelog.schema :refer [Tag Change ChangeType]]
+    [hu.ssh.github-changelog.schema :refer [Tag Change ChangeType Issue]]
     [hu.ssh.github-changelog.markdown :as markdown]
     [schema.core :as s]))
+
+(s/defn format-issue :- s/Str
+  [issue :- Issue]
+  (markdown/link (first issue) (second issue)))
 
 (s/defn format-change :- s/Str
   [change :- Change]
@@ -11,7 +15,7 @@
        " "
        (:subject change)
        (if-let [issues (:issues change)]
-         (str ", closes " (str-map #(markdown/link (first %) (second %)) issues)))))
+         (str ", closes " (str-map format-issue issues)))))
 
 (s/defn format-changes :- s/Str
   [[type changes :- [Change]]]
