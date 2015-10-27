@@ -1,7 +1,7 @@
 (ns hu.ssh.github-changelog.core
   (:require
-    [hu.ssh.github-changelog.util :as util]
-    [hu.ssh.github-changelog.schema :refer [Config Tag Pull Sha]]
+    [hu.ssh.github-changelog.util :refer [git-url]]
+    [hu.ssh.github-changelog.schema :refer [Config Tag Pull Sha Change]]
     [hu.ssh.github-changelog.git :as git]
     [hu.ssh.github-changelog.semver :as semver]
     [hu.ssh.github-changelog.github :as github]
@@ -38,7 +38,7 @@
    user :- s/Str
    repo :- s/Str]
   (let [prefix (:github config)
-        git (git/clone (util/git-url prefix user repo))
+        git (git/clone (git-url prefix user repo))
         tags (git/tags git)]
     (map (partial assoc-commits git) (parse-tags tags))))
 

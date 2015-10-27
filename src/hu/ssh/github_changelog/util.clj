@@ -4,6 +4,8 @@
 
 (defn prepend [s] (partial str s))
 
+(defn str-map [f & sqs] (apply str (apply map f sqs)))
+
 (defn value-at
   [ks m]
   {:pre  [(map? m) (vector? ks)]

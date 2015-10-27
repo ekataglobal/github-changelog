@@ -26,7 +26,9 @@
 
 (s/defschema Issue (s/pair s/Str 'name s/Str 'link))
 
-(s/defschema Change {:type s/Str
+(def ChangeType s/Str)
+
+(s/defschema Change {:type ChangeType
                      :scope (s/maybe s/Str)
                      :subject s/Str
                      :pull-request Pull
