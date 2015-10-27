@@ -4,16 +4,17 @@
     [hu.ssh.github-changelog.schema :refer [Semver]]
     [schema.experimental.generators :as g]
     [schema.experimental.complete :as c]
-    [clojure.test :refer :all]))
+    [clojure.test :refer :all]
+    [schema.core :as s]))
 
 (deftest extract
   (testing "with a v prefix"
-    (are [version] (not (nil? (semver/extract version)))
+    (are [version] (s/validate Semver (semver/extract version))
                    "v0.0.1"
                    "v0.9.3-pre0"
                    "v1.0.1"))
   (testing "without a v prefix"
-    (are [version] (not (nil? (semver/extract version)))
+    (are [version] (s/validate Semver (semver/extract version))
                    "0.0.1"
                    "0.9.3-pre0"
                    "1.0.1")))

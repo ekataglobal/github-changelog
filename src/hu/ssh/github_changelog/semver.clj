@@ -4,8 +4,6 @@
     [clj-semver.core :as semver]
     [schema.core :as s]))
 
-(s/set-fn-validation! true)
-
 (def newer? semver/newer?)
 
 (s/defn parse :- (s/maybe Semver)
