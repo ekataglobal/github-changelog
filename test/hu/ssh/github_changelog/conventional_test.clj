@@ -17,4 +17,4 @@
 
   (testing "with a GitHub issue"
     (let [pull (c/complete {:body "Fixes #1" :sha (gen-sha) :base {:repo {:html_url repo-url}}} Pull)]
-      (is (= [["1" (str repo-url "/issues/1")]] (conventional/parse-issues config pull))))))
+      (is (= [["#1" (str repo-url "/issues/1")]] (conventional/parse-issues config pull))))))

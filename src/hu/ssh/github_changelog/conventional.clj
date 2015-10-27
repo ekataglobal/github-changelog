@@ -1,6 +1,5 @@
 (ns hu.ssh.github-changelog.conventional
   (:require
-    [hu.ssh.github-changelog.util :as util]
     [hu.ssh.github-changelog.schema :refer [Config Tag Issue Pull Change Fn]]
     [schema.core :as s]
     [clojure.string :as string]))
@@ -27,13 +26,15 @@
   [config :- Config
    pull :- Pull]
   (let [base (str (:jira config) "/browse/")]
-    (collect-issues pull "\\[?([A-Z]+-\\d+)\\]?" (util/prepend base))))
+    (collect-issues pull "\\[?([A-Z]+-\\d+)\\]?" (partial str base))))
+
+(defn- parse-int [x] (Integer. (re-find #"[0-9]+" x)))
 
 (s/defn github-issues :- [Issue]
   [_config :- Config
    pull :- Pull]
   (let [base (str (get-in pull [:base :repo :html_url]) "/issues/")]
-    (collect-issues pull "#(\\d+)" (util/prepend base))))
+    (collect-issues pull "(#\\d+)" #(str base (parse-int %)))))
 
 (s/defn parse-issues :- [Issue]
   [config :- Config

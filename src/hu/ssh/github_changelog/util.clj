@@ -2,8 +2,6 @@
 
 (def git-url (partial format "%s/%s/%s.git"))
 
-(defn prepend [s] (partial str s))
-
 (defn str-map [f & sqs] (apply str (apply map f sqs)))
 
 (defn value-at
