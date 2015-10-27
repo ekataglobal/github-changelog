@@ -14,3 +14,6 @@
 
 (deftest emphasis
   (is (= "**foo bar**" (markdown/emphasis "foo bar"))))
+
+(deftest ul
+  (is (= "* a\n* b\n* c" (markdown/ul ["a" "b" "c"]))))
