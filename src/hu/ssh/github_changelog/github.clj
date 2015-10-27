@@ -14,6 +14,6 @@
   [config :- Config
    user :- s/Str
    repo :- s/Str]
-  (with-url (:github-api config)
-            (->> (pulls/pulls user repo (merge {:token (:token config), :all-pages true, :state "closed"}))
-                 (map #(assoc % :sha (pull-sha %))))))
+  (let [options {:token (:token config), :all-pages true, :state "closed"}]
+    (with-url (:github-api config)
+              (map #(assoc % :sha (pull-sha %)) (pulls/pulls user repo options)))))
