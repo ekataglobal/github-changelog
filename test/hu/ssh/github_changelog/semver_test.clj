@@ -17,4 +17,5 @@
     (is (semver/extract "1.0.1"))))
 
 (deftest newer?
-  (is (semver/newer? (c/complete {:major 1} Semver) (c/complete {:major 0} Semver))))
+  (is (semver/newer? (c/complete {:major 1} Semver) (c/complete {:major 0} Semver)))
+  (is (not (semver/newer? (c/complete {:major 0} Semver) (c/complete {:major 1} Semver)))))
