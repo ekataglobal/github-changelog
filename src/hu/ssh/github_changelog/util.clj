@@ -1,8 +1,9 @@
-(ns hu.ssh.github-changelog.util)
+(ns hu.ssh.github-changelog.util
+  (:require [clojure.string :refer [join]]))
 
 (def git-url (partial format "%s/%s/%s.git"))
 
-(defn str-map [f & sqs] (apply str (apply map f sqs)))
+(defn str-map [f & sqs] (join (apply map f sqs)))
 
 (defn value-at
   [ks m]
