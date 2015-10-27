@@ -21,6 +21,7 @@
 
 (s/defschema Pull {:title s/Str
                    :sha Sha
+                   :body (s/maybe s/Str)
                    s/Keyword s/Any})
 
 (s/defschema Issue (s/pair s/Str 'name s/Str 'link))
