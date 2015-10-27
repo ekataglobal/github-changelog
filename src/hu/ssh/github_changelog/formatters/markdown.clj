@@ -9,7 +9,9 @@
   [change :- Change]
   (str (markdown/emphasis (:scope change))
        " "
-       (:subject change)))
+       (:subject change)
+       (if-let [issues (:issues change)]
+         (str ", closes " (str-map #(markdown/link (first %) (second %)) issues)))))
 
 (s/defn format-changes :- s/Str
   [[type changes :- [Change]]]
