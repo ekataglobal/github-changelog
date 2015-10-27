@@ -5,8 +5,8 @@
 
 (deftest header
   (are [expected level body] (= expected (markdown/header level body))
-                             "# Header" 1 "Header"
-                             "## SubHeader" 2 "SubHeader"))
+                             "# Header\n" 1 "Header"
+                             "## SubHeader\n" 2 "SubHeader"))
 
 (deftest link
   (is (= "[foo bar](http://example.com/)" (markdown/link "foo bar" "http://example.com/")))
@@ -16,4 +16,4 @@
   (is (= "**foo bar**" (markdown/emphasis "foo bar"))))
 
 (deftest ul
-  (is (= "* a\n* b\n* c" (markdown/ul ["a" "b" "c"]))))
+  (is (= "* a\n* b\n* c\n" (markdown/ul ["a" "b" "c"]))))
