@@ -27,7 +27,7 @@
   [config :- Config
    pull :- Pull]
   (let [base (str (:jira config) "/browse/")]
-    (collect-issues pull "([A-Z]+-\\d+)" (util/prepend base))))
+    (collect-issues pull "\\[?([A-Z]+-\\d+)\\]?" (util/prepend base))))
 
 (s/defn github-issues :- [Issue]
   [_config :- Config
