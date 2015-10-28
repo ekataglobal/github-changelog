@@ -2,12 +2,11 @@
   (:require
     [hu.ssh.github-changelog.conventional :as conventional]
     [hu.ssh.github-changelog.schema :refer [Config Pull Change]]
+    [hu.ssh.github-changelog.util :refer [gen-sha]]
     [clojure.test :refer :all]
     [clojure.string :refer [join]]
     [schema.experimental.complete :as c]
     [schema.core :as s]))
-
-(defn- gen-sha [] (join (repeatedly 40 #(rand-nth "0123456789ABCDEF"))))
 
 (def repo-url "https://github.company.com/user/repo")
 (def jira-url "http://dev.clojure.org/jira")

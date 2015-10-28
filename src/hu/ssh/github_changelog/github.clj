@@ -5,8 +5,6 @@
     [tentacles.pulls :as pulls]
     [schema.core :as s]))
 
-(s/set-fn-validation! true)
-
 (s/defn parse-pull :- Pull
   [pull]
   (assoc pull :sha (get-in pull [:head :sha])))
