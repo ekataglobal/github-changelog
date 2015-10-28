@@ -4,8 +4,6 @@
     [schema.core :as s]
     [clojure.string :as string]))
 
-(s/set-fn-validation! true)
-
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
 (s/defn fixes-pattern :- s/Regex
   [pattern :- s/Str]

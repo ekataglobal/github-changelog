@@ -20,5 +20,7 @@
                    "1.0.1")))
 
 (deftest newer?
-  (is (semver/newer? (c/complete {:major 1} Semver) (c/complete {:major 0} Semver)))
-  (is (not (semver/newer? (c/complete {:major 0} Semver) (c/complete {:major 1} Semver)))))
+  (let [high (c/complete {:major 1} Semver)
+        low (c/complete {:major 0} Semver)]
+    (is (semver/newer? high low))
+    (is (not (semver/newer? low high)))))

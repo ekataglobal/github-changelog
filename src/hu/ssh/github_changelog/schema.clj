@@ -1,7 +1,10 @@
 (ns hu.ssh.github-changelog.schema
   (:require [schema.core :as s]))
 
-(s/defschema Config {s/Keyword s/Any})
+(s/defschema Config {:git s/Str
+                     :jira (s/maybe s/Str)
+                     :github-api s/Str
+                     s/Keyword s/Any})
 
 (s/defschema Fn (s/conditional fn? s/Any))
 

@@ -37,7 +37,7 @@
   [config :- Config
    user :- s/Str
    repo :- s/Str]
-  (let [prefix (:github config)
+  (let [prefix (:git config)
         git (git/clone (git-url prefix user repo))
         tags (git/tags git)]
     (map (partial assoc-commits git) (parse-tags tags))))
