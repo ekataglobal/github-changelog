@@ -21,7 +21,9 @@
        (:subject change)
        (let [issues (:issues change)]
          (if (not (empty? issues))
-           (str ", closes " (str-map (partial apply markdown/link) issues)))))
+           (str ", closes " (str-map (partial apply markdown/link) issues))))
+       (let [pr (:pull-request change)]
+         (str " " (markdown/link (str "#" (:number pr)) (:html_url pr))))))
 
 (s/defn format-changes :- s/Str
   [[type changes :- [Change]]]
