@@ -5,6 +5,7 @@
   :license {:name "MIT"
             :url "http://choosealicense.com/licenses/mit/"}
   :dependencies [[org.clojure/clojure "1.7.0"]
+                 [org.clojure/core.match "0.3.0-alpha4"]
                  [prismatic/schema "1.0.2"]
                  [environ "1.0.1"]
                  [org.clojure/tools.cli "0.3.3"]

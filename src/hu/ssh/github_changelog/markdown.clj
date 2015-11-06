@@ -7,6 +7,7 @@
 (def h2 (partial header 2))
 (def h3 (partial header 3))
 (def h4 (partial header 4))
+(def h5 (partial header 5))
 
 (defn link
   ([url] (link url url))
