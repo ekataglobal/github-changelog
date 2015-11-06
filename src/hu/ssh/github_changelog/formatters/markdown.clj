@@ -12,7 +12,7 @@
 
 (s/defn translate-type :- s/Str
   [type :- s/Str]
-  (or ((keyword type) type-name-map) type))
+  (get type-name-map (keyword type) type))
 
 (s/defn format-change :- s/Str
   [change :- Change]
