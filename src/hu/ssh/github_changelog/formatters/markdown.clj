@@ -21,10 +21,10 @@
   (str (markdown/emphasis (:scope change))
        " "
        (:subject change)
+       (let [pr (:pull-request change)]
+         (str " " (markdown/link (str "#" (:number pr)) (:html_url pr))))
        (if-let [issues (seq (:issues change))]
          (str ", closes " (join ", " (map (partial apply markdown/link) issues))))))
-       (let [pr (:pull-request change)]
-         (str " " (markdown/link (str "#" (:number pr)) (:html_url pr))))))
 
 (s/defn format-changes :- s/Str
   [[type changes :- [Change]]]
