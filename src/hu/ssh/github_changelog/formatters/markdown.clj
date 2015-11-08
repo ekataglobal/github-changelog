@@ -7,17 +7,28 @@
     [clojure.core.match :refer [match]]
     [schema.core :as s]))
 
+(def type-name-map
+  {:fix "Bug Fixes"
+   :chore "Chores"
+   :feat "Features"})
+
+(s/defn translate-type :- s/Str
+  [type :- s/Str]
+  (get type-name-map (keyword type) type))
+
 (s/defn format-change :- s/Str
   [change :- Change]
   (str (markdown/emphasis (:scope change))
        " "
        (:subject change)
+       (let [pr (:pull-request change)]
+         (str " " (markdown/link (str "#" (:number pr)) (:html_url pr))))
        (if-let [issues (seq (:issues change))]
          (str ", closes " (join ", " (map (partial apply markdown/link) issues))))))
 
 (s/defn format-changes :- s/Str
   [[type changes :- [Change]]]
-  (str (markdown/h4 type)
+  (str (markdown/h4 (translate-type type))
        (markdown/ul (map format-change changes))))
 
 (s/defn highlight-fn :- Fn
