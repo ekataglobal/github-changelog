@@ -22,6 +22,6 @@
               markdown/h5 v-build))
 
 (deftest format-tag
-  (are [content tag] (= (f-markdown/format-tag tag) content)
+  (are [content tag] (= content (f-markdown/format-tag tag))
                      "# v1.0.0\n\n" (c/complete {:name "v1.0.0" :sha (gen-sha) :version v-major} Tag)
                      "## v1.1.0\n\n" (c/complete {:name "v1.1.0" :sha (gen-sha) :version v-minor} Tag)))
