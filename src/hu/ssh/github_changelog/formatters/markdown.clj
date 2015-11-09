@@ -8,9 +8,14 @@
     [schema.core :as s]))
 
 (def type-name-map
-  {:fix "Bug Fixes"
+  {:feat "Features"
+   :fix "Bug Fixes"
+   :perf "Performance Improvements"
+   :docs "Documentations"
    :chore "Chores"
-   :feat "Features"})
+   :style "Style Changes"
+   :refactor "Refactorings"
+   :test "Tests"})
 
 (s/defn translate-type :- s/Str
   [type :- s/Str]
