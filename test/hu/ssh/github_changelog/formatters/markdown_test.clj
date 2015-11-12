@@ -30,4 +30,4 @@
 (def change (c/complete {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []} Change))
 
 (deftest format-change
-  (is (= "**scope** new something [#1](http://example.com/)" (f-markdown/format-change change))))
+  (is (= "**scope:** new something [#1](http://example.com/)" (f-markdown/format-change change))))

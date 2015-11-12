@@ -21,9 +21,13 @@
   [type :- s/Str]
   (get type-name-map (keyword type) type))
 
+(s/defn format-scope :- s/Str
+  [scope :- s/Str]
+  (markdown/emphasis (str scope ":")))
+
 (s/defn format-change :- s/Str
   [change :- Change]
-  (str (markdown/emphasis (:scope change))
+  (str (format-scope (:scope change))
        " "
        (:subject change)
        (let [pr (:pull-request change)]
