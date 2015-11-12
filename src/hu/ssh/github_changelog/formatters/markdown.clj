@@ -38,11 +38,11 @@
 
 (s/defn highlight-fn :- Fn
   [version :- Semver]
-  (match [version]
-         [{:minor 0, :patch 0, :pre-release nil :build nil}] markdown/h1
-         [{:minor _, :patch 0, :pre-release nil :build nil}] markdown/h2
-         [{:minor _, :patch _, :pre-release nil :build nil}] markdown/h3
-         [{:minor _, :patch _, :pre-release _ :build nil}] markdown/h4
+  (match (vec (map version [:minor :patch :pre-release :build]))
+         [0 0 nil nil] markdown/h1
+         [_ 0 nil nil] markdown/h2
+         [_ _ nil nil] markdown/h3
+         [_ _ _ nil] markdown/h4
          :else markdown/h5))
 
 (s/defn format-tag :- s/Str
