@@ -38,7 +38,7 @@
 
 (s/defn highlight-fn :- Fn
   [version :- Semver]
-  (match (vec (map version [:minor :patch :pre-release :build]))
+  (match (mapv version [:minor :patch :pre-release :build])
          [0 0 nil nil] markdown/h1
          [_ 0 nil nil] markdown/h2
          [_ _ nil nil] markdown/h3
