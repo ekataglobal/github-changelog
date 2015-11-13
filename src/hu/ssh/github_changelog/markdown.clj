@@ -1,7 +1,9 @@
 (ns hu.ssh.github-changelog.markdown
   (:require [clojure.string :refer [join]]))
 
-(defn header [n body] (str (join (repeat n "#")) " " body \newline \newline))
+(defn- block-item [body] (str \newline body \newline))
+
+(defn header [n body] (block-item (str (join (repeat n "#")) " " body)))
 
 (def h1 (partial header 1))
 (def h2 (partial header 2))
@@ -19,4 +21,4 @@
   (as-> items it
         (map (partial format "* %s") it)
         (join \newline it)
-        (str \newline it \newline \newline)))
+        (block-item it)))

@@ -23,8 +23,8 @@
 
 (deftest format-tag
   (are [content tag] (= content (f-markdown/format-tag tag))
-                     "# v1.0.0\n\n" (c/complete {:name "v1.0.0" :sha (gen-sha) :version v-major} Tag)
-                     "## v1.1.0\n\n" (c/complete {:name "v1.1.0" :sha (gen-sha) :version v-minor} Tag)))
+                     (markdown/h1 "v1.0.0") (c/complete {:name "v1.0.0" :sha (gen-sha) :version v-major} Tag)
+                     (markdown/h2 "v1.1.0") (c/complete {:name "v1.1.0" :sha (gen-sha) :version v-minor} Tag)))
 
 (def pull (c/complete {:number 1 :html_url "http://example.com/" :sha (gen-sha)} Pull))
 (def change (c/complete {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []} Change))
