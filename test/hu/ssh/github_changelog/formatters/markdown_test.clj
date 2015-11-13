@@ -7,10 +7,10 @@
     [clojure.test :refer :all]
     [schema.experimental.complete :as c]))
 
-(def v-major (c/complete {:minor 0, :patch 0, :pre-release nil :build nil} Semver))
-(def v-minor (c/complete {:patch 0, :pre-release nil :build nil} Semver))
-(def v-patch (c/complete {:pre-release nil :build nil} Semver))
-(def v-pre-release (c/complete {:build nil} Semver))
+(def v-major (c/complete {:major 1 :minor 0, :patch 0, :pre-release nil :build nil} Semver))
+(def v-minor (c/complete {:minor 1 :patch 0, :pre-release nil :build nil} Semver))
+(def v-patch (c/complete {:patch 1 :pre-release nil :build nil} Semver))
+(def v-pre-release (c/complete {:pre-release "pre" :build nil} Semver))
 (def v-build (c/complete {:build "42"} Semver))
 
 (deftest highlight-fn
