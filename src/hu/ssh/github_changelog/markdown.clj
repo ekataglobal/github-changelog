@@ -3,7 +3,10 @@
 
 (defn- block-item [body] (str \newline body \newline))
 
-(defn header [n body] (block-item (str (join (repeat n "#")) " " body)))
+(defmacro defblock [name args body]
+  `(def ~name (fn ~args (block-item ~body))))
+
+(defblock header [n body] (str (join (repeat n "#")) " " body))
 
 (def h1 (partial header 1))
 (def h2 (partial header 2))
@@ -17,8 +20,7 @@
 
 (defn emphasis [text] (format "**%s**" text))
 
-(defn ul [items]
+(defblock ul [items]
   (as-> items it
         (map (partial format "* %s") it)
-        (join \newline it)
-        (block-item it)))
+        (join \newline it)))
