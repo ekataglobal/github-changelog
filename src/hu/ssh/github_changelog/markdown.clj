@@ -20,7 +20,4 @@
 
 (defn emphasis [text] (format "**%s**" text))
 
-(defblock ul [items]
-  (as-> items it
-        (map (partial format "* %s") it)
-        (join \newline it)))
+(defblock ul [items] (join \newline (map (partial format "* %s") items)))
