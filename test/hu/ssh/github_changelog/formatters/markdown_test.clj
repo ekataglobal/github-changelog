@@ -29,5 +29,14 @@
 (def pull (c/complete {:number 1 :html_url "http://example.com/" :sha (gen-sha)} Pull))
 (def change (c/complete {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []} Change))
 
+(def expected-change "new something [#1](http://example.com/)")
+
 (deftest format-change
-  (is (= "**scope:** new something [#1](http://example.com/)" (f-markdown/format-change change))))
+  (is (= expected-change (f-markdown/format-change change))))
+
+(def grouped (group-by :scope [change change]))
+(def expected-scope (markdown/emphasis "scope:"))
+
+(deftest format-grouped-changes
+  (is (= (str expected-scope " " expected-change) (f-markdown/format-grouped-changes ["scope" [change]])))
+  (is (= (str expected-scope (markdown/ul [expected-change expected-change])) (f-markdown/format-grouped-changes (first grouped)))))

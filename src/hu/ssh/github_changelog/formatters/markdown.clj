@@ -27,18 +27,30 @@
 
 (s/defn format-change :- s/Str
   [change :- Change]
-  (str (format-scope (:scope change))
-       " "
-       (:subject change)
-       (let [pr (:pull-request change)]
-         (str " " (markdown/link (str "#" (:number pr)) (:html_url pr))))
-       (if-let [issues (seq (:issues change))]
-         (str ", closes " (join ", " (map (partial apply markdown/link) issues))))))
+  (str
+    (:subject change)
+    (let [pr (:pull-request change)]
+      (str " " (markdown/link (str "#" (:number pr)) (:html_url pr))))
+    (if-let [issues (seq (:issues change))]
+      (str ", closes " (join ", " (map (partial apply markdown/link) issues))))))
+
+(defmulti format-grouped-changes #(count (second %)))
+
+(s/defmethod format-grouped-changes 1 :- String
+             [[scope changes :- [Change]]]
+             (str (format-scope scope)
+                  " "
+                  (format-change (first changes))))
+
+(s/defmethod format-grouped-changes :default :- String
+             [[scope changes :- [Change]]]
+             (str (format-scope scope)
+                  (markdown/ul (map format-change changes))))
 
 (s/defn format-changes :- s/Str
   [[type changes :- [Change]]]
   (str (markdown/h4 (translate-type type))
-       (markdown/ul (map format-change changes))))
+       (markdown/ul (map format-grouped-changes (group-by :scope changes)))))
 
 (s/defn highlight-fn :- Fn
   [version :- Semver]

@@ -16,4 +16,4 @@
   (is (= "**foo bar**" (markdown/emphasis "foo bar"))))
 
 (deftest ul
-  (is (= "* a\n* b\n* c\n\n" (markdown/ul ["a" "b" "c"]))))
+  (is (= "\n* A\n* B\n* C\n\n" (markdown/ul ["A" "B" "C"]))))

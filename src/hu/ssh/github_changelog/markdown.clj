@@ -19,4 +19,4 @@
   (as-> items it
         (map (partial format "* %s") it)
         (join \newline it)
-        (str it \newline \newline)))
+        (str \newline it \newline \newline)))
