@@ -6,7 +6,7 @@
                      :github-api s/Str
                      s/Keyword s/Any})
 
-(s/defschema Fn (s/conditional fn? s/Any))
+(s/defschema Fn (s/conditional ifn? s/Any))
 
 (defn- sha? [x] (= (count x) 40))
 
