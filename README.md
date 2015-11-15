@@ -40,6 +40,10 @@ TODO
 * Version 0.1.0-SNAPSHOT
 
 
+## Continuous Integration
+
+[![Continuous Integration status](https://api.travis-ci.org/raszi/github-changelog.svg?branch=master)](http://travis-ci.org/raszi/github-changelog)
+
 
 ## Copyright and License
 
