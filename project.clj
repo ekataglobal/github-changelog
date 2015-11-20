@@ -2,6 +2,7 @@
   :description "GitHub changelog"
   :url "https://github.com/raszi/github-changelog"
   :main hu.ssh.github-changelog.cli
+  :repl-options {:init-ns user}
   :license {:name "MIT"
             :url "http://choosealicense.com/licenses/mit/"}
   :dependencies [[org.clojure/clojure "1.7.0"]
