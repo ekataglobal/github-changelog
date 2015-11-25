@@ -1,0 +1,5 @@
+{:git #immuconf/default "https://github.com"
+ :github-api #immuconf/default "https://api.github.com/"
+ :user #immuconf/override "Specify the user/organization of your repository."
+ :repo #immuconf/override "Specify the name of the repository."
+ :token #immuconf/override "Specify your GitHub API token here."}

@@ -10,9 +10,8 @@
   (assoc pull :sha (get-in pull [:head :sha])))
 
 (s/defn fetch-pulls :- [Pull]
-  [config :- Config
-   user :- s/Str
-   repo :- s/Str]
-  (let [options {:token (:token config), :all-pages true, :state "closed"}]
-    (with-url (:github-api config)
+  [config :- Config]
+  (let [{:keys [user repo token github-api]} config
+        options {:token token, :all-pages true, :state "closed"}]
+    (with-url github-api
               (map parse-pull (pulls/pulls user repo options)))))
