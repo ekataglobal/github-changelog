@@ -34,10 +34,9 @@
   (assoc tag :commits (git/commits git (:from tag) (:sha tag))))
 
 (s/defn load-tags :- [Tag]
-  [config :- Config
-   user :- s/Str
-   repo :- s/Str]
-  (let [prefix (:git config)
+  [config :- Config]
+  (let [{:keys [user repo]} config
+        prefix (:git config)
         git (git/clone (git-url prefix user repo))
         tags (git/tags git)]
     (map (partial assoc-commits git) (parse-tags tags))))
@@ -57,10 +56,8 @@
 
 (s/defn changelog :- [Tag]
   "Fetches the changelog"
-  [config :- Config
-   user :- s/Str
-   repo :- s/Str]
-  (let [pulls (github/fetch-pulls config user repo)]
-    (->> (load-tags config user repo)
+  [config :- Config]
+  (let [pulls (github/fetch-pulls config)]
+    (->> (load-tags config)
          (map (partial assoc-pulls pulls))
          (map (partial conventional/parse-changes config)))))

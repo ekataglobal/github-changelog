@@ -2,8 +2,10 @@
   (:require [schema.core :as s]))
 
 (s/defschema Config {:git s/Str
-                     :jira (s/maybe s/Str)
                      :github-api s/Str
+                     :user s/Str
+                     :repo s/Str
+                     :jira (s/maybe s/Str)
                      s/Keyword s/Any})
 
 (s/defschema Fn (s/conditional ifn? s/Any))

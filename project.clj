@@ -12,6 +12,7 @@
                  [org.clojure/tools.cli "0.3.3"]
                  [clj-jgit "0.8.8"]
                  [tentacles "0.4.0"]
+                 [levand/immuconf "0.1.0"]
                  [grimradical/clj-semver "0.3.0-20130920.191002-3" :exclusions [org.clojure/clojure]]]
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]
                                   [org.clojure/test.check "0.9.0"]]

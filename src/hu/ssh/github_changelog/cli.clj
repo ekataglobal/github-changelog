@@ -40,4 +40,4 @@
       errors (exit 1 (error-msg errors))
       (not (and user repo)) (exit 2 (usage summary)))
 
-    (changelog user repo options)))
+    (changelog (merge {:user user :repo repo} options))))

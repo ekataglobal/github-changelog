@@ -11,3 +11,4 @@ pom.xml.asc
 .lein-failures
 .lein-env
 .nrepl-port
+resources/overrides.edn
