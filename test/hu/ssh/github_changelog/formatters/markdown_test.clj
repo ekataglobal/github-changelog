@@ -11,7 +11,7 @@
 (def v-minor (c/complete {:minor 1 :patch 0, :pre-release nil :build nil} Semver))
 (def v-patch (c/complete {:patch 1 :pre-release nil :build nil} Semver))
 (def v-pre-release (c/complete {:pre-release "pre" :build nil} Semver))
-(def v-build (c/complete {:build "42"} Semver))
+(def v-build (c/complete {:pre-release "pre" :build "42"} Semver))
 
 (deftest highlight-fn
          (are [function version] (= (f-markdown/highlight-fn version) function)
