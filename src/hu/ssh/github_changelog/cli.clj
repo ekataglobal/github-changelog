@@ -2,11 +2,9 @@
   (:require
     [clojure.tools.cli :as cli]
     [clojure.string :refer [join]]
-    [hu.ssh.github-changelog.core :refer [changelog]])
+    [hu.ssh.github-changelog.core :refer [changelog]]
+    [hu.ssh.github-changelog.validators :refer [min-length url]])
   (:gen-class))
-
-(defn- min-length [min]
-  [#(>= (count %) min) (format "Should be at least %s character(s)" min)])
 
 (defn- exit [status msg]
   (println msg)
@@ -20,6 +18,15 @@
   [["-o" "--token TOKEN" "Sets the OAuth token"
     :missing "Missing OAuth token"
     :validate (min-length 40)]
+
+   ["-g" "--github URL" "Sets the GitHub URL"
+    :validate (url)]
+
+   ["-j" "--jira URL" "Sets the Jira URL"
+    :validate (url)]
+
+   ["-a" "--github-api URL" "Sets the Github API"
+    :validate (url)]
 
    ["-d" "--debug" "Turn on debug mode"]
    ["-h" "--help"]])
