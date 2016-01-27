@@ -1,9 +1,11 @@
 (ns hu.ssh.github-changelog.cli
   (:require
-    [clojure.tools.cli :as cli]
-    [clojure.string :refer [join]]
     [hu.ssh.github-changelog.core :refer [changelog]]
-    [hu.ssh.github-changelog.validators :refer [min-length url]])
+    [hu.ssh.github-changelog.validators :refer [min-length url]]
+    [hu.ssh.github-changelog.formatters.markdown :refer [format-tags]]
+    [clojure.tools.cli :as cli]
+    [clojure.edn :as edn]
+    [clojure.string :refer [join]])
   (:gen-class))
 
 (defn- exit [status msg]
@@ -41,10 +43,14 @@
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-options)
-        [_ user repo] (re-find #"^(\w+)/(\w+)$" (str (first arguments)))]
+        default-config (edn/read-string (slurp "resources/config.edn"))
+        [_ user repo] (re-find #"^([\w\-]+)/([\w\-]+)$" (str (first arguments)))]
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors))
       (not (and user repo)) (exit 2 (usage summary)))
 
-    (changelog (merge {:user user :repo repo} options))))
+    (->> (merge default-config options {:user user :repo repo})
+         changelog
+         format-tags
+         (exit 0))))

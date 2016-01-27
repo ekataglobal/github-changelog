@@ -11,7 +11,6 @@
    [clojure.string :as str]
    [clojure.test :as test]
    [clojure.tools.namespace.repl :refer [refresh refresh-all]]
-   [immuconf.config :as config]
    [hu.ssh.github-changelog.core :refer :all]))
 
 (def system
@@ -51,9 +50,3 @@
   []
   (stop)
   (refresh :after `go))
-
-(defn load-config
-  [& extra-files]
-  (->> (map (partial str "resources/") ["config.edn" "overrides.edn"])
-       (concat extra-files)
-       (apply config/load)))
