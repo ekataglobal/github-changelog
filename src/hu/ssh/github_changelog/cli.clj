@@ -1,12 +1,12 @@
 (ns hu.ssh.github-changelog.cli
   (:require
+    [hu.ssh.github-changelog.core :refer [changelog]]
+    [hu.ssh.github-changelog.validators :refer [min-length url]]
+    [hu.ssh.github-changelog.formatters.markdown :refer [format-tags]]
     [clojure.tools.cli :as cli]
-    [clojure.string :refer [join]]
-    [hu.ssh.github-changelog.core :refer [changelog]])
+    [clojure.edn :as edn]
+    [clojure.string :refer [join]])
   (:gen-class))
-
-(defn- min-length [min]
-  [#(>= (count %) min) (format "Should be at least %s character(s)" min)])
 
 (defn- exit [status msg]
   (println msg)
@@ -21,6 +21,15 @@
     :missing "Missing OAuth token"
     :validate (min-length 40)]
 
+   ["-g" "--github URL" "Sets the GitHub URL"
+    :validate (url)]
+
+   ["-j" "--jira URL" "Sets the Jira URL"
+    :validate (url)]
+
+   ["-a" "--github-api URL" "Sets the Github API"
+    :validate (url)]
+
    ["-d" "--debug" "Turn on debug mode"]
    ["-h" "--help"]])
 
@@ -34,10 +43,14 @@
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-options)
-        [_ user repo] (re-find #"^(\w+)/(\w+)$" (str (first arguments)))]
+        default-config (edn/read-string (slurp "resources/config.edn"))
+        [_ user repo] (re-find #"^([\w\-]+)/([\w\-]+)$" (str (first arguments)))]
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors))
       (not (and user repo)) (exit 2 (usage summary)))
 
-    (changelog (merge {:user user :repo repo} options))))
+    (->> (merge default-config options {:user user :repo repo})
+         changelog
+         format-tags
+         (exit 0))))
