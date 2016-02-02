@@ -38,11 +38,14 @@
   (let [end-point (pulls-url config)
         request (make-request config {})
         first-response (call-api end-point request)
-        links (:links first-response)
-        pages (gen-pages links)
-        requests (map #(make-request config {:page %}) pages)
-        rest-responses (pmap #(call-api end-point %) requests)]
-    (into (:body first-response) (flatten (map :body rest-responses)))))
+        links (:_links first-response)
+        first-body (:body first-response)]
+    (if links
+      (let [pages (gen-pages links)
+            requests (map #(make-request config {:page %}) pages)
+            rest-responses (pmap #(call-api end-point %) requests)]
+        (into first-body (flatten (map :body rest-responses))))
+      first-body)))
 
 (s/defn fetch-pulls :- [Pull]
         [config :- Config]
