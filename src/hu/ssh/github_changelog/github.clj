@@ -38,7 +38,7 @@
   (let [end-point (pulls-url config)
         request (make-request config {})
         first-response (call-api end-point request)
-        links (:_links first-response)
+        links (:links first-response)
         first-body (:body first-response)]
     (if links
       (let [pages (gen-pages links)
