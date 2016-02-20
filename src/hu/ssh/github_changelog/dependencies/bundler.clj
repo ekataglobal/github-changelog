@@ -19,6 +19,4 @@
 
 (defn parse [file]
   (with-open [rdr (reader file)]
-    (->> rdr
-         get-specs
-         parse-specs)))
+    (parse-specs (get-specs rdr))))
