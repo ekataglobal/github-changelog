@@ -1,9 +1,10 @@
 (ns hu.ssh.github-changelog.dependencies.bundler
   (:require
-    [clojure.string :refer [split-lines]]))
+    [clojure.string :refer [split-lines]]
+    [clojure.java.io :refer [reader]]))
 
-(defn- get-specs [file]
-  (->> (split-lines file)
+(defn- get-specs [reader]
+  (->> (doall (line-seq reader))
        (drop-while #(not= % "  specs:"))
        (drop 1)
        (take-while seq)))
@@ -17,6 +18,7 @@
        (map parse-spec)))
 
 (defn parse [file]
-  (->> (slurp file)
-       get-specs
-       parse-specs))
+  (with-open [rdr (reader file)]
+    (->> rdr
+         get-specs
+         parse-specs)))
