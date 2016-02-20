@@ -9,7 +9,7 @@
        (take-while seq)))
 
 (defn- parse-spec [spec]
-  {:gem (second spec) :version (nth spec 2)})
+  {:name (second spec) :version (nth spec 2)})
 
 (defn- parse-specs [specs]
   (->> (map #(re-matches #"^\s{4}(\S+) \((.*)\)$" %) specs)
