@@ -4,10 +4,11 @@
     [clojure.java.io :as io]))
 
 (defn- get-specs [reader]
-  (->> (doall (line-seq reader))
+  (->> (line-seq reader)
        (drop-while #(not= % "  specs:"))
        (drop 1)
-       (take-while seq)))
+       (take-while seq)
+       doall))
 
 (defn- parse-spec [spec]
   {:name (second spec) :version (nth spec 2)})
