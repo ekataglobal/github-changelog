@@ -7,8 +7,7 @@
   (->> (line-seq reader)
        (drop-while #(not= % "  specs:"))
        (drop 1)
-       (take-while seq)
-       doall))
+       (take-while seq)))
 
 (defn- parse-spec [spec]
   {:name (second spec) :version (nth spec 2)})
@@ -20,4 +19,4 @@
 
 (defn parse [file]
   (with-open [reader (io/reader file)]
-    (parse-specs (get-specs reader))))
+    (doall (parse-specs (get-specs reader)))))
