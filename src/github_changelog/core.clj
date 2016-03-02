@@ -1,11 +1,11 @@
-(ns hu.ssh.github-changelog.core
+(ns github-changelog.core
   (:require
-    [hu.ssh.github-changelog.util :refer [git-url]]
-    [hu.ssh.github-changelog.schema :refer [Config Tag Pull Sha Change]]
-    [hu.ssh.github-changelog.git :as git]
-    [hu.ssh.github-changelog.semver :as semver]
-    [hu.ssh.github-changelog.github :as github]
-    [hu.ssh.github-changelog.conventional :as conventional]
+    [github-changelog.util :refer [git-url]]
+    [github-changelog.schema :refer [Config Tag Pull Sha Change]]
+    [github-changelog.git :as git]
+    [github-changelog.semver :as semver]
+    [github-changelog.github :as github]
+    [github-changelog.conventional :as conventional]
     [environ.core :refer [env]]
     [schema.core :as s])
   (:import (org.eclipse.jgit.api Git)))

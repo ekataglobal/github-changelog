@@ -1,4 +1,4 @@
-(ns hu.ssh.github-changelog.schema
+(ns github-changelog.schema
   (:require [schema.core :as s]))
 
 (s/defschema Config {:git        s/Str

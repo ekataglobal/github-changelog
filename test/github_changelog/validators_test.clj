@@ -1,6 +1,6 @@
-(ns hu.ssh.github-changelog.validators-test
+(ns github-changelog.validators-test
   (:require
-    [hu.ssh.github-changelog.validators :as validators]
+    [github-changelog.validators :as validators]
     [clojure.test :refer :all]))
 
 (def min-length-validator (validators/min-length 2))

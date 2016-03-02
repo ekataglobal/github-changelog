@@ -1,7 +1,7 @@
-(ns hu.ssh.github-changelog.git
+(ns github-changelog.git
   (:require
     [clojure.string :as string]
-    [hu.ssh.github-changelog.schema :refer [Sha Tag]]
+    [github-changelog.schema :refer [Sha Tag]]
     [clj-jgit.porcelain :as git]
     [clj-jgit.util :refer [name-from-uri]]
     [schema.core :as s])

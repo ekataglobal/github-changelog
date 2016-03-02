@@ -1,4 +1,4 @@
-(ns hu.ssh.github-changelog.validators
+(ns github-changelog.validators
   (:import (java.net URL)))
 
 (defn min-length [min]

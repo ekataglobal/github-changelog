@@ -1,4 +1,4 @@
-(ns hu.ssh.github-changelog.dependencies.bundler
+(ns github-changelog.dependencies.bundler
   (:require
     [clojure.string :refer [split-lines]]
     [clojure.java.io :as io]))

@@ -1,9 +1,9 @@
-(ns hu.ssh.github-changelog.formatters.markdown-test
+(ns github-changelog.formatters.markdown-test
   (:require
-    [hu.ssh.github-changelog.formatters.markdown :as f-markdown]
-    [hu.ssh.github-changelog.markdown :as markdown]
-    [hu.ssh.github-changelog.schema :refer [Semver Tag Change Pull Issue]]
-    [hu.ssh.github-changelog.util :refer [gen-sha]]
+    [github-changelog.formatters.markdown :as f-markdown]
+    [github-changelog.markdown :as markdown]
+    [github-changelog.schema :refer [Semver Tag Change Pull Issue]]
+    [github-changelog.util :refer [gen-sha]]
     [clojure.test :refer :all]
     [schema.experimental.complete :as c]))
 

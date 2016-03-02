@@ -1,8 +1,8 @@
-(ns hu.ssh.github-changelog.github-test
+(ns github-changelog.github-test
   (:require
-    [hu.ssh.github-changelog.github :as github]
-    [hu.ssh.github-changelog.schema :refer [Config Pull]]
-    [hu.ssh.github-changelog.util :refer [gen-sha]]
+    [github-changelog.github :as github]
+    [github-changelog.schema :refer [Config Pull]]
+    [github-changelog.util :refer [gen-sha]]
     [clojure.test :refer :all]
     [schema.core :as s]
     [schema.experimental.complete :as c]))

@@ -1,7 +1,7 @@
-(ns hu.ssh.github-changelog.semver-test
+(ns github-changelog.semver-test
   (:require
-    [hu.ssh.github-changelog.semver :as semver]
-    [hu.ssh.github-changelog.schema :refer [Semver]]
+    [github-changelog.semver :as semver]
+    [github-changelog.schema :refer [Semver]]
     [schema.experimental.generators :as g]
     [schema.experimental.complete :as c]
     [clojure.test :refer :all]

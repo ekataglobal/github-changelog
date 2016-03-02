@@ -1,8 +1,8 @@
-(ns hu.ssh.github-changelog.formatters.markdown
+(ns github-changelog.formatters.markdown
   (:require
-    [hu.ssh.github-changelog.util :refer [str-map]]
-    [hu.ssh.github-changelog.schema :refer [Tag Change ChangeType Fn Semver]]
-    [hu.ssh.github-changelog.markdown :as markdown]
+    [github-changelog.util :refer [str-map]]
+    [github-changelog.schema :refer [Tag Change ChangeType Fn Semver]]
+    [github-changelog.markdown :as markdown]
     [clojure.string :refer [join]]
     [clojure.core.match :refer [match]]
     [schema.core :as s]))

@@ -1,6 +1,6 @@
-(ns hu.ssh.github-changelog.semver
+(ns github-changelog.semver
   (:require
-    [hu.ssh.github-changelog.schema :refer [Semver]]
+    [github-changelog.schema :refer [Semver]]
     [clj-semver.core :as semver]
     [schema.core :as s]))
 

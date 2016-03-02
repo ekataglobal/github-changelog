@@ -1,6 +1,6 @@
-(ns hu.ssh.github-changelog.markdown-test
+(ns github-changelog.markdown-test
   (:require
-    [hu.ssh.github-changelog.markdown :as markdown]
+    [github-changelog.markdown :as markdown]
     [clojure.test :refer :all]))
 
 (deftest header
