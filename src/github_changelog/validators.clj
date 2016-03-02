@@ -8,4 +8,4 @@
   (try (some? (URL. url)) (catch Exception _ false)) )
 
 (defn url []
-  [#(valid-url? %) "Should be a valid URL"])
+  [valid-url? "Should be a valid URL"])

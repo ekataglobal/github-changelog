@@ -49,5 +49,4 @@
 
 (s/defn fetch-pulls :- [Pull]
         [config :- Config]
-  (->> (get-pulls config)
-      (map parse-pull)))
+  (map parse-pull (get-pulls config)))
