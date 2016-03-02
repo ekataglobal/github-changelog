@@ -1,8 +1,8 @@
-(ns hu.ssh.github-changelog.cli
+(ns github-changelog.cli
   (:require
-    [hu.ssh.github-changelog.core :refer [changelog]]
-    [hu.ssh.github-changelog.validators :refer [min-length url]]
-    [hu.ssh.github-changelog.formatters.markdown :refer [format-tags]]
+    [github-changelog.core :refer [changelog]]
+    [github-changelog.validators :refer [min-length url]]
+    [github-changelog.formatters.markdown :refer [format-tags]]
     [clojure.tools.cli :as cli]
     [clojure.edn :as edn]
     [clojure.string :refer [join]])

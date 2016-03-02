@@ -1,7 +1,7 @@
 (defproject hu.ssh/github-changelog "0.1.0-SNAPSHOT"
   :description "GitHub changelog"
   :url "https://github.com/raszi/github-changelog"
-  :main hu.ssh.github-changelog.cli
+  :main github-changelog.cli
   :repl-options {:init-ns user}
   :license {:name "MIT"
             :url "http://choosealicense.com/licenses/mit/"}

@@ -1,8 +1,8 @@
-(ns hu.ssh.github-changelog.conventional-test
+(ns github-changelog.conventional-test
   (:require
-    [hu.ssh.github-changelog.conventional :as conventional]
-    [hu.ssh.github-changelog.schema :refer [Config Pull Change]]
-    [hu.ssh.github-changelog.util :refer [gen-sha]]
+    [github-changelog.conventional :as conventional]
+    [github-changelog.schema :refer [Config Pull Change]]
+    [github-changelog.util :refer [gen-sha]]
     [clojure.test :refer :all]
     [clojure.string :refer [join]]
     [schema.experimental.complete :as c]

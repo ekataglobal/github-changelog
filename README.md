@@ -15,12 +15,12 @@ Pull-request based conventional changelog generator for GitHub projects which fo
 
 [Leiningen] dependency information:
 
-    [hu.ssh/github-changelog "0.1.0-SNAPSHOT"]
+    [github-changelog "0.1.0-SNAPSHOT"]
 
 [Maven] dependency information:
 
     <dependency>
-      <groupId>hu.ssh</groupId>
+      <groupId>github-changelog</groupId>
       <artifactId>github-changelog</artifactId>
       <version>0.1.0-SNAPSHOT</version>
     </dependency>

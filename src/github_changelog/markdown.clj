@@ -1,4 +1,4 @@
-(ns hu.ssh.github-changelog.markdown
+(ns github-changelog.markdown
   (:require [clojure.string :refer [join]]))
 
 (defn- block-item [body] (str \newline body \newline))

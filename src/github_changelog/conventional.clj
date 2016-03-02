@@ -1,6 +1,6 @@
-(ns hu.ssh.github-changelog.conventional
+(ns github-changelog.conventional
   (:require
-    [hu.ssh.github-changelog.schema :refer [Config Tag Issue Pull Change Fn]]
+    [github-changelog.schema :refer [Config Tag Issue Pull Change Fn]]
     [schema.core :as s]
     [clojure.string :as string]))
 

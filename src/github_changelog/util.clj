@@ -1,4 +1,4 @@
-(ns hu.ssh.github-changelog.util
+(ns github-changelog.util
   (:require [clojure.string :refer [join]]))
 
 (def git-url (partial format "%s/%s/%s.git"))

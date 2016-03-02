@@ -1,7 +1,7 @@
-(ns hu.ssh.github-changelog.github
+(ns github-changelog.github
   (:require
-    [hu.ssh.github-changelog.util :refer [strip-trailing extract-params]]
-    [hu.ssh.github-changelog.schema :refer [Config Pull]]
+    [github-changelog.util :refer [strip-trailing extract-params]]
+    [github-changelog.schema :refer [Config Pull]]
     [clojure.string :refer [split]]
     [clj-http.client :as http]
     [throttler.core :refer [throttle-fn]]
