@@ -10,18 +10,16 @@
 (defn parse-pull [pull]
   (assoc pull :sha (get-in pull [:head :sha])))
 
-(defn pulls-url [config]
-  (let [{:keys [github-api user repo]} config]
-    (format "%s/repos/%s/%s/pulls" (strip-trailing github-api "/") user repo)))
+(defn pulls-url [{:keys [github-api user repo]}]
+  (format "%s/repos/%s/%s/pulls" (strip-trailing github-api "/") user repo))
 
 (defn- make-request
   ([config] (make-request config {}))
-  ([config params]
-   (let [oauth-token (:token config)]
-     {:as           :json
-      :query-params (merge {:state "closed"} params)
-      :headers      {"User-Agent"    "GitHub-Changelog"
-                     "Authorization" (str "token " oauth-token)}})))
+  ([{oauth-token :token} params]
+   {:as           :json
+    :query-params (merge {:state "closed"} params)
+    :headers      {"User-Agent"    "GitHub-Changelog"
+                   "Authorization" (str "token " oauth-token)}}))
 
 (defn- last-page-number [links]
   (some-> (get-in links [:last :href])
