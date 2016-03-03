@@ -17,6 +17,7 @@
                  [org.slf4j/slf4j-nop "1.7.18"]
                  [grimradical/clj-semver "0.3.0-20130920.191002-3" :exclusions [org.clojure/clojure]]]
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.11"]
-                                  [org.clojure/test.check "0.9.0"]]
+                                  [org.clojure/test.check "0.9.0"]
+                                  [clj-http-fake "1.0.2"]]
                    :source-paths ["dev"]}
              :uberjar {:aot :all}})

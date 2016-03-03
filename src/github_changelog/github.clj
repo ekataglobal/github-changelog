@@ -14,39 +14,46 @@
   (let [{:keys [github-api user repo]} config]
     (format "%s/repos/%s/%s/pulls" (strip-trailing github-api "/") user repo)))
 
-(defn- make-request [config params]
-  (let [oauth-token (:token config)]
-    {:as           :json
-     :query-params (merge {:state "closed"} params)
-     :headers      {"User-Agent"    "GitHub-Changelog"
-                    "Authorization" (str "token " oauth-token)}}))
-
-(def call-api (throttle-fn http/get 5 :second))
+(defn- make-request
+  ([config] (make-request config {}))
+  ([config params]
+   (let [oauth-token (:token config)]
+     {:as           :json
+      :query-params (merge {:state "closed"} params)
+      :headers      {"User-Agent"    "GitHub-Changelog"
+                     "Authorization" (str "token " oauth-token)}})))
 
 (defn- last-page-number [links]
-  (-> (get-in links [:last :href])
-      (split #"\?")
-      second
-      extract-params
-      :page
-      Integer/parseInt))
+  (some-> (get-in links [:last :href])
+          (split #"\?")
+          second
+          extract-params
+          :page
+          Long/parseLong))
 
 (defn- gen-pages [links]
-  (range 2 (inc (last-page-number links))))
+  (if-let [last-page (last-page-number links)]
+    (range 2 (inc last-page))
+    []))
 
-(defn- get-pulls [config]
-  (let [end-point (pulls-url config)
-        request (make-request config {})
-        first-response (call-api end-point request)
+(defn- make-requests [config links]
+  (map #(make-request config {:page %}) (gen-pages links)))
+
+(defn- call-api-fn [config]
+  (let [rate-limit (get config :rate-limit 5)
+        end-point (pulls-url config)]
+    (throttle-fn (partial http/get end-point) rate-limit :second)))
+
+(s/defn get-pulls :- [Pull] [config :- Config]
+  (let [call-api (call-api-fn config)
+        request (make-request config)
+        first-response (call-api request)
         links (:links first-response)
-        first-body (:body first-response)]
-    (if links
-      (let [pages (gen-pages links)
-            requests (map #(make-request config {:page %}) pages)
-            rest-responses (pmap #(call-api end-point %) requests)]
-        (into first-body (flatten (map :body rest-responses))))
-      first-body)))
+        first-body (:body first-response)
+        requests (make-requests config links)
+        rest-responses (pmap call-api requests)]
+    (into first-body (flatten (map :body rest-responses)))))
 
 (s/defn fetch-pulls :- [Pull]
-        [config :- Config]
+  [config :- Config]
   (map parse-pull (get-pulls config)))
