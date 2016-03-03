@@ -46,12 +46,11 @@
 
 (s/defn get-pulls :- [Pull] [config :- Config]
   (let [call-api (call-api-fn config)
-        request (make-request config)
-        first-response (call-api request)
-        links (:links first-response)
-        first-body (:body first-response)
-        requests (make-requests config links)
-        rest-responses (pmap call-api requests)]
+        first-request (make-request config)
+        first-response (call-api first-request)
+        {links :links first-body :body} first-response
+        rest-requests (make-requests config links)
+        rest-responses (pmap call-api rest-requests)]
     (into first-body (flatten (map :body rest-responses)))))
 
 (s/defn fetch-pulls :- [Pull]
