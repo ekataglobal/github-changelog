@@ -30,9 +30,8 @@
           Long/parseLong))
 
 (defn- gen-pages [links]
-  (if-let [last-page (last-page-number links)]
-    (range 2 (inc last-page))
-    []))
+  (when-let [last-page (last-page-number links)]
+    (range 2 (inc last-page))))
 
 (defn- make-requests [config links]
   (map #(make-request config {:page %}) (gen-pages links)))
