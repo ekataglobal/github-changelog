@@ -8,7 +8,8 @@
     [schema.core :as s]))
 
 (defn parse-pull [pull]
-  (assoc pull :sha (get-in pull [:head :sha])))
+  (-> (assoc pull :sha (get-in pull [:head :sha]))
+      (select-keys (keys Pull))))
 
 (defn pulls-url [{:keys [github-api user repo]}]
   (format "%s/repos/%s/%s/pulls" (strip-trailing github-api "/") user repo))

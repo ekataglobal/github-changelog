@@ -25,9 +25,11 @@
                      :build       (s/maybe s/Str)})
 
 (s/defschema Pull {:title    s/Str
+                   :number   Natural
                    :sha      Sha
                    :body     (s/maybe s/Str)
-                   s/Keyword s/Any})
+                   :html_url s/Str
+                   :base     {:repo {:html_url s/Str}}})
 
 (s/defschema Issue (s/pair s/Str 'name s/Str 'link))
 

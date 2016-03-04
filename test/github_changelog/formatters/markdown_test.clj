@@ -3,7 +3,7 @@
     [github-changelog.formatters.markdown :as f-markdown]
     [github-changelog.markdown :as markdown]
     [github-changelog.schema :refer [Semver Tag Change Pull Issue]]
-    [github-changelog.util :refer [gen-sha]]
+    [github-changelog.schema-generators :refer [generators]]
     [clojure.test :refer :all]
     [schema.experimental.complete :as c]))
 
@@ -23,11 +23,11 @@
 
 (deftest format-tag
   (are [content tag] (= content (f-markdown/format-tag tag))
-                     (markdown/h1 "v1.0.0") (c/complete {:name "v1.0.0" :sha (gen-sha) :version v-major} Tag)
-                     (markdown/h2 "v1.1.0") (c/complete {:name "v1.1.0" :sha (gen-sha) :version v-minor} Tag)))
+                     (markdown/h1 "v1.0.0") (c/complete {:name "v1.0.0" :version v-major} Tag {} generators)
+                     (markdown/h2 "v1.1.0") (c/complete {:name "v1.1.0" :version v-minor} Tag {} generators)))
 
-(def pull (c/complete {:number 1 :html_url "http://example.com/" :sha (gen-sha)} Pull))
-(def change (c/complete {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []} Change))
+(def pull (c/complete {:number 1 :html_url "http://example.com/"} Pull {} generators))
+(def change (c/complete {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []} Change {} generators))
 
 (def expected-change (str "new something " (markdown/link "#1" "http://example.com/")))
 

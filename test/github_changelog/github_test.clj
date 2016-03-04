@@ -1,14 +1,15 @@
 (ns github-changelog.github-test
   (:require
     [github-changelog.github :as github]
-    [github-changelog.schema :refer [Config Pull]]
-    [github-changelog.util :refer [gen-sha]]
+    [github-changelog.schema :refer [Config Pull Sha]]
+    [github-changelog.schema-generators :refer [generators]]
     [clojure.test :refer :all]
     [clojure.set :refer [subset?]]
     [clj-http.fake :refer [with-fake-routes-in-isolation]]
     [cheshire.core :refer [generate-string]]
     [schema.core :as s]
-    [schema.experimental.complete :as c]))
+    [schema.experimental.complete :as c]
+    [schema.experimental.generators :as g]))
 
 (def github-api "http://api.github.com/")
 (def config (c/complete {:github-api github-api
@@ -21,8 +22,14 @@
   (is (= api-endpoint (github/pulls-url config))))
 
 (deftest parse-pull
-  (let [sha (gen-sha)
-        pull (github/parse-pull {:title "Something" :body nil :head {:sha sha}})]
+  (let [sha (g/generate Sha generators)
+        example-json {:number 1
+                      :html_url ""
+                      :title "Something"
+                      :body nil
+                      :head {:sha sha}
+                      :base {:repo {:html_url ""}}}
+        pull (github/parse-pull example-json)]
     (is (s/validate Pull pull))
     (is (= sha (:sha pull)))))
 
@@ -40,10 +47,12 @@
         (is (= body (github/get-pulls config))))))
 
   (testing "with multiple pages"
-    (let [first-body [{:example1 ""}]
+    (let [first-body (g/sample 10 Pull generators)
           links {:last {:href "?page=2"}}
-          second-body [{:example2 ""}]]
+          second-body (g/sample 10 Pull generators)]
       (with-fake-routes-in-isolation
         {{:address api-endpoint :query-params {:state "closed"}} (mocked-response-fn first-body {:links links})
          {:address api-endpoint :query-params {:state "closed" :page "2"}} (mocked-response-fn second-body)}
-        (is (subset? (into first-body second-body) (set (github/get-pulls config))))))))
+        (let [merged (set (into first-body second-body))
+              result (set (github/get-pulls config))]
+          (is (= merged result)))))))
