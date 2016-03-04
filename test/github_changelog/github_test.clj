@@ -2,7 +2,7 @@
   (:require
     [github-changelog.github :as github]
     [github-changelog.schema :refer [Config Pull Sha]]
-    [github-changelog.schema-generators :as g]
+    [github-changelog.schema-generators :refer [generate sample]]
     [github-changelog.schema-complete :refer [complete]]
     [clojure.test :refer :all]
     [clojure.set :refer [subset?]]
@@ -21,7 +21,7 @@
   (is (= api-endpoint (github/pulls-url config))))
 
 (deftest parse-pull
-  (let [sha (g/generate Sha)
+  (let [sha (generate Sha)
         example-json {:number 1
                       :html_url ""
                       :title "Something"
@@ -46,9 +46,9 @@
         (is (= body (github/get-pulls config))))))
 
   (testing "with multiple pages"
-    (let [first-body (g/sample 10 Pull)
+    (let [first-body (sample 10 Pull)
           links {:last {:href "?page=2"}}
-          second-body (g/sample 10 Pull)]
+          second-body (sample 10 Pull)]
       (with-fake-routes-in-isolation
         {{:address api-endpoint :query-params {:state "closed"}} (mocked-response-fn first-body {:links links})
          {:address api-endpoint :query-params {:state "closed" :page "2"}} (mocked-response-fn second-body)}
