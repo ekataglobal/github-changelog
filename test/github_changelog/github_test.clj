@@ -40,7 +40,7 @@
 
 (deftest get-pulls
   (testing "without multiple pages"
-    (let [body [{:example ""}]]
+    (let [body (sample 2 Pull)]
       (with-fake-routes-in-isolation
         {{:address api-endpoint :query-params {:state "closed"}} (mocked-response-fn body)}
         (is (= body (github/get-pulls config))))))
