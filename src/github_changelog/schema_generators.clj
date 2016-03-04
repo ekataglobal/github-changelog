@@ -11,3 +11,9 @@
   ((gen/fmap join) (check-generators/vector hexadecimal 40)))
 
 (def generators {schema/Sha sha})
+
+(defn generate [schema]
+  (gen/generate schema generators))
+
+(defn sample [samples schema]
+  (gen/sample samples schema generators))

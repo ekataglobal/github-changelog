@@ -4,14 +4,14 @@
     [github-changelog.markdown :as markdown]
     [github-changelog.schema :refer [Semver Tag Change Pull Issue]]
     [github-changelog.schema-generators :refer [generators]]
-    [clojure.test :refer :all]
-    [schema.experimental.complete :as c]))
+    [github-changelog.schema-complete :refer [complete]]
+    [clojure.test :refer :all]))
 
-(def v-major (c/complete {:major 1 :minor 0, :patch 0, :pre-release nil :build nil} Semver))
-(def v-minor (c/complete {:minor 1 :patch 0, :pre-release nil :build nil} Semver))
-(def v-patch (c/complete {:patch 1 :pre-release nil :build nil} Semver))
-(def v-pre-release (c/complete {:pre-release "pre" :build nil} Semver))
-(def v-build (c/complete {:pre-release "pre" :build "42"} Semver))
+(def v-major (complete {:major 1 :minor 0, :patch 0, :pre-release nil :build nil} Semver))
+(def v-minor (complete {:minor 1 :patch 0, :pre-release nil :build nil} Semver))
+(def v-patch (complete {:patch 1 :pre-release nil :build nil} Semver))
+(def v-pre-release (complete {:pre-release "pre" :build nil} Semver))
+(def v-build (complete {:pre-release "pre" :build "42"} Semver))
 
 (deftest highlight-fn
          (are [function version] (= (f-markdown/highlight-fn version) function)
@@ -23,11 +23,11 @@
 
 (deftest format-tag
   (are [content tag] (= content (f-markdown/format-tag tag))
-                     (markdown/h1 "v1.0.0") (c/complete {:name "v1.0.0" :version v-major} Tag {} generators)
-                     (markdown/h2 "v1.1.0") (c/complete {:name "v1.1.0" :version v-minor} Tag {} generators)))
+                     (markdown/h1 "v1.0.0") (complete {:name "v1.0.0" :version v-major} Tag)
+                     (markdown/h2 "v1.1.0") (complete {:name "v1.1.0" :version v-minor} Tag)))
 
-(def pull (c/complete {:number 1 :html_url "http://example.com/"} Pull {} generators))
-(def change (c/complete {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []} Change {} generators))
+(def pull (complete {:number 1 :html_url "http://example.com/"} Pull))
+(def change (complete {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []} Change))
 
 (def expected-change (str "new something " (markdown/link "#1" "http://example.com/")))
 

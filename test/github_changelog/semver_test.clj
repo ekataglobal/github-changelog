@@ -2,8 +2,7 @@
   (:require
     [github-changelog.semver :as semver]
     [github-changelog.schema :refer [Semver]]
-    [schema.experimental.generators :as g]
-    [schema.experimental.complete :as c]
+    [github-changelog.schema-complete :refer [complete]]
     [clojure.test :refer :all]
     [schema.core :as s]))
 
@@ -20,7 +19,7 @@
                    "1.0.1")))
 
 (deftest newer?
-  (let [high (c/complete {:major 1} Semver)
-        low (c/complete {:major 0} Semver)]
+  (let [high (complete {:major 1} Semver)
+        low (complete {:major 0} Semver)]
     (is (semver/newer? high low))
     (is (not (semver/newer? low high)))))
