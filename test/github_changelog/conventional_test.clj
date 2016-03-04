@@ -3,17 +3,17 @@
     [github-changelog.conventional :as conventional]
     [github-changelog.schema :refer [Config Pull Change]]
     [github-changelog.schema-generators :refer [generators]]
+    [github-changelog.schema-complete :refer [complete]]
     [clojure.test :refer :all]
     [clojure.string :refer [join]]
-    [schema.experimental.complete :as c]
     [schema.core :as s]))
 
 (def repo-url "https://github.company.com/user/repo")
 (def jira-url "http://dev.clojure.org/jira")
-(def config (c/complete {:jira jira-url} Config))
+(def config (complete {:jira jira-url} Config))
 
 (defn- create-pull [partial-datum]
-   (c/complete partial-datum Pull {} generators))
+   (complete partial-datum Pull))
 
 (deftest parse-issues
   (testing "with a JIRA issue"
