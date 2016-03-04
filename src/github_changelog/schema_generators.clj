@@ -1,6 +1,6 @@
 (ns github-changelog.schema-generators
   (:require [github-changelog.schema :as schema]
-            [clojure.string :refer [join upper-case]]
+            [clojure.string :refer [join]]
             [schema.experimental.generators :as gen]
             [clojure.test.check.generators :as check-generators]))
 
