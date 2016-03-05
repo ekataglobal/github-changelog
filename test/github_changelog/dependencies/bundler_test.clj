@@ -4,11 +4,15 @@
     [clojure.test :refer :all]
     [clojure.java.io :refer [file]]))
 
-(defn- fixture-file [path]
-  (.getCanonicalPath (file "test/fixtures" path)))
+(defn- test-parse [path]
+  (->> (file "test/fixtures" path)
+       .getCanonicalPath
+       bundler/parse))
 
-(deftest format-tag
+(deftest parse
   (testing "with an empty file"
-    (is (empty? (bundler/parse (fixture-file "Gemfile_empty.lock")))))
+    (is (empty? (test-parse "Gemfile_empty.lock"))))
   (testing "with empty deps"
-    (is (empty? (bundler/parse (fixture-file "Gemfile_no-deps.lock"))))))
+    (is (empty? (test-parse "Gemfile_no-deps.lock"))))
+  (testing "with dependencies"
+    (is (some #{{:name "rake" :version "10.5.0"}} (test-parse "Gemfile_rake.lock")))))
