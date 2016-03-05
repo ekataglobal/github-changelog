@@ -10,7 +10,11 @@
 (def sha
   ((gen/fmap join) (check-generators/vector hexadecimal 40)))
 
-(def generators {schema/Sha sha})
+(def natural
+  (check-generators/choose 0 Long/MAX_VALUE))
+
+(def generators {schema/Sha sha
+                 schema/Natural natural})
 
 (defn generate [schema]
   (gen/generate schema generators))
