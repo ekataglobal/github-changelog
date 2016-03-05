@@ -5,7 +5,6 @@
     [github-changelog.schema-generators :refer [generate sample]]
     [github-changelog.schema-complete :refer [complete]]
     [clojure.test :refer :all]
-    [clojure.set :refer [subset?]]
     [clj-http.fake :refer [with-fake-routes-in-isolation]]
     [cheshire.core :refer [generate-string]]
     [schema.core :refer [validate]]))
