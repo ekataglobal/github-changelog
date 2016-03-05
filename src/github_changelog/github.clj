@@ -42,7 +42,7 @@
         end-point (pulls-url config)]
     (throttle-fn (partial http/get end-point) rate-limit :second)))
 
-(s/defn get-pulls :- [Pull] [config :- Config]
+(defn- get-pulls [config]
   (let [call-api (call-api-fn config)
         first-request (make-request config)
         first-response (call-api first-request)
