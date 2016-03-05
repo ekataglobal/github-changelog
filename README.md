@@ -1,6 +1,7 @@
 # GitHub changelog
 
 [![Continuous Integration status](https://api.travis-ci.org/raszi/github-changelog.svg?branch=master)](http://travis-ci.org/raszi/github-changelog)
+[![Coverage Status](https://coveralls.io/repos/github/raszi/github-changelog/badge.svg?branch=master)](https://coveralls.io/github/raszi/github-changelog)
 
 Pull-request based conventional changelog generator for GitHub projects which follow the AngularJS [Commit Message Format](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format).
 
