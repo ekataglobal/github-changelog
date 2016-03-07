@@ -3,8 +3,8 @@
     [github-changelog.util :refer [str-map]]
     [github-changelog.schema :refer [Tag Change ChangeType Fn Semver]]
     [github-changelog.markdown :as markdown]
+    [github-changelog.semver :refer [get-type]]
     [clojure.string :refer [join]]
-    [clojure.core.match :refer [match]]
     [schema.core :as s]))
 
 (def type-name-map
@@ -52,14 +52,15 @@
   (str (markdown/h4 (translate-type type))
        (markdown/ul (map format-grouped-changes (group-by :scope changes)))))
 
+(def highlight-mapping {:major markdown/h1
+                        :minor markdown/h2
+                        :patch markdown/h3
+                        :pre-release markdown/h4
+                        :build markdown/h5})
+
 (s/defn highlight-fn :- Fn
   [version :- Semver]
-  (match (mapv version [:minor :patch :pre-release :build])
-         [0 0 nil nil] markdown/h1
-         [_ 0 nil nil] markdown/h2
-         [_ _ nil nil] markdown/h3
-         [_ _ _ nil] markdown/h4
-         :else markdown/h5))
+  (get highlight-mapping (get-type version) markdown/h5))
 
 (s/defn format-tag :- s/Str
   [tag :- Tag]

@@ -2,19 +2,14 @@
   (:require
     [github-changelog.formatters.markdown :as f-markdown]
     [github-changelog.markdown :as markdown]
-    [github-changelog.schema :refer [Semver Tag Change Pull Issue]]
+    [github-changelog.schema :refer [Tag Change Pull Issue]]
     [github-changelog.schema-generators :refer [generators]]
     [github-changelog.schema-complete :refer [complete]]
+    [github-changelog.version-examples :refer :all]
     [clojure.test :refer :all]))
 
-(def v-major (complete {:major 1 :minor 0, :patch 0, :pre-release nil :build nil} Semver))
-(def v-minor (complete {:minor 1 :patch 0, :pre-release nil :build nil} Semver))
-(def v-patch (complete {:patch 1 :pre-release nil :build nil} Semver))
-(def v-pre-release (complete {:pre-release "pre" :build nil} Semver))
-(def v-build (complete {:pre-release "pre" :build "42"} Semver))
-
 (deftest highlight-fn
-         (are [function version] (= (f-markdown/highlight-fn version) function)
+         (are [function version] (= function (f-markdown/highlight-fn version))
               markdown/h1 v-major
               markdown/h2 v-minor
               markdown/h3 v-patch
