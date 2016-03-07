@@ -52,14 +52,13 @@
             (map markdown/li)
             join)))
 
-(def highlight-mapping {:major markdown/h1
-                        :minor markdown/h2
-                        :patch markdown/h3
-                        :pre-release markdown/h4
-                        :build markdown/h5})
+(defmulti highlight-fn get-type)
 
-(defn highlight-fn [version]
-  (get highlight-mapping (get-type version) markdown/h5))
+(defmethod highlight-fn :major [_] markdown/h1)
+(defmethod highlight-fn :minor [_] markdown/h2)
+(defmethod highlight-fn :patch [_] markdown/h3)
+(defmethod highlight-fn :pre-release [_] markdown/h4)
+(defmethod highlight-fn :default [_] markdown/h5)
 
 (s/defn format-tag :- s/Str
   [tag :- Tag]
