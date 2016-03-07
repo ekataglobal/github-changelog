@@ -6,6 +6,7 @@
     [github-changelog.schema-generators :refer [generators]]
     [github-changelog.schema-complete :refer [complete]]
     [github-changelog.version-examples :refer :all]
+    [clojure.string :refer [join]]
     [clojure.test :refer :all]))
 
 (deftest highlight-fn
@@ -26,13 +27,18 @@
 
 (def expected-change (str "new something " (markdown/link "#1" "http://example.com/")))
 
-(deftest format-change
-  (is (= expected-change (f-markdown/format-change change))))
-
 (def grouped (group-by :scope [change change]))
 (def expected-scope (markdown/emphasis "scope:"))
-(def expected-changes (markdown/ul [expected-change expected-change]))
+(def expected-changes (join (map markdown/li [expected-change expected-change])))
 
 (deftest format-grouped-changes
-  (is (= (str expected-scope " " expected-change) (f-markdown/format-grouped-changes ["scope" [change]])))
-  (is (= (str expected-scope expected-changes) (f-markdown/format-grouped-changes (first grouped)))))
+  (testing "with one change"
+    (is (= (str expected-scope " " expected-change) (f-markdown/format-grouped-changes ["scope" [change]]))))
+  (testing "with multiple changes"
+    (is (= (str expected-scope expected-changes) (f-markdown/format-grouped-changes (first grouped))))))
+
+(def expected-formatted-changes (str (markdown/h5 "Features")
+                                     (markdown/li (join [expected-scope expected-changes]))))
+
+(deftest format-changes
+  (is (= expected-formatted-changes (f-markdown/format-changes ["feat" [change change]]))))

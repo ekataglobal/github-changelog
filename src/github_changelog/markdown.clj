@@ -1,7 +1,7 @@
 (ns github-changelog.markdown
-  (:require [clojure.string :refer [join]]))
+  (:require [clojure.string :refer [join split-lines]]))
 
-(defn- block-item [body] (str \newline body \newline))
+(defn- block-item [body] (str \newline body \newline \newline))
 
 (defmacro defblock [name args body]
   `(def ~name (fn ~args (block-item ~body))))
@@ -13,6 +13,7 @@
 (def h3 (partial header 3))
 (def h4 (partial header 4))
 (def h5 (partial header 5))
+(def h6 (partial header 6))
 
 (defn link
   ([url] (link url url))
@@ -20,4 +21,8 @@
 
 (defn emphasis [text] (format "**%s**" text))
 
-(defblock ul [items] (join \newline (map (partial format "* %s") items)))
+(defn li [body]
+  (let [lines (split-lines body)
+        first-line (str "* " (first lines))
+        rest-lines (mapv (partial str "  ") (rest lines))]
+    (str \newline (join \newline (into [first-line] rest-lines)))))

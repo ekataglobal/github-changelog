@@ -17,16 +17,13 @@
    :refactor "Refactorings"
    :test "Tests"})
 
-(s/defn translate-type :- s/Str
-  [type :- s/Str]
+(defn- translate-type [type]
   (get type-name-map (keyword type) type))
 
-(s/defn format-scope :- s/Str
-  [scope :- s/Str]
+(defn- format-scope [scope]
   (markdown/emphasis (str scope ":")))
 
-(s/defn format-change :- s/Str
-  [change :- Change]
+(defn- format-change [change]
   (str
     (:subject change)
     (let [pr (:pull-request change)]
@@ -36,21 +33,24 @@
 
 (defmulti format-grouped-changes #(count (second %)))
 
-(s/defmethod format-grouped-changes 1 :- String
-             [[scope changes :- [Change]]]
-             (str (format-scope scope)
-                  " "
-                  (format-change (first changes))))
+(defmethod format-grouped-changes 1 [[scope changes]]
+  (str (format-scope scope)
+       " "
+       (format-change (first changes))))
 
-(s/defmethod format-grouped-changes :default :- String
-             [[scope changes :- [Change]]]
-             (str (format-scope scope)
-                  (markdown/ul (map format-change changes))))
+(defmethod format-grouped-changes :default [[scope changes]]
+  (str (format-scope scope)
+       (->> (map format-change changes)
+            (map markdown/li)
+            join)))
 
 (s/defn format-changes :- s/Str
   [[type changes :- [Change]]]
-  (str (markdown/h4 (translate-type type))
-       (markdown/ul (map format-grouped-changes (group-by :scope changes)))))
+  (str (markdown/h5 (translate-type type))
+       (->> (group-by :scope changes)
+            (map format-grouped-changes)
+            (map markdown/li)
+            join)))
 
 (def highlight-mapping {:major markdown/h1
                         :minor markdown/h2
@@ -58,8 +58,7 @@
                         :pre-release markdown/h4
                         :build markdown/h5})
 
-(s/defn highlight-fn :- Fn
-  [version :- Semver]
+(defn highlight-fn [version]
   (get highlight-mapping (get-type version) markdown/h5))
 
 (s/defn format-tag :- s/Str
