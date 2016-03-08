@@ -26,8 +26,12 @@
     (is (not (semver/newer? low high)))))
 
 (deftest semver-type
-  (is (= (semver/get-type v-major) :major))
-  (is (= (semver/get-type v-minor) :minor))
-  (is (= (semver/get-type v-patch) :patch))
-  (is (= (semver/get-type v-pre-release) :pre-release))
-  (is (= (semver/get-type v-build) :build)))
+  (are [type version] (= type (semver/get-type version))
+                      :major v-major
+                      :minor v-minor
+                      :patch v-patch
+                      :pre-release v-pre-release
+                      :build v-build))
+
+
+
