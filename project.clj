@@ -7,7 +7,6 @@
             :url  "http://choosealicense.com/licenses/mit/"}
   :plugins [[lein-cloverage "1.0.6"]]
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/core.match "0.3.0-alpha4"]
                  [prismatic/schema "1.0.5"]
                  [environ "1.0.2"]
                  [org.clojure/tools.cli "0.3.3"]

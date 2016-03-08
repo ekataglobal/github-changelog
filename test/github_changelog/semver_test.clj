@@ -3,6 +3,7 @@
     [github-changelog.semver :as semver]
     [github-changelog.schema :refer [Semver]]
     [github-changelog.schema-complete :refer [complete]]
+    [github-changelog.version-examples :refer :all]
     [clojure.test :refer :all]
     [schema.core :as s]))
 
@@ -23,3 +24,11 @@
         low (complete {:major 0} Semver)]
     (is (semver/newer? high low))
     (is (not (semver/newer? low high)))))
+
+(deftest semver-type
+  (are [type version] (= type (semver/get-type version))
+                      :major v-major
+                      :minor v-minor
+                      :patch v-patch
+                      :pre-release v-pre-release
+                      :build v-build))
