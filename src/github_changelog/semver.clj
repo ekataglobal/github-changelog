@@ -1,16 +1,14 @@
 (ns github-changelog.semver
-  (:require
-    [github-changelog.schema :refer [Semver]]
-    [clj-semver.core :as semver]
-    [schema.core :as s]))
+  (:require [clj-semver.core :as semver]))
 
 (def newer? semver/newer?)
 
-(s/defn parse :- (s/maybe Semver)
-  [version :- s/Str]
+(defn parse [version]
   (try (semver/parse version)
        (catch java.lang.AssertionError _e nil)))
 
-(s/defn extract :- (s/maybe Semver)
-  [tag-name :- s/Str]
-  (parse (if (= \v (first tag-name)) (subs tag-name 1) tag-name)))
+(defn extract [tag-name]
+  (parse
+   (if (= \v (first tag-name))
+     (subs tag-name 1)
+     tag-name)))

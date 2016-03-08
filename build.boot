@@ -5,7 +5,6 @@
  :dependencies
  '[[org.clojure/clojure "1.8.0"]
    [org.clojure/core.match "0.3.0-alpha4"]
-   [prismatic/schema "1.0.5"]
    [environ "1.0.2"]
    [org.clojure/tools.cli "0.3.3"]
    [clj-jgit "0.8.8"]
@@ -63,7 +62,7 @@
   []
   (comp
    (testing-helper)
-   (boot-test/test)))
+   (boot-test/test :junit-output-to "junit-out")))
 
 (deftask auto-test
   "Tests everything whenever source changes"

@@ -1,15 +1,12 @@
 (ns github-changelog.github
   (:require
     [github-changelog.util :refer [strip-trailing extract-params]]
-    [github-changelog.schema :refer [Config Pull]]
     [clojure.string :refer [split]]
     [clj-http.client :as http]
-    [throttler.core :refer [throttle-fn]]
-    [schema.core :as s]))
+    [throttler.core :refer [throttle-fn]]))
 
 (defn parse-pull [pull]
-  (-> (assoc pull :sha (get-in pull [:head :sha]))
-      (select-keys (keys Pull))))
+  (assoc pull :sha (get-in pull [:head :sha])))
 
 (defn pulls-url [{:keys [github-api user repo]}]
   (format "%s/repos/%s/%s/pulls" (strip-trailing github-api "/") user repo))
@@ -51,6 +48,5 @@
         rest-responses (pmap call-api rest-requests)]
     (into first-body (flatten (map :body rest-responses)))))
 
-(s/defn fetch-pulls :- [Pull]
-  [config :- Config]
+(defn fetch-pulls [config]
   (map parse-pull (get-pulls config)))

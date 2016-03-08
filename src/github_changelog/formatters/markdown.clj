@@ -1,59 +1,54 @@
 (ns github-changelog.formatters.markdown
   (:require
     [github-changelog.util :refer [str-map]]
-    [github-changelog.schema :refer [Tag Change ChangeType Fn Semver]]
     [github-changelog.markdown :as markdown]
     [clojure.string :refer [join]]
-    [clojure.core.match :refer [match]]
-    [schema.core :as s]))
+    [clojure.core.match :refer [match]]))
 
-(def type-name-map
-  {:feat "Features"
-   :fix "Bug Fixes"
-   :perf "Performance Improvements"
-   :docs "Documentations"
-   :chore "Chores"
-   :style "Style Changes"
-   :refactor "Refactorings"
-   :test "Tests"})
+(defmulti translate-type identity)
 
-(s/defn translate-type :- s/Str
-  [type :- s/Str]
-  (get type-name-map (keyword type) type))
+(doseq [k v] {"feat" "Features"
+              "fix" "Bug Fixes"
+              "perf" "Performance Improvements"
+              "docs" "Documentations"
+              "chore" "Chores"
+              "style" "Style Changes"
+              "refactor" "Refactorings"
+              "test" "Tests"}
+       (defmethod translate-type k [_] v))
 
-(s/defn format-scope :- s/Str
-  [scope :- s/Str]
+(defmethod translate-type :default [x] x)
+
+
+(defn format-scope [scope]
   (markdown/emphasis (str scope ":")))
 
-(s/defn format-change :- s/Str
-  [change :- Change]
+(defn format-pull-request [{:keys [number html_url]}]
+  (str " " (markdown/link (str "#" number) html_url)))
+
+(defn format-change [{:keys [subject pull-request issues]}]
   (str
-    (:subject change)
-    (let [pr (:pull-request change)]
-      (str " " (markdown/link (str "#" (:number pr)) (:html_url pr))))
-    (if-let [issues (seq (:issues change))]
-      (str ", closes " (join ", " (map (partial apply markdown/link) issues))))))
+   subject
+   (format-pull-request pull-request)
+   (if-let [issues (seq issues)]
+     (str ", closes " (join ", " (map (partial apply markdown/link) issues))))))
 
 (defmulti format-grouped-changes #(count (second %)))
 
-(s/defmethod format-grouped-changes 1 :- String
-             [[scope changes :- [Change]]]
-             (str (format-scope scope)
-                  " "
-                  (format-change (first changes))))
+(defmethod format-grouped-changes 1 [[scope changes]]
+  (str (format-scope scope)
+       " "
+       (format-change (first changes))))
 
-(s/defmethod format-grouped-changes :default :- String
-             [[scope changes :- [Change]]]
-             (str (format-scope scope)
-                  (markdown/ul (map format-change changes))))
+(defmethod format-grouped-changes :default [[scope changes]]
+  (str (format-scope scope)
+       (markdown/ul (map format-change changes))))
 
-(s/defn format-changes :- s/Str
-  [[type changes :- [Change]]]
+(defn format-changes [[type changes]]
   (str (markdown/h4 (translate-type type))
        (markdown/ul (map format-grouped-changes (group-by :scope changes)))))
 
-(s/defn highlight-fn :- Fn
-  [version :- Semver]
+(defn highlight-fn [version]
   (match (mapv version [:minor :patch :pre-release :build])
          [0 0 nil nil] markdown/h1
          [_ 0 nil nil] markdown/h2
@@ -61,12 +56,11 @@
          [_ _ _ nil] markdown/h4
          :else markdown/h5))
 
-(s/defn format-tag :- s/Str
-  [tag :- Tag]
-  (str ((highlight-fn (:version tag)) (:name tag))
-       (str-map format-changes (group-by :type (:changes tag)))))
+(defn format-tag [{:keys [version name changes]}]
+  (str ((highlight-fn version) name)
+       (str-map format-changes (group-by :type changes))))
 
-(s/defn format-tags :- s/Str
+(defn format-tags
   "Generates a markdown version from the changes"
-  [tags :- [Tag]]
+  [tags]
   (str-map format-tag tags))
