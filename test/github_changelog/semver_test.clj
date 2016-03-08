@@ -17,7 +17,12 @@
     (are [version] (s/validate Semver (semver/extract version))
                    "0.0.1"
                    "0.9.3-pre0"
-                   "1.0.1")))
+                   "1.0.1"))
+  (testing "invalid tags"
+    (are [version] (nil? (semver/extract version))
+                   "something"
+                   "foobar"
+                   "versions")))
 
 (deftest newer?
   (let [high (complete {:major 1} Semver)
