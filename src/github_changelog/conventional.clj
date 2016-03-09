@@ -1,6 +1,5 @@
 (ns github-changelog.conventional
-  (:require [clojure.string :as string]
-            [github-changelog.schema :refer [map->Change]]))
+  (:require [clojure.string :as string]))
 
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
 (def close-keywords ["close" "closes" "closed" "fix" "fixes" "fixed" "resolve" "resolves" "resolved"])
@@ -34,12 +33,12 @@
   (apply concat ((juxt jira-issues github-issues) config pull)))
 
 (defn parse-pull [config {:keys [title] :as pull}]
-  (if-let [[_ type scope subject] (re-find header-pattern pull)]
-    (map->Change {:type type
-                  :scope scope
-                  :subject subject
-                  :pull-request pull
-                  :issues (parse-issues config pull)})))
+  (if-let [[_ type scope subject] (re-find header-pattern title)]
+    {:type type
+     :scope scope
+     :subject subject
+     :pull-request pull
+     :issues (parse-issues config pull)}))
 
 (defn parse-changes [config {:keys [pulls] :as tag}]
   (->> (map (partial parse-pull config) pulls)

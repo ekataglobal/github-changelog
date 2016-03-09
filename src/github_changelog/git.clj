@@ -1,7 +1,6 @@
 (ns github-changelog.git
   (:require
     [clojure.string :as string]
-    [github-changelog.schema :refer [->Tag]]
     [clj-jgit.porcelain :as git]
     [clj-jgit.util :refer [name-from-uri]])
   (:import (java.io FileNotFoundException)
@@ -31,7 +30,8 @@
   (string/replace (.getName tag) #"^refs/tags/" ""))
 
 (defn map-tag [^Repository repo ^Ref tag]
-  (->Tag (map-tag-name tag) (get-merge-sha repo tag)))
+  {:name (map-tag-name tag)
+   :sha (get-merge-sha repo tag)})
 
 (defn tags [^Git git]
   (let [repo (.getRepository git)

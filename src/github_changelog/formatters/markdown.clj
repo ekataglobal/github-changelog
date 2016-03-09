@@ -7,14 +7,14 @@
 
 (defmulti translate-type identity)
 
-(doseq [k v] {"feat" "Features"
-              "fix" "Bug Fixes"
-              "perf" "Performance Improvements"
-              "docs" "Documentations"
-              "chore" "Chores"
-              "style" "Style Changes"
-              "refactor" "Refactorings"
-              "test" "Tests"}
+(doseq [[k v] {"feat" "Features"
+               "fix" "Bug Fixes"
+               "perf" "Performance Improvements"
+               "docs" "Documentations"
+               "chore" "Chores"
+               "style" "Style Changes"
+               "refactor" "Refactorings"
+               "test" "Tests"}]
        (defmethod translate-type k [_] v))
 
 (defmethod translate-type :default [x] x)

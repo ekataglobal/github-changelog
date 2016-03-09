@@ -2,16 +2,14 @@
   (:require
     [github-changelog.formatters.markdown :as f-markdown]
     [github-changelog.markdown :as markdown]
-    [github-changelog.schema :refer [Semver Tag Change Pull Issue]]
-    [github-changelog.schema-generators :refer [generators]]
-    [github-changelog.schema-complete :refer [complete]]
+    [github-changelog.schema-generators :as sgen :refer [complete-semver complete-pull complete-tag]]
     [clojure.test :refer :all]))
 
-(def v-major (complete {:major 1 :minor 0, :patch 0, :pre-release nil :build nil} Semver))
-(def v-minor (complete {:minor 1 :patch 0, :pre-release nil :build nil} Semver))
-(def v-patch (complete {:patch 1 :pre-release nil :build nil} Semver))
-(def v-pre-release (complete {:pre-release "pre" :build nil} Semver))
-(def v-build (complete {:pre-release "pre" :build "42"} Semver))
+(def v-major (complete-semver {:major 1 :minor 0, :patch 0, :pre-release nil :build nil}))
+(def v-minor (complete-semver {:minor 1 :patch 0, :pre-release nil :build nil}))
+(def v-patch (complete-semver {:patch 1 :pre-release nil :build nil}))
+(def v-pre-release (complete-semver {:pre-release "pre" :build nil}))
+(def v-build (complete-semver {:pre-release "pre" :build "42"}))
 
 (deftest highlight-fn
          (are [function version] (= (f-markdown/highlight-fn version) function)
@@ -23,11 +21,11 @@
 
 (deftest format-tag
   (are [content tag] (= content (f-markdown/format-tag tag))
-                     (markdown/h1 "v1.0.0") (complete {:name "v1.0.0" :version v-major} Tag)
-                     (markdown/h2 "v1.1.0") (complete {:name "v1.1.0" :version v-minor} Tag)))
+                     (markdown/h1 "v1.0.0") (complete-tag {:name "v1.0.0" :version v-major})
+                     (markdown/h2 "v1.1.0") (complete-tag {:name "v1.1.0" :version v-minor})))
 
-(def pull (complete {:number 1 :html_url "http://example.com/"} Pull))
-(def change (complete {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []} Change))
+(def pull (complete-pull {:number 1 :html_url "http://example.com/"}))
+(def change (sgen/complete-change {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []}))
 
 (def expected-change (str "new something " (markdown/link "#1" "http://example.com/")))
 

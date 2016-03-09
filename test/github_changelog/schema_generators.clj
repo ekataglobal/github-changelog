@@ -1,6 +1,5 @@
 (ns github-changelog.schema-generators
-  (:require [github-changelog.schema :as schema]
-            [clojure.string :refer [join]]
+  (:require [clojure.string :refer [join]]
             [clojure.test.check.generators :as gen]))
 
 (def hexadecimal (gen/elements "0123456789ABCDEF"))
@@ -9,34 +8,42 @@
 
 (def issue (gen/tuple gen/string gen/string))
 
-(defmacro defrecord-gen [name record-fn & body]
-  `(def ~name (gen/fmap ~record-fn (gen/hash-map ~@body))))
+(defn complete
+  ([gen] #(complete % gen))
+  ([partial-datum gen]
+   (-> (gen/generate gen)
+       (merge partial-datum))))
 
-(defrecord-gen config schema/map->Config
+(defmacro defgen [fn-name & body]
+  `(do
+     (def ~fn-name (gen/hash-map ~@body))
+     (def ~(symbol (str "complete-" fn-name)) (complete ~fn-name))))
+
+(defgen config
   :git gen/string
   :github-api gen/string
   :user gen/string
   :repo gen/string)
 
-(defrecord-gen semver schema/map->Semver
+(defgen semver
   :major gen/nat
   :minor gen/nat
   :patch gen/nat)
 
-(defrecord-gen pull schema/map->Pull
+(defgen pull
   :title (gen/not-empty gen/string-alphanumeric)
   :number gen/nat
   :sha sha
   :body gen/string
   :html_url gen/string)
 
-(defrecord-gen change schema/map->Change
+(defgen change
   :type gen/string
   :scope gen/string
   :subject gen/string
   :pull-request pull
   :issues (gen/vector issue))
 
-(defrecord-gen tag schema/map->Tag
+(defgen tag
   :name (gen/not-empty gen/string-alphanumeric)
   :sha sha)
