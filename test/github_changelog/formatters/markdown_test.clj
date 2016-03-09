@@ -3,16 +3,12 @@
     [github-changelog.formatters.markdown :as f-markdown]
     [github-changelog.markdown :as markdown]
     [github-changelog.schema-generators :as sgen :refer [complete-semver complete-pull complete-tag]]
+    [github-changelog.version-examples :refer :all]
+    [clojure.string :refer [join]]
     [clojure.test :refer :all]))
 
-(def v-major (complete-semver {:major 1 :minor 0, :patch 0, :pre-release nil :build nil}))
-(def v-minor (complete-semver {:minor 1 :patch 0, :pre-release nil :build nil}))
-(def v-patch (complete-semver {:patch 1 :pre-release nil :build nil}))
-(def v-pre-release (complete-semver {:pre-release "pre" :build nil}))
-(def v-build (complete-semver {:pre-release "pre" :build "42"}))
-
 (deftest highlight-fn
-         (are [function version] (= (f-markdown/highlight-fn version) function)
+         (are [function version] (= function (f-markdown/highlight-fn version))
               markdown/h1 v-major
               markdown/h2 v-minor
               markdown/h3 v-patch
@@ -29,13 +25,18 @@
 
 (def expected-change (str "new something " (markdown/link "#1" "http://example.com/")))
 
-(deftest format-change
-  (is (= expected-change (f-markdown/format-change change))))
-
 (def grouped (group-by :scope [change change]))
 (def expected-scope (markdown/emphasis "scope:"))
-(def expected-changes (markdown/ul [expected-change expected-change]))
+(def expected-changes (join (map markdown/li [expected-change expected-change])))
 
 (deftest format-grouped-changes
-  (is (= (str expected-scope " " expected-change) (f-markdown/format-grouped-changes ["scope" [change]])))
-  (is (= (str expected-scope expected-changes) (f-markdown/format-grouped-changes (first grouped)))))
+  (testing "with one change"
+    (is (= (str expected-scope " " expected-change) (f-markdown/format-grouped-changes ["scope" [change]]))))
+  (testing "with multiple changes"
+    (is (= (str expected-scope expected-changes) (f-markdown/format-grouped-changes (first grouped))))))
+
+(def expected-formatted-changes (str (markdown/h5 "Features")
+                                     (markdown/li (join [expected-scope expected-changes]))))
+
+(deftest format-changes
+  (is (= expected-formatted-changes (f-markdown/format-changes ["feat" [change change]]))))

@@ -11,5 +11,5 @@
 
 (defn strip-trailing [str end]
   (if (.endsWith str end)
-    (.substring str 0 (- (count str) (count end)))
+    (recur (.substring str 0 (- (count str) (count end))) end)
     str))

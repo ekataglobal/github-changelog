@@ -2,8 +2,8 @@
   (:require
     [github-changelog.util :refer [str-map]]
     [github-changelog.markdown :as markdown]
-    [clojure.string :refer [join]]
-    [clojure.core.match :refer [match]]))
+    [github-changelog.semver :refer [get-type]]
+    [clojure.string :refer [join]]))
 
 (defmulti translate-type identity)
 
@@ -18,7 +18,6 @@
        (defmethod translate-type k [_] v))
 
 (defmethod translate-type :default [x] x)
-
 
 (defn format-scope [scope]
   (markdown/emphasis (str scope ":")))
@@ -42,19 +41,24 @@
 
 (defmethod format-grouped-changes :default [[scope changes]]
   (str (format-scope scope)
-       (markdown/ul (map format-change changes))))
+       (->> (map format-change changes)
+            (map markdown/li)
+            join)))
 
 (defn format-changes [[type changes]]
-  (str (markdown/h4 (translate-type type))
-       (markdown/ul (map format-grouped-changes (group-by :scope changes)))))
+  (str (markdown/h5 (translate-type type))
+       (->> (group-by :scope changes)
+            (map format-grouped-changes)
+            (map markdown/li)
+            join)))
 
-(defn highlight-fn [version]
-  (match (mapv version [:minor :patch :pre-release :build])
-         [0 0 nil nil] markdown/h1
-         [_ 0 nil nil] markdown/h2
-         [_ _ nil nil] markdown/h3
-         [_ _ _ nil] markdown/h4
-         :else markdown/h5))
+(defmulti highlight-fn get-type)
+
+(defmethod highlight-fn :major [_] markdown/h1)
+(defmethod highlight-fn :minor [_] markdown/h2)
+(defmethod highlight-fn :patch [_] markdown/h3)
+(defmethod highlight-fn :pre-release [_] markdown/h4)
+(defmethod highlight-fn :default [_] markdown/h5)
 
 (defn format-tag [{:keys [version name changes]}]
   (str ((highlight-fn version) name)
