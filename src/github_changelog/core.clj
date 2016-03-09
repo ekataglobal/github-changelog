@@ -4,8 +4,7 @@
     [github-changelog.git :as git]
     [github-changelog.semver :as semver]
     [github-changelog.github :as github]
-    [github-changelog.conventional :as conventional]
-    [environ.core :refer [env]])
+    [github-changelog.conventional :as conventional])
   (:import (org.eclipse.jgit.api Git)))
 
 (defn assoc-semver [{:keys [name] :as tag}]
@@ -23,7 +22,6 @@
 
 (defn assoc-commits [git {:keys [from sha] :as tag}]
   (assoc tag :commits (git/commits git from sha)))
-
 
 (defn clone-repo [{:keys [user repo git]}]
   (git/clone (git-url git user repo)))
