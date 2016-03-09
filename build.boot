@@ -4,7 +4,6 @@
  :source-paths #{"src/"}
  :dependencies
  '[[org.clojure/clojure "1.8.0"]
-   [org.clojure/core.match "0.3.0-alpha4"]
    [environ "1.0.2"]
    [org.clojure/tools.cli "0.3.3"]
    [clj-jgit "0.8.8"]
@@ -14,7 +13,6 @@
    [org.slf4j/slf4j-nop "1.7.18"]
    [grimradical/clj-semver "0.3.0-20130920.191002-3" :exclusions [org.clojure/clojure]]
    ; testing
-   [org.clojure/tools.namespace "0.2.11" :scope "test"]
    [org.clojure/test.check "0.9.0" :scope "test"]
    [clj-http-fake "1.0.2" :scope "test"]
    [adzerk/boot-test "1.1.1" :scope "test"]
