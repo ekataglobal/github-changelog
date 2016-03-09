@@ -29,7 +29,7 @@
 (bootlaces! +version+)
 
 (task-options!
- pom {:project 'hu.ssh/github-changelog
+ pom {:project 'github-changelog
       :version +version+
       :description "GitHub changelog"
       :url "https://github.com/raszi/github-changelog"
