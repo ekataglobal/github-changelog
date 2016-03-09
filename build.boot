@@ -40,14 +40,14 @@
  jar {:main 'github-changelog.cli}
  aot {:all true})
 
-#_(deftask check-sources
+(deftask check-sources
   "Checks source code for possible improvements/simplifications"
   []
   (comp
    (check/with-bikeshed)
-   check/with-eastwood)
+   (check/with-eastwood)
    (check/with-yagni)
-   (check/with-kibit))
+   (check/with-kibit)))
 
 (deftask testing-helper
   "Sets up the environment for testing"
