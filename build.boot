@@ -65,7 +65,7 @@
   []
   (comp
    (testing-helper)
-   (boot-test/test :junit-output-to "junit-out")))
+   (boot-test/test)))
 
 (deftask auto-test
   "Tests everything whenever source changes"
