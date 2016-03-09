@@ -2,7 +2,7 @@
   (:require
    [github-changelog
     [conventional :as conventional]
-    [schema-generators :as sgen :refer [complete-pull complete-config]]]
+    [schema-generators :refer [complete-pull complete-config]]]
    [clojure.test :refer :all]
    [clojure.test.check.generators :as gen]
    [clojure.string :refer [join]]))
