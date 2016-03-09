@@ -55,6 +55,11 @@
   (merge-env! :source-paths #{"test"})
   identity)
 
+(deftask dev []
+  "Sets up a development environment"
+  (comp (testing-helper)
+        (repl)))
+
 (ns-unmap 'boot.user 'test)
 
 (deftask test
