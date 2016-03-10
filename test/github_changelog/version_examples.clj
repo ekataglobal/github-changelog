@@ -1,10 +1,9 @@
 (ns github-changelog.version-examples
   (:require
-    [github-changelog.schema :refer [Semver]]
-    [github-changelog.schema-complete :refer [complete]]))
+    [github-changelog.schema-generators :refer [complete-semver]]))
 
-(def v-major (complete {:major 1 :minor 0, :patch 0, :pre-release "" :build ""} Semver))
-(def v-minor (complete {:minor 1 :patch 0, :pre-release "" :build ""} Semver))
-(def v-patch (complete {:patch 1 :pre-release "" :build ""} Semver))
-(def v-pre-release (complete {:pre-release "pre" :build ""} Semver))
-(def v-build (complete {:pre-release "pre" :build "42"} Semver))
+(def v-major (complete-semver {:major 1 :minor 0, :patch 0, :pre-release "" :build ""}))
+(def v-minor (complete-semver {:minor 1 :patch 0, :pre-release "" :build ""}))
+(def v-patch (complete-semver {:patch 1 :pre-release "" :build ""}))
+(def v-pre-release (complete-semver {:pre-release "pre" :build ""}))
+(def v-build (complete-semver {:pre-release "pre" :build "42"}))

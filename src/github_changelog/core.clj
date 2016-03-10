@@ -1,63 +1,46 @@
 (ns github-changelog.core
   (:require
     [github-changelog.util :refer [git-url]]
-    [github-changelog.schema :refer [Config Tag Pull Sha Change]]
     [github-changelog.git :as git]
     [github-changelog.semver :as semver]
     [github-changelog.github :as github]
-    [github-changelog.conventional :as conventional]
-    [environ.core :refer [env]]
-    [schema.core :as s])
+    [github-changelog.conventional :as conventional])
   (:import (org.eclipse.jgit.api Git)))
 
-(s/set-fn-validation! true)
+(defn assoc-semver [{:keys [name] :as tag}]
+  (assoc tag :version (semver/extract name)))
 
-(s/defn assoc-semver :- Tag
-  [tag :- Tag]
-  (assoc tag :version (semver/extract (:name tag))))
-
-(s/defn assoc-ranges :- [Tag]
-  [tags :- [Tag]]
+(defn assoc-ranges [tags]
   (let [previous-shas (concat (map :sha (rest tags)) [nil])]
     (map #(assoc %1 :from %2) tags previous-shas)))
 
-(s/defn parse-tags :- [Tag]
-  [tags :- [Tag]]
+(defn parse-tags [tags]
   (->> (map assoc-semver tags)
        (filter :version)
        (sort-by :version semver/newer?)
        assoc-ranges))
 
-(s/defn assoc-commits :- Tag
-  [git :- Git
-   tag :- Tag]
-  (assoc tag :commits (git/commits git (:from tag) (:sha tag))))
+(defn assoc-commits [git {:keys [from sha] :as tag}]
+  (assoc tag :commits (git/commits git from sha)))
 
-(s/defn load-tags :- [Tag]
-  [config :- Config]
-  (let [{:keys [user repo]} config
-        prefix (:git config)
-        git (git/clone (git-url prefix user repo))
-        tags (git/tags git)]
-    (map (partial assoc-commits git) (parse-tags tags))))
+(defn clone-repo [{:keys [user repo git]}]
+  (git/clone (git-url git user repo)))
 
-(s/defn find-pull :- (s/maybe Pull)
-  [pulls :- [Pull]
-   sha :- Sha]
+(defn load-tags [config]
+  (let [git-repo (clone-repo config)
+        tags (git/tags git-repo)]
+    (map (partial assoc-commits git-repo) (parse-tags tags))))
+
+(defn find-pull [pulls sha]
   (first (filter #(= (:sha %) sha) pulls)))
 
-(s/defn assoc-pulls :- Tag
-  [pulls :- [Pull]
-   tag :- Tag]
-  (let [related-pulls (->> (:commits tag)
-                           (map (partial find-pull pulls))
-                           (remove nil?))]
+(defn assoc-pulls [pulls {:keys [commits] :as tag}]
+  (let [related-pulls (remove nil? (map (partial find-pull pulls) commits))]
     (assoc tag :pulls related-pulls)))
 
-(s/defn changelog :- [Tag]
+(defn changelog
   "Fetches the changelog"
-  [config :- Config]
-  (let [pulls (github/fetch-pulls config)]
-    (->> (load-tags config)
-         (map (partial assoc-pulls pulls))
-         (map (partial conventional/parse-changes config)))))
+  [config]
+  (->> (load-tags config)
+       (map (partial assoc-pulls (github/fetch-pulls config)))
+       (map (partial conventional/parse-changes config))))

@@ -1,20 +1,19 @@
 (ns github-changelog.semver-test
   (:require
     [github-changelog.semver :as semver]
-    [github-changelog.schema :refer [Semver]]
-    [github-changelog.schema-complete :refer [complete]]
+    [github-changelog.schema-generators :as sgen]
+    [clj-semver.core :as clj-semver]
     [github-changelog.version-examples :refer :all]
-    [clojure.test :refer :all]
-    [schema.core :as s]))
+    [clojure.test :refer :all]))
 
 (deftest extract
   (testing "with a v prefix"
-    (are [version] (s/validate Semver (semver/extract version))
+    (are [version] (clj-semver/valid? (semver/extract version))
                    "v0.0.1"
                    "v0.9.3-pre0"
                    "v1.0.1"))
   (testing "without a v prefix"
-    (are [version] (s/validate Semver (semver/extract version))
+    (are [version] (clj-semver/valid? (semver/extract version))
                    "0.0.1"
                    "0.9.3-pre0"
                    "1.0.1"))
@@ -25,8 +24,8 @@
                    "versions")))
 
 (deftest newer?
-  (let [high (complete {:major 1} Semver)
-        low (complete {:major 0} Semver)]
+  (let [high (sgen/complete-semver {:major 1})
+        low (sgen/complete-semver {:major 0})]
     (is (semver/newer? high low))
     (is (not (semver/newer? low high)))))
 

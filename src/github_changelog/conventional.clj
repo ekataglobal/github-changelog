@@ -1,58 +1,46 @@
 (ns github-changelog.conventional
-  (:require
-    [github-changelog.schema :refer [Config Tag Issue Pull Change Fn]]
-    [schema.core :as s]
-    [clojure.string :as string]))
+  (:require [clojure.string :as string]))
 
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
-(s/defn fixes-pattern :- s/Regex
-  [pattern :- s/Str]
-  (let [close-keywords ["close" "closes" "closed" "fix" "fixes" "fixed" "resolve" "resolves" "resolved"]]
-    (re-pattern (format "(?i:%s) %s" (string/join \| close-keywords) pattern))))
+(def close-keywords ["close" "closes" "closed" "fix" "fixes" "fixed" "resolve" "resolves" "resolved"])
+
+(defn fixes-pattern
+  ([pattern] (fixes-pattern pattern close-keywords))
+  ([pattern closing-words]
+   (re-pattern
+    (format "(?i:%s) %s"
+            (string/join \| closing-words)
+            pattern))))
 
 (def header-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
 
-(s/defn collect-issues :- [Issue]
-  [pull :- Pull
-   pattern :- s/Str
-   link-fn :- Fn]
+(defn collect-issues [pull pattern link-fn]
   (->> (re-seq (fixes-pattern pattern) (str (:body pull)))
        (map second)
        (map #(vector % (link-fn %)))))
 
-(s/defn jira-issues :- [Issue]
-  [config :- Config
-   pull :- Pull]
-  (let [base (str (:jira config) "/browse/")]
+(defn jira-issues [{:keys [jira]} pull]
+  (let [base (str jira "/browse/")]
     (collect-issues pull "\\[?([A-Z]+-\\d+)\\]?" (partial str base))))
 
 (defn- parse-int [x] (Integer. (re-find #"[0-9]+" x)))
 
-(s/defn github-issues :- [Issue]
-  [_config :- Config
-   pull :- Pull]
+(defn github-issues [_ pull]
   (let [base (str (get-in pull [:base :repo :html_url]) "/issues/")]
     (collect-issues pull "(#\\d+)" #(str base (parse-int %)))))
 
-(s/defn parse-issues :- [Issue]
-  [config :- Config
-   pull :- Pull]
+(defn parse-issues [config pull]
   (apply concat ((juxt jira-issues github-issues) config pull)))
 
-(s/defn parse-pull :- (s/maybe Change)
-  [config :- Config
-   pull :- Pull]
-  (if-let [[_ type scope subject] (re-find header-pattern (:title pull))]
+(defn parse-pull [config {:keys [title] :as pull}]
+  (if-let [[_ type scope subject] (re-find header-pattern title)]
     {:type type
      :scope scope
      :subject subject
      :pull-request pull
      :issues (parse-issues config pull)}))
 
-(s/defn parse-changes :- Tag
-  [config :- Config
-   tag :- Tag]
-  (->> (:pulls tag)
-       (map (partial parse-pull config))
+(defn parse-changes [config {:keys [pulls] :as tag}]
+  (->> (map (partial parse-pull config) pulls)
        (remove nil?)
        (assoc tag :changes)))

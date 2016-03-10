@@ -1,43 +1,39 @@
 (ns github-changelog.conventional-test
   (:require
-    [github-changelog.conventional :as conventional]
-    [github-changelog.schema :refer [Config Pull Change]]
-    [github-changelog.schema-generators :refer [generators]]
-    [github-changelog.schema-complete :refer [complete]]
-    [clojure.test :refer :all]
-    [clojure.string :refer [join]]
-    [schema.core :as s]))
+   [github-changelog
+    [conventional :as conventional]
+    [schema-generators :refer [complete-pull complete-config]]]
+   [clojure.test :refer :all]
+   [clojure.test.check.generators :as gen]
+   [clojure.string :refer [join]]))
 
 (def repo-url "https://github.company.com/user/repo")
 (def jira-url "http://dev.clojure.org/jira")
-(def config (complete {:jira jira-url} Config))
+(def config (complete-config {:jira jira-url}))
 
-(defn- create-pull [partial-datum]
-   (complete partial-datum Pull))
-
-(deftest parse-issues
+(deftest parse-issue
   (testing "with a JIRA issue"
-    (let [pull (create-pull {:body "Fixes JIRA-1"})]
+    (let [pull (complete-pull {:body "Fixes JIRA-1"})]
       (is (= [["JIRA-1" (str jira-url "/browse/JIRA-1")]] (conventional/parse-issues config pull)))))
-
   (testing "with a GitHub issue"
-    (let [pull (create-pull {:body "Fixes #1" :base {:repo {:html_url repo-url}}})]
+    (let [pull (complete-pull {:body "Fixes #1" :base {:repo {:html_url repo-url}}})]
       (is (= [["#1" (str repo-url "/issues/1")]] (conventional/parse-issues config pull))))))
+
+(conventional/parse-pull config (complete-pull {:title "this is just a PR"}))
 
 (deftest parse-pull
   (testing "with a correct formats"
-    (are [title] (s/validate Change (conventional/parse-pull config (create-pull {:title title})))
+    (are [title] (not= nil (conventional/parse-pull config (complete-pull {:title title})))
                  "feat(scope): enhance this and that"
                  "fix(scope): do not fail on invalid input"
                  "chore: clean up the codebase"))
   (testing "with invalid formats"
-    (are [title] (nil? (conventional/parse-pull config (create-pull {:title title})))
+    (are [title] (nil? (conventional/parse-pull config (complete-pull {:title title})))
                  "this is just a PR"
                  "does not follow the rules"))
   (testing "with a full test"
-    (let [pull (create-pull {:title "feat(the scope): subject line" :body "Fixes #1, Closes JIRA-2"})
+    (let [pull (complete-pull {:title "feat(the scope): subject line" :body "Fixes #1, Closes JIRA-2"})
           change (conventional/parse-pull config pull)]
-      (is (s/validate Change change))
       (is (= "feat" (:type change)))
       (is (= "the scope" (:scope change)))
       (is (= "subject line" (:subject change)))

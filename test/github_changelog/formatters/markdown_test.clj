@@ -2,9 +2,7 @@
   (:require
     [github-changelog.formatters.markdown :as f-markdown]
     [github-changelog.markdown :as markdown]
-    [github-changelog.schema :refer [Tag Change Pull Issue]]
-    [github-changelog.schema-generators :refer [generators]]
-    [github-changelog.schema-complete :refer [complete]]
+    [github-changelog.schema-generators :as sgen :refer [complete-semver complete-pull complete-tag]]
     [github-changelog.version-examples :refer :all]
     [clojure.string :refer [join]]
     [clojure.test :refer :all]))
@@ -19,11 +17,11 @@
 
 (deftest format-tag
   (are [content tag] (= content (f-markdown/format-tag tag))
-                     (markdown/h1 "v1.0.0") (complete {:name "v1.0.0" :version v-major} Tag)
-                     (markdown/h2 "v1.1.0") (complete {:name "v1.1.0" :version v-minor} Tag)))
+                     (markdown/h1 "v1.0.0") (complete-tag {:name "v1.0.0" :version v-major})
+                     (markdown/h2 "v1.1.0") (complete-tag {:name "v1.1.0" :version v-minor})))
 
-(def pull (complete {:number 1 :html_url "http://example.com/"} Pull))
-(def change (complete {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []} Change))
+(def pull (complete-pull {:number 1 :html_url "http://example.com/"}))
+(def change (sgen/complete-change {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []}))
 
 (def expected-change (str "new something " (markdown/link "#1" "http://example.com/")))
 
