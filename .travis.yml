@@ -1,9 +1,16 @@
+env:
+- BOOT_EMIT_TARGET=no
 sudo: false
 language: clojure
 jdk:
   - oraclejdk8
 install:
-  - wget -O boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh
-  - chmod 755 boot
-  - ./boot -V
-script: ./boot test
+  - curl -L -O https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh
+  - chmod 755 boot.sh
+  - ./boot.sh -V
+script: ./boot.sh test
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.boot/cache/bin
+  - $HOME/.boot/cache/lib
