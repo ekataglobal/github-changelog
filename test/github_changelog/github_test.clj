@@ -1,11 +1,11 @@
 (ns github-changelog.github-test
   (:require
-    [github-changelog.github :as github]
-    [clojure.test.check.generators :as gen]
-    [github-changelog.schema-generators :as sgen]
-    [clojure.test :refer :all]
-    [clj-http.fake :refer [with-fake-routes-in-isolation]]
-    [cheshire.core :refer [generate-string]]))
+   [github-changelog.github :as github]
+   [clojure.test.check.generators :as gen]
+   [github-changelog.schema-generators :as sgen]
+   [clojure.test :refer :all]
+   [clj-http.fake :refer [with-fake-routes-in-isolation]]
+   [cheshire.core :refer [generate-string]]))
 
 (def github-api "http://api.github.com/")
 (def config (sgen/complete-config {:github-api github-api
@@ -18,8 +18,8 @@
   ([] (sample-pull (gen/generate sgen/sha)))
   ([sha]
    (sgen/complete-pull
-    {:head     {:sha sha}
-     :base     {:repo {:html_url ""}}})))
+    {:head {:sha sha}
+     :base {:repo {:html_url ""}}})))
 
 (deftest pulls-url
   (is (= api-endpoint (github/pulls-url config))))

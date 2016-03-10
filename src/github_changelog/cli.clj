@@ -1,11 +1,11 @@
 (ns github-changelog.cli
   (:require
-    [github-changelog.core :refer [changelog]]
-    [github-changelog.validators :refer [min-length url]]
-    [github-changelog.formatters.markdown :refer [format-tags]]
-    [clojure.tools.cli :as cli]
-    [clojure.edn :as edn]
-    [clojure.string :refer [join]])
+   [github-changelog.core :refer [changelog]]
+   [github-changelog.validators :refer [min-length url]]
+   [github-changelog.formatters.markdown :refer [format-tags]]
+   [clojure.tools.cli :as cli]
+   [clojure.edn :as edn]
+   [clojure.string :refer [join]])
   (:gen-class))
 
 (defn- exit [status msg]
@@ -35,11 +35,11 @@
 
 (defn- usage [summary]
   (join
-    \newline
-    ["Usage: program-name [options...] <user/repo>"
-     ""
-     "Options:"
-     summary]))
+   \newline
+   ["Usage: program-name [options...] <user/repo>"
+    ""
+    "Options:"
+    summary]))
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-options)

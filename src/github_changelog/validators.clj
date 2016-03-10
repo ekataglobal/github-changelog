@@ -5,7 +5,7 @@
   [#(>= (count %) min) (format "Should be at least %s character(s)" min)])
 
 (defn- valid-url? [url]
-  (try (some? (URL. url)) (catch Exception _ false)) )
+  (try (some? (URL. url)) (catch Exception _ false)))
 
 (defn url []
   [valid-url? "Should be a valid URL"])

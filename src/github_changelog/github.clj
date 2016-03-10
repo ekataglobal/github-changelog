@@ -1,9 +1,9 @@
 (ns github-changelog.github
   (:require
-    [github-changelog.util :refer [strip-trailing extract-params]]
-    [clojure.string :refer [split]]
-    [clj-http.client :as http]
-    [throttler.core :refer [throttle-fn]]))
+   [github-changelog.util :refer [strip-trailing extract-params]]
+   [clojure.string :refer [split]]
+   [clj-http.client :as http]
+   [throttler.core :refer [throttle-fn]]))
 
 (defn parse-pull [pull]
   (assoc pull :sha (get-in pull [:head :sha])))
