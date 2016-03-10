@@ -5,7 +5,7 @@ language: clojure
 jdk:
   - oraclejdk8
 install:
-  - curl -O https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh
+  - curl -L -O https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh
   - chmod 755 boot.sh
   - ./boot.sh -V
 script: ./boot.sh test
