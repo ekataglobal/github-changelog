@@ -12,3 +12,4 @@ script: ./boot.sh test
 cache:
   directories:
   - $HOME/.m2
+  - $HOME/.boot/cache
