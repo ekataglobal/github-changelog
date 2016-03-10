@@ -1,8 +1,8 @@
 (ns github-changelog.git
   (:require
-    [clojure.string :as string]
-    [clj-jgit.porcelain :as git]
-    [clj-jgit.util :refer [name-from-uri]])
+   [clojure.string :as string]
+   [clj-jgit.porcelain :as git]
+   [clj-jgit.util :refer [name-from-uri]])
   (:import (java.io FileNotFoundException)
            (org.eclipse.jgit.api Git)
            (org.eclipse.jgit.lib Repository Ref)

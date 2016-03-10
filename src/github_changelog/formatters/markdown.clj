@@ -1,9 +1,9 @@
 (ns github-changelog.formatters.markdown
   (:require
-    [github-changelog.util :refer [str-map]]
-    [github-changelog.markdown :as markdown]
-    [github-changelog.semver :refer [get-type]]
-    [clojure.string :refer [join]]))
+   [github-changelog.util :refer [str-map]]
+   [github-changelog.markdown :as markdown]
+   [github-changelog.semver :refer [get-type]]
+   [clojure.string :refer [join]]))
 
 (defmulti translate-type identity)
 
@@ -15,7 +15,7 @@
                "style" "Style Changes"
                "refactor" "Refactorings"
                "test" "Tests"}]
-       (defmethod translate-type k [_] v))
+  (defmethod translate-type k [_] v))
 
 (defmethod translate-type :default [x] x)
 

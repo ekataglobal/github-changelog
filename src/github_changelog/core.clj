@@ -1,10 +1,10 @@
 (ns github-changelog.core
   (:require
-    [github-changelog.util :refer [git-url]]
-    [github-changelog.git :as git]
-    [github-changelog.semver :as semver]
-    [github-changelog.github :as github]
-    [github-changelog.conventional :as conventional])
+   [github-changelog.util :refer [git-url]]
+   [github-changelog.git :as git]
+   [github-changelog.semver :as semver]
+   [github-changelog.github :as github]
+   [github-changelog.conventional :as conventional])
   (:import (org.eclipse.jgit.api Git)))
 
 (defn assoc-semver [{:keys [name] :as tag}]
