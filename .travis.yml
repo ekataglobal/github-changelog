@@ -9,3 +9,6 @@ install:
   - chmod 755 boot.sh
   - ./boot.sh -V
 script: ./boot.sh test
+cache:
+  directories:
+  - $HOME/.m2
