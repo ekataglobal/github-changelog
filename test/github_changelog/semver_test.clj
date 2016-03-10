@@ -1,27 +1,27 @@
 (ns github-changelog.semver-test
   (:require
-    [github-changelog.semver :as semver]
-    [github-changelog.schema-generators :as sgen]
-    [clj-semver.core :as clj-semver]
-    [github-changelog.version-examples :refer :all]
-    [clojure.test :refer :all]))
+   [github-changelog.semver :as semver]
+   [github-changelog.schema-generators :as sgen]
+   [clj-semver.core :as clj-semver]
+   [github-changelog.version-examples :refer :all]
+   [clojure.test :refer :all]))
 
 (deftest extract
   (testing "with a v prefix"
     (are [version] (clj-semver/valid? (semver/extract version))
-                   "v0.0.1"
-                   "v0.9.3-pre0"
-                   "v1.0.1"))
+      "v0.0.1"
+      "v0.9.3-pre0"
+      "v1.0.1"))
   (testing "without a v prefix"
     (are [version] (clj-semver/valid? (semver/extract version))
-                   "0.0.1"
-                   "0.9.3-pre0"
-                   "1.0.1"))
+      "0.0.1"
+      "0.9.3-pre0"
+      "1.0.1"))
   (testing "invalid tags"
     (are [version] (nil? (semver/extract version))
-                   "something"
-                   "foobar"
-                   "versions")))
+      "something"
+      "foobar"
+      "versions")))
 
 (deftest newer?
   (let [high (sgen/complete-semver {:major 1})
@@ -31,8 +31,8 @@
 
 (deftest semver-type
   (are [type version] (= type (semver/get-type version))
-                      :major v-major
-                      :minor v-minor
-                      :patch v-patch
-                      :pre-release v-pre-release
-                      :build v-build))
+    :major v-major
+    :minor v-minor
+    :patch v-patch
+    :pre-release v-pre-release
+    :build v-build))

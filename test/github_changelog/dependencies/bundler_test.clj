@@ -1,8 +1,8 @@
 (ns github-changelog.dependencies.bundler-test
   (:require
-    [github-changelog.dependencies.bundler :as bundler]
-    [clojure.test :refer :all]
-    [clojure.java.io :refer [file]]))
+   [github-changelog.dependencies.bundler :as bundler]
+   [clojure.test :refer :all]
+   [clojure.java.io :refer [file]]))
 
 (defn- test-parse [path]
   (->> (file "test/fixtures" path)

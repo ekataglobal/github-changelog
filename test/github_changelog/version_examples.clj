@@ -1,6 +1,6 @@
 (ns github-changelog.version-examples
   (:require
-    [github-changelog.schema-generators :refer [complete-semver]]))
+   [github-changelog.schema-generators :refer [complete-semver]]))
 
 (def v-major (complete-semver {:major 1 :minor 0, :patch 0, :pre-release "" :build ""}))
 (def v-minor (complete-semver {:minor 1 :patch 0, :pre-release "" :build ""}))

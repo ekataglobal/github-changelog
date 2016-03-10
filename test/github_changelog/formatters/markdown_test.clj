@@ -1,24 +1,24 @@
 (ns github-changelog.formatters.markdown-test
   (:require
-    [github-changelog.formatters.markdown :as f-markdown]
-    [github-changelog.markdown :as markdown]
-    [github-changelog.schema-generators :as sgen :refer [complete-semver complete-pull complete-tag]]
-    [github-changelog.version-examples :refer :all]
-    [clojure.string :refer [join]]
-    [clojure.test :refer :all]))
+   [github-changelog.formatters.markdown :as f-markdown]
+   [github-changelog.markdown :as markdown]
+   [github-changelog.schema-generators :as sgen :refer [complete-semver complete-pull complete-tag]]
+   [github-changelog.version-examples :refer :all]
+   [clojure.string :refer [join]]
+   [clojure.test :refer :all]))
 
 (deftest highlight-fn
-         (are [function version] (= function (f-markdown/highlight-fn version))
-              markdown/h1 v-major
-              markdown/h2 v-minor
-              markdown/h3 v-patch
-              markdown/h4 v-pre-release
-              markdown/h5 v-build))
+  (are [function version] (= function (f-markdown/highlight-fn version))
+    markdown/h1 v-major
+    markdown/h2 v-minor
+    markdown/h3 v-patch
+    markdown/h4 v-pre-release
+    markdown/h5 v-build))
 
 (deftest format-tag
   (are [content tag] (= content (f-markdown/format-tag tag))
-                     (markdown/h1 "v1.0.0") (complete-tag {:name "v1.0.0" :version v-major})
-                     (markdown/h2 "v1.1.0") (complete-tag {:name "v1.1.0" :version v-minor})))
+    (markdown/h1 "v1.0.0") (complete-tag {:name "v1.0.0" :version v-major})
+    (markdown/h2 "v1.1.0") (complete-tag {:name "v1.1.0" :version v-minor})))
 
 (def pull (complete-pull {:number 1 :html_url "http://example.com/"}))
 (def change (sgen/complete-change {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []}))
