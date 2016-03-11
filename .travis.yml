@@ -7,7 +7,7 @@ jdk:
 install:
   - mkdir -p ~/bin
   - export PATH=~/bin:$PATH
-  - curl -L https://github.com/boot-clj/boot-bin/releases/download/2.5.5/boot.sh -o ~/bin/boot
+  - curl -L https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh -o ~/bin/boot
   - chmod +x ~/bin/boot
 script: boot test
 cache:
