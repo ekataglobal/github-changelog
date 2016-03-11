@@ -32,10 +32,9 @@
       :version +version+
       :description "GitHub changelog"
       :url "https://github.com/raszi/github-changelog"
-      :license {:name "MIT"
-                :url  "http://choosealicense.com/licenses/mit/"}}
+      :license {"MIT" "http://choosealicense.com/licenses/mit/"}}
  jar {:main 'github-changelog.cli}
- aot {:all true})
+ aot {:namespace #{'github-changelog.cli}})
 
 (deftask check-sources
   "Checks source code for possible improvements/simplifications"
@@ -73,3 +72,13 @@
    (testing-helper)
    (watch)
    (boot-test/test)))
+
+(deftask uberjar
+  []
+  (comp
+   (uber)
+   (aot)
+   (pom)
+   (jar)
+   (sift)
+   (target)))
