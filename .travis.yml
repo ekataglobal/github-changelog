@@ -15,4 +15,3 @@ cache:
   - $HOME/.m2
   - $HOME/.boot/cache/bin
   - $HOME/.boot/cache/lib
-  - $HOME/bin
