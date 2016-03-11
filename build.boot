@@ -31,7 +31,9 @@
  pom {:project 'github-changelog
       :version +version+
       :description "GitHub changelog"
-      :url "https://github.com/raszi/github-changelog"}
+      :url "https://github.com/raszi/github-changelog"
+      :license {"name" "MIT"
+                "url" "http://choosealicense.com/licenses/mit/"}}
  jar {:main 'github-changelog.cli}
  aot {:namespace #{'github-changelog.cli}})
 
