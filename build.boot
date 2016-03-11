@@ -33,7 +33,7 @@
       :description "GitHub changelog"
       :url "https://github.com/raszi/github-changelog"}
  jar {:main 'github-changelog.cli}
- aot {:all true})
+ aot {:namespace #{'github-changelog.cli}})
 
 (deftask check-sources
   "Checks source code for possible improvements/simplifications"
