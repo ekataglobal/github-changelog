@@ -71,3 +71,8 @@
    (testing-helper)
    (watch)
    (boot-test/test)))
+
+(deftask uberjar
+  []
+  (comp (uber) (aot) (pom) (jar) (sift) (target)))
+
