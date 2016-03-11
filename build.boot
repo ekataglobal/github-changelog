@@ -77,4 +77,3 @@
 (deftask uberjar
   []
   (comp (uber) (aot) (pom) (jar) (sift) (target)))
-
