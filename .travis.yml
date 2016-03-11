@@ -1,5 +1,3 @@
-env:
-  - BOOT_EMIT_TARGET=no
 sudo: false
 language: java
 jdk:
