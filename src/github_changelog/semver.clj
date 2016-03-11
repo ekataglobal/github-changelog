@@ -7,9 +7,9 @@
   (try (semver/parse version)
        (catch java.lang.AssertionError _e nil)))
 
-(defn extract [tag-name]
+(defn extract [[first-char :as tag-name]]
   (parse
-   (if (= \v (first tag-name))
+   (if (= \v first-char)
      (subs tag-name 1)
      tag-name)))
 
