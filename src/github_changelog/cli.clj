@@ -22,4 +22,4 @@
   (->> (read-config config-file)
        changelog
        format-tags
-       (exit 0 nil)))
+       (exit 0)))
