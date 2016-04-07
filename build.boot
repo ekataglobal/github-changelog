@@ -32,7 +32,8 @@
       :description "GitHub changelog"
       :url "https://github.com/raszi/github-changelog"
       :license {"MIT" "http://choosealicense.com/licenses/mit/"}}
- jar {:main 'github-changelog.cli}
+ jar {:file "github-changelog.jar"
+      :main 'github-changelog.cli}
  aot {:namespace #{'github-changelog.cli}})
 
 (deftask check-sources
