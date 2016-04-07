@@ -15,11 +15,13 @@
 (defn- read-config [file]
   (edn/read-string (slurp file)))
 
+(defn- generate [file]
+  (->> (read-config file)
+       changelog
+       format-tags))
+
 (defn -main [& [config-file]]
   (when (empty? config-file)
     (exit 1 "Usage: program-name config-file.edn"))
 
-  (->> (read-config config-file)
-       changelog
-       format-tags
-       (exit 0)))
+  (exit 0 (generate config-file)))
