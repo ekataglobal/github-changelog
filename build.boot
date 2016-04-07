@@ -4,7 +4,6 @@
  :source-paths #{"src/"}
  :dependencies
  '[[org.clojure/clojure "1.8.0"]
-   [org.clojure/tools.cli "0.3.3"]
    [clj-jgit "0.8.8"]
    [clj-http "2.1.0"]
    [cheshire "5.5.0"]
@@ -33,7 +32,8 @@
       :description "GitHub changelog"
       :url "https://github.com/raszi/github-changelog"
       :license {"MIT" "http://choosealicense.com/licenses/mit/"}}
- jar {:main 'github-changelog.cli}
+ jar {:file "github-changelog.jar"
+      :main 'github-changelog.cli}
  aot {:namespace #{'github-changelog.cli}})
 
 (deftask check-sources

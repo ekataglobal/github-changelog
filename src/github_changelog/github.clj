@@ -9,7 +9,7 @@
   (assoc pull :sha (get-in pull [:head :sha])))
 
 (defn pulls-url [{:keys [github-api user repo]}]
-  (format "%s/repos/%s/%s/pulls" (strip-trailing github-api "/") user repo))
+  (format "%s/repos/%s/%s/pulls" (strip-trailing github-api) user repo))
 
 (defn- make-request
   ([config] (make-request config {}))
