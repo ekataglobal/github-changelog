@@ -12,4 +12,3 @@ pom.xml.asc
 .lein-env
 .nrepl-port
 .nrepl-history
-resources/overrides.edn
