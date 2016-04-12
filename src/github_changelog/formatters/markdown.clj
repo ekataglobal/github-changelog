@@ -46,7 +46,7 @@
             join)))
 
 (defn format-changes [[type changes]]
-  (str (markdown/h5 (translate-type type))
+  (str (markdown/h6 (translate-type type))
        (->> (group-by :scope changes)
             (map format-grouped-changes)
             (map markdown/li)
