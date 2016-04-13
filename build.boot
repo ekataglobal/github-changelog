@@ -4,18 +4,18 @@
  :source-paths #{"src/"}
  :dependencies
  '[[org.clojure/clojure "1.8.0"]
-   [clj-jgit "0.8.8"]
-   [clj-http "2.1.0"]
-   [cheshire "5.5.0"]
+   [clj-jgit "0.8.9"]
+   [clj-http "3.0.0"]
+   [cheshire "5.6.1"]
    [throttler "1.0.0"]
-   [org.slf4j/slf4j-nop "1.7.18"]
-   [grimradical/clj-semver "0.3.0-20130920.191002-3" :exclusions [org.clojure/clojure]]
+   [org.slf4j/slf4j-nop "1.7.21"]
+   [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
    ; testing
    [org.clojure/test.check "0.9.0" :scope "test"]
    [clj-http-fake "1.0.2" :scope "test"]
    [adzerk/boot-test "1.1.1" :scope "test"]
    [tolitius/boot-check "0.1.1" :scope "test"]
-   [boot/core "2.5.1" :scope "provided"]
+   [boot/core "2.5.5" :scope "provided"]
    [adzerk/bootlaces "0.1.13" :scope "test"]])
 
 (require
