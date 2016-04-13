@@ -15,7 +15,7 @@
    [clj-http-fake "1.0.2" :scope "test"]
    [adzerk/boot-test "1.1.1" :scope "test"]
    [tolitius/boot-check "0.1.1" :scope "test"]
-   [boot/core "2.5.1" :scope "provided"]
+   [boot/core "2.5.5" :scope "provided"]
    [adzerk/bootlaces "0.1.13" :scope "test"]])
 
 (require
