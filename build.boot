@@ -8,7 +8,7 @@
    [clj-http "3.0.0"]
    [cheshire "5.6.1"]
    [throttler "1.0.0"]
-   [org.slf4j/slf4j-nop "1.7.18"]
+   [org.slf4j/slf4j-nop "1.7.21"]
    [grimradical/clj-semver "0.3.0-20130920.191002-3" :exclusions [org.clojure/clojure]]
    ; testing
    [org.clojure/test.check "0.9.0" :scope "test"]
