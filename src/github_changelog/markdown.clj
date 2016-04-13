@@ -6,7 +6,7 @@
 (defmacro defblock [name args body]
   `(def ~name (fn ~args (block-item ~body))))
 
-(defblock header [n body] (str (join (repeat n "#")) " " body))
+(defblock header [n body] (str \newline (join (repeat n "#")) " " body))
 
 (def h1 (partial header 1))
 (def h2 (partial header 2))
