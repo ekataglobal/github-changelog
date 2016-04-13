@@ -4,7 +4,7 @@
  :source-paths #{"src/"}
  :dependencies
  '[[org.clojure/clojure "1.8.0"]
-   [clj-jgit "0.8.8"]
+   [clj-jgit "0.8.9"]
    [clj-http "3.0.0"]
    [cheshire "5.5.0"]
    [throttler "1.0.0"]
