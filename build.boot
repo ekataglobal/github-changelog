@@ -5,7 +5,7 @@
  :dependencies
  '[[org.clojure/clojure "1.8.0"]
    [clj-jgit "0.8.8"]
-   [clj-http "2.1.0"]
+   [clj-http "3.0.0"]
    [cheshire "5.5.0"]
    [throttler "1.0.0"]
    [org.slf4j/slf4j-nop "1.7.18"]
