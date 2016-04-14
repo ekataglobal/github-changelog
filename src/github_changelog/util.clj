@@ -11,5 +11,5 @@
   ([s] (strip-trailing s "/"))
   ([s end]
    (if (ends-with? s end)
-     (recur (join (butlast s)) end)
+     (recur (join (drop-last s)) end)
      s)))
