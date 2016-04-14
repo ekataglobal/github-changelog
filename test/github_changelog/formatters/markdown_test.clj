@@ -35,7 +35,7 @@
   (testing "with multiple changes"
     (is (= (str expected-scope expected-changes) (f-markdown/format-grouped-changes (first grouped))))))
 
-(def expected-formatted-changes (str (markdown/h5 "Features")
+(def expected-formatted-changes (str (markdown/h6 "Features")
                                      (markdown/li (join [expected-scope expected-changes]))))
 
 (deftest format-changes
