@@ -8,8 +8,8 @@
              [(keyword k) v])))
 
 (defn strip-trailing
-  ([str] (strip-trailing str "/"))
-  ([str end]
-   (if (ends-with? str end)
-     (recur (.substring str 0 (- (count str) (count end))) end)
-     str)))
+  ([s] (strip-trailing s "/"))
+  ([s end]
+   (if (ends-with? s end)
+     (recur (join (butlast s)) end)
+     s)))
