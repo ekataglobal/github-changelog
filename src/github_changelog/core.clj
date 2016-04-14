@@ -1,6 +1,5 @@
 (ns github-changelog.core
   (:require
-   [github-changelog.util :refer [git-url]]
    [github-changelog.git :as git]
    [github-changelog.semver :as semver]
    [github-changelog.github :as github]
@@ -23,11 +22,8 @@
 (defn assoc-commits [git {:keys [from sha] :as tag}]
   (assoc tag :commits (git/commits git from sha)))
 
-(defn clone-repo [{:keys [user repo dir git]}]
-  (git/clone (git-url git user repo) dir))
-
 (defn load-tags [config]
-  (let [git-repo (clone-repo config)
+  (let [git-repo (git/clone config)
         tags (git/tags git-repo)]
     (map (partial assoc-commits git-repo) (parse-tags tags))))
 

@@ -13,6 +13,3 @@
    (if (ends-with? str end)
      (recur (.substring str 0 (- (count str) (count end))) end)
      str)))
-
-(defn git-url [git user repo]
-  (format "%s/%s/%s.git" (strip-trailing git) user repo))
