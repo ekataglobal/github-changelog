@@ -9,7 +9,7 @@
            (org.eclipse.jgit.lib Repository Ref)
            (org.eclipse.jgit.revwalk RevCommit)))
 
-(defn git-url [{:keys [git user repo]}]
+(defn gen-url [{:keys [git user repo]}]
   (format "%s/%s/%s.git" (strip-trailing git) user repo))
 
 (def git-path name-from-uri)
@@ -24,11 +24,13 @@
   (git/git-fetch-all repo)
   repo)
 
-(defn clone [{:keys [dir] :as config}]
-  (let [url (git-url config)]
-    (->> (or dir (git-path url))
-         (clone-or-load url)
-         refresh)))
+(defn clone [config]
+  (let [{:keys [git-url dir update?]
+         :or   {git-url (gen-url config)
+                dir     (git-path git-url)
+                update? true}} config
+        repo                   (clone-or-load git-url dir)]
+    (if update? (refresh repo) repo)))
 
 (defn- get-merge-sha [^Repository repo ^Ref tag]
   (let [peeled (.peel repo tag)]

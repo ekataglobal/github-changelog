@@ -4,5 +4,5 @@
 
 (def config {:git "https://github.com/":user "user" :repo "repo"})
 
-(deftest git-url
-  (is (= "https://github.com/user/repo.git" (git/git-url config))))
+(deftest gen-url
+  (is (= "https://github.com/user/repo.git" (git/gen-url config))))
