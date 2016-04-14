@@ -10,15 +10,15 @@
 
 (def git-path name-from-uri)
 
-(defn clone-or-load [uri]
-  (let [path (git-path uri)]
-    (try
-      (git/load-repo path)
-      (catch FileNotFoundException _
-        (git/git-clone uri path)))))
+(defn clone-or-load [uri dir]
+  (try
+    (git/load-repo dir)
+    (catch FileNotFoundException _
+      (git/git-clone uri dir))))
 
-(defn clone [uri]
-  (let [repo (clone-or-load uri)]
+(defn clone [uri dir]
+  (let [path (or dir (git-path uri))
+        repo (clone-or-load uri path)]
     (git/git-fetch-all repo)
     repo))
 

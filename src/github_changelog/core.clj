@@ -23,8 +23,8 @@
 (defn assoc-commits [git {:keys [from sha] :as tag}]
   (assoc tag :commits (git/commits git from sha)))
 
-(defn clone-repo [{:keys [user repo git]}]
-  (git/clone (git-url git user repo)))
+(defn clone-repo [{:keys [user repo dir git]}]
+  (git/clone (git-url git user repo) dir))
 
 (defn load-tags [config]
   (let [git-repo (clone-repo config)
