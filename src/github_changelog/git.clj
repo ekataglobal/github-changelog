@@ -16,11 +16,14 @@
     (catch FileNotFoundException _
       (git/git-clone uri dir))))
 
+(defn- refresh [^Repository repo]
+  (git/git-fetch-all repo)
+  repo)
+
 (defn clone [uri dir]
-  (let [path (or dir (git-path uri))
-        repo (clone-or-load uri path)]
-    (git/git-fetch-all repo)
-    repo))
+  (->> (or dir (git-path uri))
+       (clone-or-load uri)
+       refresh))
 
 (defn- get-merge-sha [^Repository repo ^Ref tag]
   (let [peeled (.peel repo tag)]
