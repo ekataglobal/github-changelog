@@ -10,7 +10,7 @@
 
 (def git-path name-from-uri)
 
-(defn clone-or-load [uri dir]
+(defn- clone-or-load [uri dir]
   (try
     (git/load-repo dir)
     (catch FileNotFoundException _
@@ -22,14 +22,14 @@
     (git/git-fetch-all repo)
     repo))
 
-(defn get-merge-sha [^Repository repo ^Ref tag]
+(defn- get-merge-sha [^Repository repo ^Ref tag]
   (let [peeled (.peel repo tag)]
     (.name (if-let [peeled-id (.getPeeledObjectId peeled)] peeled-id (.getObjectId peeled)))))
 
-(defn map-tag-name [^Ref tag]
+(defn- map-tag-name [^Ref tag]
   (string/replace (.getName tag) #"^refs/tags/" ""))
 
-(defn map-tag [^Repository repo ^Ref tag]
+(defn- map-tag [^Repository repo ^Ref tag]
   {:name (map-tag-name tag)
    :sha (get-merge-sha repo tag)})
 
@@ -38,7 +38,7 @@
         tags (.. git tagList call)]
     (map (partial map-tag repo) tags)))
 
-(defn get-commit-sha [^RevCommit log]
+(defn- get-commit-sha [^RevCommit log]
   (.name log))
 
 (defn commits [^Git git from until]
