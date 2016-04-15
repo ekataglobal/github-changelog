@@ -39,7 +39,7 @@ with the following content:
 {:user       "user"
  :repo       "repo"
  :token      "0123456789abcdef0123456789abcdef01234567"
- :git        "https://github.com/"
+ :github     "https://github.com/"
  :github-api "https://api.github.com/"
  :jira       "https://jira.atlassian.com/"
  :dir        "/tmp/destination-dir/"
@@ -51,11 +51,12 @@ with the following content:
 | `:user`       | Username for the repo | ✓ |
 | `:repo`       | Repository name | ✓ |
 | `:token`      | GitHub [access token] to reach the API | ✓ |
-| `:git`        | Git URL for cloning | ✓ |
+| `:github`     | GitHub URL | ✗ |
 | `:github-api` | URL for [GitHub Enterprise API] | ✗ |
 | `:jira`       | JIRA URL if you're using that for issue tracking | ✗ |
 | `:dir`        | The destination directory for the repo | ✗ |
 | `:update?`    | Enables or disables repo updating | ✗ |
+| `:git-url`    | Git URL for cloning if automatic generation does not suit you | ✗ |
 
 ## Change Log
 

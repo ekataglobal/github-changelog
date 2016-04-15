@@ -1,6 +1,7 @@
 (ns github-changelog.github
   (:require
    [github-changelog.util :refer [strip-trailing extract-params]]
+   [github-changelog.defaults :refer [defaults]]
    [clojure.string :refer [split]]
    [clj-http.client :as http]
    [throttler.core :refer [throttle-fn]]))
@@ -8,7 +9,8 @@
 (defn parse-pull [pull]
   (assoc pull :sha (get-in pull [:head :sha])))
 
-(defn pulls-url [{:keys [github-api user repo]}]
+(defn pulls-url [{:keys [github-api user repo]
+                  :or   {github-api (:github-api defaults)}}]
   (format "%s/repos/%s/%s/pulls" (strip-trailing github-api) user repo))
 
 (defn- make-request

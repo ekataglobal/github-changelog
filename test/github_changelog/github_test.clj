@@ -7,12 +7,10 @@
    [clj-http.fake :refer [with-fake-routes-in-isolation]]
    [cheshire.core :refer [generate-string]]))
 
-(def github-api "http://api.github.com/")
-(def config (sgen/complete-config {:github-api github-api
-                                   :user       "raszi"
-                                   :repo       "changelog-test"}))
+(def config (sgen/complete-config {:user "raszi"
+                                   :repo "changelog-test"}))
 
-(def api-endpoint "http://api.github.com/repos/raszi/changelog-test/pulls")
+(def api-endpoint "https://api.github.com/repos/raszi/changelog-test/pulls")
 
 (defn- sample-pull
   ([] (sample-pull (gen/generate sgen/sha)))
@@ -22,7 +20,11 @@
      :base {:repo {:html_url ""}}})))
 
 (deftest pulls-url
-  (is (= api-endpoint (github/pulls-url config))))
+  (testing "with default API endpoint"
+    (is (= api-endpoint (github/pulls-url config))))
+  (testing "with custom API endpoint"
+    (let [alter-config (merge config {:github-api "http://enterprise.example.com/api/v3/"})]
+      (is (= "http://enterprise.example.com/api/v3/repos/raszi/changelog-test/pulls" (github/pulls-url alter-config))))))
 
 (deftest parse-pull
   (let [sha (gen/generate sgen/sha)

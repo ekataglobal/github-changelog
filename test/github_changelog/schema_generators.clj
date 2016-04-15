@@ -20,8 +20,6 @@
      (def ~(symbol (str "complete-" fn-name)) (complete ~fn-name))))
 
 (defgen config
-  :git gen/string
-  :github-api gen/string
   :user gen/string
   :repo gen/string)
 

@@ -1,6 +1,7 @@
 (ns github-changelog.git
   (:require
    [github-changelog.util :refer [strip-trailing]]
+   [github-changelog.defaults :refer [defaults]]
    [clojure.string :as string]
    [clj-jgit.porcelain :as git]
    [clj-jgit.util :refer [name-from-uri]])
@@ -9,8 +10,9 @@
            (org.eclipse.jgit.lib Repository Ref)
            (org.eclipse.jgit.revwalk RevCommit)))
 
-(defn gen-url [{:keys [git user repo]}]
-  (format "%s/%s/%s.git" (strip-trailing git) user repo))
+(defn gen-url [{:keys [github user repo]
+                :or   {github (:github defaults)}}]
+  (format "%s/%s/%s.git" (strip-trailing github) user repo))
 
 (def git-path name-from-uri)
 
@@ -27,7 +29,7 @@
 (defn clone [{:keys [git-url dir update?]
               :or   {git-url (gen-url config)
                      dir     (git-path git-url)
-                     update? true}
+                     update? (:update? defaults)}
               :as config}]
   (cond-> (clone-or-load git-url dir)
     update? refresh))
