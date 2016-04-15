@@ -21,16 +21,16 @@
       (git/git-clone uri dir))))
 
 (defn- refresh [^Repository repo]
-  (git/git-fetch-all repo))
+  (git/git-fetch-all repo)
+  repo)
 
 (defn clone [{:keys [git-url dir update?]
               :or   {git-url (gen-url config)
                      dir     (git-path git-url)
                      update? true}
               :as config}]
-  (let [repo (clone-or-load git-url dir)]
-    (if update? (refresh repo))
-    repo))
+  (cond-> (clone-or-load git-url dir)
+    update? refresh))
 
 (defn- get-merge-sha [^Repository repo ^Ref tag]
   (let [peeled (.peel repo tag)]
