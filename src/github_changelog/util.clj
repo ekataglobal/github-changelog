@@ -1,18 +1,15 @@
 (ns github-changelog.util
-  (:require [clojure.string :refer [join ends-with?]]))
+  (:require [clojure.string :refer [ends-with?]]))
 
-(defn str-map [f & sqs] (join (apply map f sqs)))
+(defn str-map [f & sqs] (apply str (apply map f sqs)))
 
 (defn extract-params [query-string]
   (into {} (for [[_ k v] (re-seq #"([^&=]+)=([^&]+)" query-string)]
              [(keyword k) v])))
 
 (defn strip-trailing
-  ([str] (strip-trailing str "/"))
-  ([str end]
-   (if (ends-with? str end)
-     (recur (.substring str 0 (- (count str) (count end))) end)
-     str)))
-
-(defn git-url [git user repo]
-  (format "%s/%s/%s.git" (strip-trailing git) user repo))
+  ([s] (strip-trailing s "/"))
+  ([s end]
+   (if (ends-with? s end)
+     (recur (apply str (drop-last s)) end)
+     s)))

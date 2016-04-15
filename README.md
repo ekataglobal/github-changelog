@@ -3,7 +3,7 @@
 [![Continuous Integration status](https://api.travis-ci.org/raszi/github-changelog.svg?branch=master)](http://travis-ci.org/raszi/github-changelog)
 [![Coverage Status](https://coveralls.io/repos/github/raszi/github-changelog/badge.svg?branch=master)](https://coveralls.io/github/raszi/github-changelog?branch=master)
 
-Pull-request based conventional changelog generator for GitHub projects which follow the AngularJS [Commit Message Format](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format).
+Pull-request based conventional changelog generator for GitHub projects which follow the AngularJS [Commit Message Format].
 
 
 ## Releases and Dependency Information
@@ -26,13 +26,54 @@ Pull-request based conventional changelog generator for GitHub projects which fo
       <version>0.1.0-SNAPSHOT</version>
     </dependency>
 
-[Leiningen]: http://leiningen.org/
-[Maven]: http://maven.apache.org/
 
 
 ## Usage
 
-TODO
+### Command Line Interface
+
+It should be started with a [edn] config file
+with the following content:
+
+```edn
+{:user       "user"
+ :repo       "repo"
+ :token      "0123456789abcdef0123456789abcdef01234567"}
+``` 
+
+Then start with:
+
+    $ java -jar github-changelog.jar config.edn
+
+This will clone the user/repo repository from GitHub into the current directory
+and will generate the changelog for it.
+
+### Config options
+
+| key | description | required |
+|-----|-------------|----------|
+| `:user`       | Username for the repo | ✓ |
+| `:repo`       | Repository name | ✓ |
+| `:token`      | GitHub [access token] to reach the API | ✓ |
+| `:github`     | GitHub URL | ✗ |
+| `:github-api` | URL for [GitHub Enterprise API] | ✗ |
+| `:jira`       | JIRA URL if you're using that for issue tracking | ✗ |
+| `:dir`        | The destination directory for the repo | ✗ |
+| `:update?`    | Enables or disables repo updating | ✗ |
+| `:git-url`    | Git URL for cloning if automatic generation does not suit you | ✗ |
+
+A more complete config example:
+
+```edn
+{:user       "user"
+ :repo       "repo"
+ :token      "0123456789abcdef0123456789abcdef01234567"
+ :github     "https://github.example.com/"
+ :github-api "https://github.example.com/api/v3/"
+ :jira       "https://jira.atlassian.com/"
+ :dir        "/tmp/destination-dir/"
+ :update?    false}
+```
 
 
 ## Change Log
@@ -42,6 +83,13 @@ TODO
 
 ## Copyright and License
 
-Copyright © 2015 István Karaszi
+Copyright © 2015-2016 István Karaszi
 
 Distributed under [MIT license](http://choosealicense.com/licenses/mit/).
+
+[Leiningen]: http://leiningen.org/
+[Maven]: http://maven.apache.org/
+[Commit Message Format]: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format
+[edn]: https://github.com/edn-format/edn
+[access token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
+[GitHub Enterprise API]: https://developer.github.com/v3/enterprise/
