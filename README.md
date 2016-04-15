@@ -38,13 +38,17 @@ with the following content:
 ```edn
 {:user       "user"
  :repo       "repo"
- :token      "0123456789abcdef0123456789abcdef01234567"
- :github     "https://github.com/"
- :github-api "https://api.github.com/"
- :jira       "https://jira.atlassian.com/"
- :dir        "/tmp/destination-dir/"
- :update?    true}
-```
+ :token      "0123456789abcdef0123456789abcdef01234567"}
+``` 
+
+Then start with:
+
+    $ java -jar github-changelog.jar config.edn
+
+This will clone the user/repo repository from GitHub into the current directory
+and will generate the changelog for it.
+
+### Config options
 
 | key | description | required |
 |-----|-------------|----------|
@@ -57,6 +61,20 @@ with the following content:
 | `:dir`        | The destination directory for the repo | ✗ |
 | `:update?`    | Enables or disables repo updating | ✗ |
 | `:git-url`    | Git URL for cloning if automatic generation does not suit you | ✗ |
+
+A more complete config example:
+
+```edn
+{:user       "user"
+ :repo       "repo"
+ :token      "0123456789abcdef0123456789abcdef01234567"
+ :github     "https://github.example.com/"
+ :github-api "https://github.example.com/api/v3/"
+ :jira       "https://jira.atlassian.com/"
+ :dir        "/tmp/destination-dir/"
+ :update?    false}
+```
+
 
 ## Change Log
 
