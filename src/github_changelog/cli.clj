@@ -1,7 +1,6 @@
 (ns github-changelog.cli
   (:require
    [github-changelog.core :refer [changelog]]
-   [github-changelog.validators :refer [min-length url]]
    [github-changelog.formatters.markdown :refer [format-tags]]
    [clojure.edn :as edn]
    [clojure.string :refer [join]])
