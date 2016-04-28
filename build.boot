@@ -19,7 +19,6 @@
    [adzerk/bootlaces "0.1.13" :scope "test"]])
 
 (require
- '[github-changelog.core :refer [changelog]]
  '[adzerk.boot-test :as boot-test]
  '[tolitius.boot-check :as check]
  '[adzerk.bootlaces :refer :all])
