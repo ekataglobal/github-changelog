@@ -8,13 +8,14 @@
    [clojure.string :refer [join]]))
 
 (def repo-url "https://github.company.com/user/repo")
-(def jira-url "http://dev.clojure.org/jira")
+(def jira-url "http://dev.clojure.org/jira/")
 (def config (complete-config {:jira jira-url}))
 
 (deftest parse-issue
   (testing "with a JIRA issue"
-    (let [pull (complete-pull {:body "Fixes JIRA-1"})]
-      (is (= [["JIRA-1" (str jira-url "/browse/JIRA-1")]] (conventional/parse-issues config pull)))))
+    (let [pull (complete-pull {:body "Fixes JIRA-1"})
+          jira-issue-url "http://dev.clojure.org/jira/browse/JIRA-1"]
+      (is (= [["JIRA-1" jira-issue-url]] (conventional/parse-issues config pull)))))
   (testing "with a GitHub issue"
     (let [pull (complete-pull {:body "Fixes #1" :base {:repo {:html_url repo-url}}})]
       (is (= [["#1" (str repo-url "/issues/1")]] (conventional/parse-issues config pull))))))
