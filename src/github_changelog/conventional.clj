@@ -1,5 +1,7 @@
 (ns github-changelog.conventional
-  (:require [clojure.string :refer [join]]))
+  (:require
+   [github-changelog.util :refer [strip-trailing]]
+   [clojure.string :refer [join]]))
 
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
 (def close-keywords ["close" "closes" "closed" "fix" "fixes" "fixed" "resolve" "resolves" "resolved"])
@@ -22,7 +24,7 @@
 (def jira-pattern (fixes-pattern "\\[?([A-Z]+-\\d+)\\]?"))
 
 (defn jira-issues [{:keys [jira]} pull]
-  (let [base (str jira "/browse/")]
+  (let [base (str (strip-trailing jira) "/browse/")]
     (collect-issues pull jira-pattern (partial str base))))
 
 (def github-pattern (fixes-pattern "(#\\d+)"))
