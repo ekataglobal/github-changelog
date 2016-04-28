@@ -1,7 +1,5 @@
 (ns github-changelog.dependencies.bundler
-  (:require
-   [clojure.string :refer [split-lines]]
-   [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]))
 
 (defn- get-specs [reader]
   (->> (line-seq reader)

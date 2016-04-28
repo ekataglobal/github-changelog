@@ -1,9 +1,9 @@
 (ns github-changelog.formatters.markdown
-  (:require
-   [github-changelog.util :refer [str-map]]
-   [github-changelog.markdown :as markdown]
-   [github-changelog.semver :refer [get-type]]
-   [clojure.string :refer [join]]))
+  (:require [clojure.string :refer [join]]
+            [github-changelog
+             [markdown :as markdown]
+             [semver :refer [get-type]]
+             [util :refer [str-map]]]))
 
 (defmulti translate-type identity)
 

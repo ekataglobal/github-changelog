@@ -1,11 +1,8 @@
 (ns github-changelog.conventional-test
-  (:require
-   [github-changelog
-    [conventional :as conventional]
-    [schema-generators :refer [complete-pull complete-config]]]
-   [clojure.test :refer :all]
-   [clojure.test.check.generators :as gen]
-   [clojure.string :refer [join]]))
+  (:require [clojure.test :refer :all]
+            [github-changelog
+             [conventional :as conventional]
+             [schema-generators :refer [complete-config complete-pull]]]))
 
 (def repo-url "https://github.company.com/user/repo")
 (def jira-url "http://dev.clojure.org/jira/")

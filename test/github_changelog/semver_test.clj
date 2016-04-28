@@ -1,10 +1,10 @@
 (ns github-changelog.semver-test
-  (:require
-   [github-changelog.semver :as semver]
-   [github-changelog.schema-generators :as sgen]
-   [clj-semver.core :as clj-semver]
-   [github-changelog.version-examples :refer :all]
-   [clojure.test :refer :all]))
+  (:require [clj-semver.core :as clj-semver]
+            [clojure.test :refer :all]
+            [github-changelog
+             [schema-generators :as sgen]
+             [semver :as semver]
+             [version-examples :refer :all]]))
 
 (deftest extract
   (testing "with a v prefix"
