@@ -1,5 +1,5 @@
 (ns github-changelog.conventional
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :refer [join]]))
 
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
 (def close-keywords ["close" "closes" "closed" "fix" "fixes" "fixed" "resolve" "resolves" "resolved"])
@@ -9,7 +9,7 @@
   ([pattern closing-words]
    (re-pattern
     (format "(?i:%s) %s"
-            (string/join \| closing-words)
+            (join \| closing-words)
             pattern))))
 
 (def header-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
