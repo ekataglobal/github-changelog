@@ -15,19 +15,23 @@
 (def header-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
 
 (defn collect-issues [pull pattern link-fn]
-  (->> (re-seq (fixes-pattern pattern) (str (:body pull)))
+  (->> (re-seq pattern (str (:body pull)))
        (map second)
        (map #(vector % (link-fn %)))))
 
+(def jira-pattern (fixes-pattern "\\[?([A-Z]+-\\d+)\\]?"))
+
 (defn jira-issues [{:keys [jira]} pull]
   (let [base (str jira "/browse/")]
-    (collect-issues pull "\\[?([A-Z]+-\\d+)\\]?" (partial str base))))
+    (collect-issues pull jira-pattern (partial str base))))
+
+(def github-pattern (fixes-pattern "(#\\d+)"))
 
 (defn- parse-int [x] (Integer. (re-find #"[0-9]+" x)))
 
 (defn github-issues [_ pull]
   (let [base (str (get-in pull [:base :repo :html_url]) "/issues/")]
-    (collect-issues pull "(#\\d+)" #(str base (parse-int %)))))
+    (collect-issues pull github-pattern #(str base (parse-int %)))))
 
 (defn parse-issues [config pull]
   (apply concat ((juxt jira-issues github-issues) config pull)))
