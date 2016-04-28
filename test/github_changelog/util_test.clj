@@ -1,6 +1,6 @@
 (ns github-changelog.util-test
-  (:require [github-changelog.util :as util]
-            [clojure.test :refer :all]))
+  (:require [clojure.test :refer :all]
+            [github-changelog.util :as util]))
 
 (deftest strip-trailing
   (is (= "something" (util/strip-trailing "something///")))

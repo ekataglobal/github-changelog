@@ -1,8 +1,8 @@
 (ns github-changelog.markdown-test
-  (:require
-   [github-changelog.markdown :as markdown]
-   [clojure.test :refer :all]
-   [clojure.string :refer [join]]))
+  (:require [clojure
+             [string :refer [join]]
+             [test :refer :all]]
+            [github-changelog.markdown :as markdown]))
 
 (deftest header
   (are [expected level body] (= expected (markdown/header level body))

@@ -1,14 +1,15 @@
 (ns github-changelog.git
-  (:require
-   [github-changelog.util :refer [strip-trailing]]
-   [github-changelog.defaults :refer [defaults]]
-   [clojure.string :as string]
-   [clj-jgit.porcelain :as git]
-   [clj-jgit.util :refer [name-from-uri]])
-  (:import (java.io FileNotFoundException)
-           (org.eclipse.jgit.api Git)
-           (org.eclipse.jgit.lib Repository Ref)
-           (org.eclipse.jgit.revwalk RevCommit)))
+  (:require [clj-jgit
+             [porcelain :as git]
+             [util :refer [name-from-uri]]]
+            [clojure.string :as string]
+            [github-changelog
+             [defaults :refer [defaults]]
+             [util :refer [strip-trailing]]])
+  (:import java.io.FileNotFoundException
+           org.eclipse.jgit.api.Git
+           [org.eclipse.jgit.lib Ref Repository]
+           org.eclipse.jgit.revwalk.RevCommit))
 
 (defn gen-url [{:keys [github user repo]
                 :or   {github (:github defaults)}}]

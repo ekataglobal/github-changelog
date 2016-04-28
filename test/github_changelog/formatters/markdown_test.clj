@@ -1,11 +1,12 @@
 (ns github-changelog.formatters.markdown-test
-  (:require
-   [github-changelog.formatters.markdown :as f-markdown]
-   [github-changelog.markdown :as markdown]
-   [github-changelog.schema-generators :as sgen :refer [complete-semver complete-pull complete-tag]]
-   [github-changelog.version-examples :refer :all]
-   [clojure.string :refer [join]]
-   [clojure.test :refer :all]))
+  (:require [clojure
+             [string :refer [join]]
+             [test :refer :all]]
+            [github-changelog
+             [markdown :as markdown]
+             [schema-generators :as sgen :refer [complete-pull complete-tag]]
+             [version-examples :refer :all]]
+            [github-changelog.formatters.markdown :as f-markdown]))
 
 (deftest highlight-fn
   (are [function version] (= function (f-markdown/highlight-fn version))

@@ -1,6 +1,6 @@
 (ns github-changelog.git-test
-  (:require [github-changelog.git :as git]
-            [clojure.test :refer :all]))
+  (:require [clojure.test :refer :all]
+            [github-changelog.git :as git]))
 
 (def config {:user "user" :repo "repo"})
 

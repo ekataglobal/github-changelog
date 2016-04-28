@@ -1,11 +1,11 @@
 (ns github-changelog.github-test
-  (:require
-   [github-changelog.github :as github]
-   [clojure.test.check.generators :as gen]
-   [github-changelog.schema-generators :as sgen]
-   [clojure.test :refer :all]
-   [clj-http.fake :refer [with-fake-routes-in-isolation]]
-   [cheshire.core :refer [generate-string]]))
+  (:require [cheshire.core :refer [generate-string]]
+            [clj-http.fake :refer [with-fake-routes-in-isolation]]
+            [clojure.test :refer :all]
+            [clojure.test.check.generators :as gen]
+            [github-changelog
+             [github :as github]
+             [schema-generators :as sgen]]))
 
 (def config (sgen/complete-config {:user "raszi"
                                    :repo "changelog-test"}))

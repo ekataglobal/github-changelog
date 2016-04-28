@@ -1,10 +1,8 @@
 (ns github-changelog.cli
-  (:require
-   [github-changelog.core :refer [changelog]]
-   [github-changelog.formatters.markdown :refer [format-tags]]
-   [clojure.edn :as edn]
-   [clojure.string :refer [join]])
-  (:gen-class))
+  (:gen-class)
+  (:require [clojure.edn :as edn]
+            [github-changelog.core :refer [changelog]]
+            [github-changelog.formatters.markdown :refer [format-tags]]))
 
 (defn- exit [status msg]
   (when msg

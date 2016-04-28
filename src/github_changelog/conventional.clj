@@ -1,7 +1,6 @@
 (ns github-changelog.conventional
-  (:require
-   [github-changelog.util :refer [strip-trailing]]
-   [clojure.string :refer [join]]))
+  (:require [clojure.string :refer [join]]
+            [github-changelog.util :refer [strip-trailing]]))
 
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
 (def close-keywords ["close" "closes" "closed" "fix" "fixes" "fixed" "resolve" "resolves" "resolved"])
