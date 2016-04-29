@@ -32,25 +32,33 @@
    (if-let [issues (seq issues)]
      (str ", closes " (join ", " (map (partial apply markdown/link) issues))))))
 
-(defmulti format-grouped-changes #(count (second %)))
+(defn- format-entries [changes]
+  (join (map markdown/li changes)))
 
-(defmethod format-grouped-changes 1 [[scope changes]]
-  (str (format-scope scope)
-       " "
-       (format-change (first changes))))
+(defmulti format-grouped-changes (comp count second))
+
+(defmethod format-grouped-changes 1 [[scope [change]]]
+  (if (empty? scope)
+    change
+    (str (format-scope scope) " " change)))
 
 (defmethod format-grouped-changes :default [[scope changes]]
-  (str (format-scope scope)
-       (->> (map format-change changes)
-            (map markdown/li)
-            join)))
+  (if (empty? scope)
+    changes
+    (str (format-scope scope) (format-entries changes))))
+
+(defn- assoc-formatted-change [change]
+  (assoc change :formatted (format-change change)))
+
+(defn- map-formatted [[scope changes]]
+  [scope (map format-change changes)])
 
 (defn format-changes [[type changes]]
   (str (markdown/h6 (translate-type type))
        (->> (group-by :scope changes)
+            (map map-formatted)
             (map format-grouped-changes)
-            (map markdown/li)
-            join)))
+            format-entries)))
 
 (defmulti highlight-fn get-type)
 

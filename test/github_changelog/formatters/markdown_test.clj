@@ -30,12 +30,6 @@
 (def expected-scope (markdown/emphasis "scope:"))
 (def expected-changes (join (map markdown/li [expected-change expected-change])))
 
-(deftest format-grouped-changes
-  (testing "with one change"
-    (is (= (str expected-scope " " expected-change) (f-markdown/format-grouped-changes ["scope" [change]]))))
-  (testing "with multiple changes"
-    (is (= (str expected-scope expected-changes) (f-markdown/format-grouped-changes (first grouped))))))
-
 (def expected-formatted-changes (str (markdown/h6 "Features")
                                      (markdown/li (join [expected-scope expected-changes]))))
 
