@@ -47,9 +47,6 @@
     changes
     (str (format-scope scope) (format-entries changes))))
 
-(defn- assoc-formatted-change [change]
-  (assoc change :formatted (format-change change)))
-
 (defn- map-formatted [[scope changes]]
   [scope (map format-change changes)])
 
