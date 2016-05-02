@@ -19,8 +19,9 @@
 
 (defmethod translate-type :default [x] x)
 
-(defn format-scope [scope]
-  (markdown/emphasis (str scope ":")))
+(defn- format-scope [scope]
+  (when (not-empty scope)
+    (markdown/emphasis (str scope ":"))))
 
 (defn format-pull-request [{:keys [number html_url]}]
   (str " " (markdown/link (str "#" number) html_url)))
@@ -40,15 +41,15 @@
 (defmethod format-grouped-changes 1 [[scope [change]]]
   (if (empty? scope)
     change
-    (str (format-scope scope) " " change)))
+    (str scope " " change)))
 
 (defmethod format-grouped-changes :default [[scope changes]]
   (if (empty? scope)
     changes
-    (str (format-scope scope) (format-entries changes))))
+    (str scope (format-entries changes))))
 
 (defn- map-formatted [[scope changes]]
-  [scope (map format-change changes)])
+  [(format-scope scope) (map format-change changes)])
 
 (defn format-changes [[type changes]]
   (str (markdown/h6 (translate-type type))
