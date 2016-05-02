@@ -7,50 +7,57 @@
 
 (defmulti translate-type identity)
 
-(doseq [[k v] {"feat" "Features"
-               "fix" "Bug Fixes"
-               "perf" "Performance Improvements"
-               "docs" "Documentations"
-               "chore" "Chores"
-               "style" "Style Changes"
+(doseq [[k v] {"feat"     "Features"
+               "fix"      "Bug Fixes"
+               "perf"     "Performance Improvements"
+               "docs"     "Documentations"
+               "chore"    "Chores"
+               "style"    "Style Changes"
                "refactor" "Refactorings"
-               "test" "Tests"}]
+               "test"     "Tests"}]
   (defmethod translate-type k [_] v))
 
 (defmethod translate-type :default [x] x)
 
-(defn format-scope [scope]
-  (markdown/emphasis (str scope ":")))
+(defn- format-scope [scope]
+  (when (not-empty scope)
+    (markdown/emphasis (str scope ":"))))
 
-(defn format-pull-request [{:keys [number html_url]}]
+(defn- format-pull-request [{:keys [number html_url]}]
   (str " " (markdown/link (str "#" number) html_url)))
 
-(defn format-change [{:keys [subject pull-request issues]}]
+(defn- format-change [{:keys [subject pull-request issues]}]
   (str
    subject
    (format-pull-request pull-request)
    (if-let [issues (seq issues)]
      (str ", closes " (join ", " (map (partial apply markdown/link) issues))))))
 
-(defmulti format-grouped-changes #(count (second %)))
+(defn- format-entries [changes]
+  (join (map markdown/li changes)))
 
-(defmethod format-grouped-changes 1 [[scope changes]]
-  (str (format-scope scope)
-       " "
-       (format-change (first changes))))
+(defmulti format-grouped-changes (comp count second))
+
+(defmethod format-grouped-changes 1 [[scope [change]]]
+  (if (empty? scope)
+    change
+    (str scope " " change)))
 
 (defmethod format-grouped-changes :default [[scope changes]]
-  (str (format-scope scope)
-       (->> (map format-change changes)
-            (map markdown/li)
-            join)))
+  (if (empty? scope)
+    changes
+    (str scope (format-entries changes))))
+
+(defn- map-formatted [[scope changes]]
+  [(format-scope scope) (map format-change changes)])
 
 (defn format-changes [[type changes]]
   (str (markdown/h6 (translate-type type))
        (->> (group-by :scope changes)
+            (map map-formatted)
             (map format-grouped-changes)
-            (map markdown/li)
-            join)))
+            flatten
+            format-entries)))
 
 (defmulti highlight-fn get-type)
 

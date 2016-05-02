@@ -22,22 +22,29 @@
     (markdown/h2 "v1.1.0") (complete-tag {:name "v1.1.0" :version v-minor})))
 
 (def pull (complete-pull {:number 1 :html_url "http://example.com/"}))
-(def change (sgen/complete-change {:type "feat" :scope "scope" :subject "new something" :pull-request pull :issues []}))
+
+(defn- change
+  ([] (change "scope"))
+  ([scope]
+   (sgen/complete-change {:type         "feat"
+                          :scope        scope
+                          :subject      "new something"
+                          :pull-request pull
+                          :issues       []})))
 
 (def expected-change (str "new something " (markdown/link "#1" "http://example.com/")))
 
-(def grouped (group-by :scope [change change]))
-(def expected-scope (markdown/emphasis "scope:"))
 (def expected-changes (join (map markdown/li [expected-change expected-change])))
 
-(deftest format-grouped-changes
-  (testing "with one change"
-    (is (= (str expected-scope " " expected-change) (f-markdown/format-grouped-changes ["scope" [change]]))))
-  (testing "with multiple changes"
-    (is (= (str expected-scope expected-changes) (f-markdown/format-grouped-changes (first grouped))))))
+(def expected-scopeless-changes (str (markdown/h6 "Features")
+                                  expected-changes))
 
-(def expected-formatted-changes (str (markdown/h6 "Features")
-                                     (markdown/li (join [expected-scope expected-changes]))))
+(def expected-scope (markdown/emphasis "scope:"))
+(def expected-scoped-changes (str (markdown/h6 "Features")
+                                  (markdown/li (join [expected-scope expected-changes]))))
 
 (deftest format-changes
-  (is (= expected-formatted-changes (f-markdown/format-changes ["feat" [change change]]))))
+  (testing "scopeless changes"
+    (is (= expected-scopeless-changes (f-markdown/format-changes ["feat" [(change "") (change "")]]))))
+  (testing "scoped changes"
+    (is (= expected-scoped-changes (f-markdown/format-changes ["feat" [(change) (change)]])))))
