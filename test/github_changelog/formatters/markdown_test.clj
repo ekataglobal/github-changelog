@@ -26,7 +26,6 @@
 
 (def expected-change (str "new something " (markdown/link "#1" "http://example.com/")))
 
-(def grouped (group-by :scope [change change]))
 (def expected-scope (markdown/emphasis "scope:"))
 (def expected-changes (join (map markdown/li [expected-change expected-change])))
 
