@@ -23,10 +23,10 @@
   (when (not-empty scope)
     (markdown/emphasis (str scope ":"))))
 
-(defn format-pull-request [{:keys [number html_url]}]
+(defn- format-pull-request [{:keys [number html_url]}]
   (str " " (markdown/link (str "#" number) html_url)))
 
-(defn format-change [{:keys [subject pull-request issues]}]
+(defn- format-change [{:keys [subject pull-request issues]}]
   (str
    subject
    (format-pull-request pull-request)
