@@ -11,8 +11,7 @@
 (defn complete
   ([gen] #(complete % gen))
   ([partial-datum gen]
-   (-> (gen/generate gen)
-       (merge partial-datum))))
+   (merge (gen/generate gen) partial-datum)))
 
 (defmacro defgen [fn-name & body]
   `(do
