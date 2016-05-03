@@ -1,12 +1,11 @@
 (ns github-changelog.markdown
   (:require [clojure.string :refer [join split-lines]]))
 
-(defn- block-item [body] (str \newline body \newline \newline))
+(defn- block-item [body]
+  (str \newline body \newline \newline))
 
-(defmacro defblock [name args body]
-  `(def ~name (fn ~args (block-item ~body))))
-
-(defblock header [n body] (str \newline (join (repeat n "#")) " " body))
+(defn- header [n body]
+  (block-item (str \newline (join (repeat n "#")) " " body)))
 
 (def h1 (partial header 1))
 (def h2 (partial header 2))
