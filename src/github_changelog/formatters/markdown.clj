@@ -20,7 +20,7 @@
 (defmethod translate-type :default [x] x)
 
 (defn- format-scope [scope]
-  (when (not-empty scope)
+  (when (seq scope)
     (markdown/emphasis (str scope ":"))))
 
 (defn- format-pull-request [{:keys [number html_url]}]

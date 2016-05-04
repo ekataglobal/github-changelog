@@ -4,10 +4,11 @@
              [test :refer :all]]
             [github-changelog.markdown :as markdown]))
 
-(deftest header
-  (are [expected level body] (= expected (markdown/header level body))
-    "\n\n# Header\n\n" 1 "Header"
-    "\n\n## SubHeader\n\n" 2 "SubHeader"))
+(deftest h1
+  (is (= "\n\n# Header\n\n" (markdown/h1 "Header"))))
+
+(deftest h2
+  (is (= "\n\n## SubHeader\n\n" (markdown/h2 "SubHeader"))))
 
 (deftest link
   (is (= "[foo bar](http://example.com/)" (markdown/link "foo bar" "http://example.com/")))
