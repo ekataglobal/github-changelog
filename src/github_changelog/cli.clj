@@ -8,7 +8,10 @@
             [github-changelog.formatters.markdown :refer [format-tags]]))
 
 (def cli-options
-  [["-h" "--help"]])
+  [["-l" "--last LAST" "Generate changes only for the last n tags"
+     :parse-fn #(Integer/parseInt %)
+     :validate [#(< 0 %) "Must be a positive number"]]
+    ["-h" "--help"]])
 
 (defn- join-lines [lines]
   (str/join \newline (flatten lines)))
@@ -26,10 +29,10 @@
 (defn- read-config [file]
   (edn/read-string (slurp file)))
 
-(defn- generate [file]
-  (->> (read-config file)
-       changelog
-       format-tags))
+(defn- generate [file last]
+  (let [all-tags (changelog (read-config file))
+        tags (if last (take last all-tags) all-tags)]
+    (format-tags tags)))
 
 (defn- usage [options-summary]
   (join-lines ["Usage: program-name [options] <config.edn> ..."
@@ -38,13 +41,14 @@
                options-summary]))
 
 (defn -main [& args]
-  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
+        {:keys [help last]} options]
     (cond
-      (:help options) (exit 0 (usage summary))
+      help (exit 0 (usage summary))
       (empty? arguments) (exit 1 (usage summary))
       errors (exit 1 (error-msg errors)))
 
     (doseq [config-file arguments]
-      (println (generate config-file)))
+      (println (generate config-file last)))
 
     (exit 0 nil)))
