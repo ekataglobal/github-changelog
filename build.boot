@@ -10,6 +10,7 @@
    [throttler "1.0.0"]
    [org.slf4j/slf4j-nop "1.7.21"]
    [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
+   [org.clojure/tools.cli "0.3.5"]
    ; testing
    [org.clojure/test.check "0.9.0" :scope "test"]
    [clj-http-fake "1.0.2" :scope "test"]
