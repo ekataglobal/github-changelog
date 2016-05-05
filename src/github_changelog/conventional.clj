@@ -23,8 +23,9 @@
 (def jira-pattern (fixes-pattern "\\[?([A-Z]+-\\d+)\\]?"))
 
 (defn jira-issues [{:keys [jira]} pull]
-  (let [base (str (strip-trailing jira) "/browse/")]
-    (collect-issues pull jira-pattern (partial str base))))
+  (when (seq jira)
+    (let [base (str (strip-trailing jira) "/browse/")]
+      (collect-issues pull jira-pattern (partial str base)))))
 
 (def github-pattern (fixes-pattern "(#\\d+)"))
 
