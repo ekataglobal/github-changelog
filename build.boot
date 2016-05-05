@@ -35,20 +35,21 @@
       :main 'github-changelog.cli}
  aot {:namespace #{'github-changelog.cli}})
 
-(deftask check-sources
-  "Checks source code for possible improvements/simplifications"
-  []
-  (comp
-   (check/with-bikeshed)
-   (check/with-eastwood)
-   (check/with-yagni)
-   (check/with-kibit)))
-
 (deftask testing-helper
   "Sets up the environment for testing"
   []
   (merge-env! :source-paths #{"test"})
   identity)
+
+(deftask check-sources
+  "Checks source code for possible improvements/simplifications"
+  []
+  (comp
+   (testing-helper)
+   (check/with-bikeshed)
+   (check/with-eastwood)
+   (check/with-yagni)
+   (check/with-kibit)))
 
 (deftask dev []
   "Sets up a development environment"
