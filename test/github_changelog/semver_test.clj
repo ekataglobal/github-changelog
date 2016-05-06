@@ -36,3 +36,11 @@
     :patch v-patch
     :pre-release v-pre-release
     :build v-build))
+
+(deftest parse
+  (are [version str-version] (= version (semver/parse str-version))
+    {:major 1 :minor 0 :patch 0 :pre-release nil :build nil}          "1.0.0"
+    {:major 1 :minor 1 :patch 0 :pre-release nil :build nil}          "1.1.0"
+    {:major 1 :minor 1 :patch 1 :pre-release nil :build nil}          "1.1.1"
+    {:major 1 :minor 1 :patch 1 :pre-release "pre0" :build nil}       "1.1.1-pre0"
+    {:major 1 :minor 1 :patch 1 :pre-release "pre0" :build "build-1"} "1.1.1-pre0+build-1"))
