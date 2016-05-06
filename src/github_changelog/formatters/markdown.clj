@@ -19,6 +19,9 @@
 
 (defmethod translate-type :default [x] x)
 
+(defn- format-type [type]
+  (markdown/h4 (translate-type type)))
+
 (defn- format-scope [scope]
   (when (seq scope)
     (markdown/emphasis (str scope ":"))))
@@ -52,7 +55,7 @@
   [(format-scope scope) (map format-change changes)])
 
 (defn format-changes [[type changes]]
-  (str (markdown/h6 (translate-type type))
+  (str (format-type type)
        (->> (group-by :scope changes)
             (map map-formatted)
             (map format-grouped-changes)
@@ -61,14 +64,17 @@
 
 (defmulti highlight-fn get-type)
 
-(defmethod highlight-fn :major [_] markdown/h1)
+(defmethod highlight-fn :major [_] (comp markdown/h2 markdown/emphasis))
 (defmethod highlight-fn :minor [_] markdown/h2)
-(defmethod highlight-fn :patch [_] markdown/h3)
-(defmethod highlight-fn :pre-release [_] markdown/h4)
-(defmethod highlight-fn :default [_] markdown/h5)
+(defmethod highlight-fn :patch [_] (comp  markdown/h3 markdown/emphasis))
+(defmethod highlight-fn :pre-release [_] markdown/h3)
+(defmethod highlight-fn :default [_] (comp markdown/h4 markdown/emphasis))
+
+(defn- format-version [version name]
+  ((highlight-fn version) name))
 
 (defn format-tag [{:keys [version name changes]}]
-  (str ((highlight-fn version) name)
+  (str (format-version version name)
        (str-map format-changes (group-by :type changes))))
 
 (defn format-tags

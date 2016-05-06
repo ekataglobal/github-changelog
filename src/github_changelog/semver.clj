@@ -15,8 +15,8 @@
 
 (defn get-type [{:keys [minor patch pre-release build]}]
   (cond
-    (= [0 0 "" ""] [minor patch pre-release build]) :major
-    (= [0 "" ""] [patch pre-release build]) :minor
-    (= ["" ""] [pre-release build]) :patch
-    (= "" build) :pre-release
+    (= [0 0 nil nil] [minor patch pre-release build]) :major
+    (= [0 nil nil] [patch pre-release build]) :minor
+    (= [nil nil] [pre-release build]) :patch
+    (= nil build) :pre-release
     :else :build))
