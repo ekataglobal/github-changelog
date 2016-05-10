@@ -58,7 +58,7 @@ and will generate the changelog for it.
 | `:github-api` | URL for [GitHub Enterprise API] | ✗ |
 | `:jira`       | JIRA URL if you're using that for issue tracking | ✗ |
 | `:dir`        | The destination directory for the repo | ✗ |
-| `:update?`    | Clones or fetches the repository if not exists | ✗ |
+| `:update?`    | Clones or fetches the repository before generating the changelog | ✗ |
 | `:git-url`    | Git URL for cloning if automatic generation does not suit you | ✗ |
 
 A more complete config example:
