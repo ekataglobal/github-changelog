@@ -17,9 +17,15 @@
     (let [pull (complete-pull {:body "Fixes #1" :base {:repo {:html_url repo-url}}})]
       (is (= [["#1" (str repo-url "/issues/1")]] (conventional/parse-issues config pull))))))
 
-(conventional/parse-pull config (complete-pull {:title "this is just a PR"}))
+(defn complete-revert [{:keys [user repo]} title pull-id]
+  (complete-pull {:title title
+                  :body (format "Reverts %s/%s#%d" user repo pull-id)}))
 
 (deftest parse-pull
+  (testing "with a revert"
+    (are [title pull-id] (= pull-id (:revert-pull (conventional/parse-pull config (complete-revert config title pull-id))))
+      "Revert " 5
+      "Revert blah" 2))
   (testing "with a correct formats"
     (are [title] (not= nil (conventional/parse-pull config (complete-pull {:title title})))
       "feat(scope): enhance this and that"
