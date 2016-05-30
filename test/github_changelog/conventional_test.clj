@@ -57,4 +57,3 @@
     (concat (revert pulls) pulls) 0
     (concat (revert (drop 1 pulls)) pulls) 1
     (concat (revert (revert (take 1 pulls))) (revert pulls) pulls) 1))
-
