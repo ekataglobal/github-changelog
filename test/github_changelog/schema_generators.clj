@@ -18,53 +18,47 @@
 (def string-title (gen/fmap (partial apply format "%s(%s): %s")
                             (gen/tuple string-std string-std string-std)))
 
-(defn complete
-  ([gen] #(complete % gen))
-  ([partial-datum gen]
-   (merge (gen/generate gen) partial-datum)))
+(defn complete [gen partial-datum]
+  (merge (gen/generate gen) partial-datum))
 
-(defmacro defgen [fn-name & body]
+(defmacro defgen [fn-name kv]
   `(do
-     (def ~fn-name (gen/hash-map ~@body))
-     (def ~(symbol (str "complete-" fn-name)) (complete ~fn-name))))
+     (def ~fn-name (apply gen/hash-map (flatten (seq ~kv))))
+     (def ~(symbol (str "complete-" fn-name)) (partial complete ~fn-name))))
+
+(def pull-data
+  {:title    string-std
+   :number   gen/nat
+   :sha      sha
+   :body     string-std
+   :html_url string-std})
 
 (defgen config
-  :user string-std
-  :repo string-std)
+  {:user string-std
+   :repo string-std})
 
 (defgen semver
-  :major gen/nat
-  :minor gen/nat
-  :patch gen/nat)
+  {:major gen/nat
+   :minor gen/nat
+   :patch gen/nat})
 
 (defgen pull
-  :title string-std
-  :number gen/nat
-  :sha sha
-  :body string-std
-  :html_url string-std)
+  pull-data)
 
 (defgen valid-pull
-  :title string-title
-  :number gen/nat
-  :sha sha
-  :body string-std
-  :html_url string-std)
+  (merge pull-data {:title string-title}))
 
 (defgen revert-pull
-  :title revert-title
-  :number gen/nat
-  :sha sha
-  :body revert-body
-  :html_url string-std)
+  (merge pull-data  {:title revert-title
+                     :body  revert-body}))
 
 (defgen change
-  :type gen/string-ascii
-  :scope gen/string-ascii
-  :subject gen/string-ascii
-  :pull-request pull
-  :issues (gen/vector issue))
+  {:type         gen/string-ascii
+   :scope        gen/string-ascii
+   :subject      gen/string-ascii
+   :pull-request pull
+   :issues       (gen/vector issue)})
 
 (defgen tag
-  :name string-std
-  :sha sha)
+  {:name string-std
+   :sha  sha})
