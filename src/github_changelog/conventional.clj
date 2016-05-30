@@ -1,5 +1,5 @@
 (ns github-changelog.conventional
-  (:require [clojure.string :refer [join]]
+  (:require [clojure.string :refer [join starts-with?]]
             [github-changelog.util :refer [strip-trailing]]))
 
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
@@ -13,7 +13,7 @@
             (join \| closing-words)
             pattern))))
 
-(def header-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
+(def angular-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
 
 (defn collect-issues [pull pattern link-fn]
   (->> (re-seq pattern (str (:body pull)))
@@ -38,15 +38,39 @@
 (defn parse-issues [config pull]
   (apply concat ((juxt jira-issues github-issues) config pull)))
 
+(defn parse-revert [{:keys [user repo]} {:keys [title body]}]
+  (if (starts-with? title "Revert ")
+    (let [revert-prefix (format "Reverts %s/%s#" user repo)
+          [prefix pull-id] (map join (split-at (count revert-prefix) body))]
+      (if (starts-with? prefix revert-prefix)
+        (parse-int pull-id)))))
+
 (defn parse-pull [config {:keys [title] :as pull}]
-  (if-let [[_ type scope subject] (re-find header-pattern title)]
-    {:type type
-     :scope scope
-     :subject subject
-     :pull-request pull
-     :issues (parse-issues config pull)}))
+  (if-let [pull-id (parse-revert config pull)]
+    {:revert-pull pull-id
+     :pull-request pull}
+    (if-let [[_ type scope subject] (re-find angular-pattern title)]
+      {:type type
+       :scope scope
+       :subject subject
+       :pull-request pull
+       :issues (parse-issues config pull)})))
+
+(defn reverted-ids [pulls]
+  (->> (map :revert-pull pulls)
+       (remove nil?)
+       (set)))
+
+(defn filter-reverted [pulls {:keys [revert-pull pull-request] :as pull}]
+  (let [reverted-pulls (reverted-ids pulls)
+        pull-id (get-in pull [:pull-request :number])]
+    (if (reverted-pulls pull-id)
+      pulls
+      (conj pulls pull))))
 
 (defn parse-changes [config {:keys [pulls] :as tag}]
   (->> (map (partial parse-pull config) pulls)
        (remove nil?)
+       (reduce filter-reverted [])
+       (remove :revert-pull)
        (assoc tag :changes)))
