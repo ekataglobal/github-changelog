@@ -48,11 +48,14 @@
 (def pulls (map #(g/complete-valid-pull {:number %}) (range 1 5)))
 
 (defn revert [pulls]
-  (let [pull-ids (map :number pulls)]
-    (map #(assoc (revert-pull config %) :number (* 10 %)) pull-ids)))
+  (->> (map :number pulls)
+       (map #(assoc (revert-pull config %) :number (* 10 %)))))
 
 (deftest parse-changes
-  (are [pulls expected] (= expected (count (:changes (conventional/parse-changes config (g/complete-tag {:pulls pulls})))))
+  (are [pulls expected] (= expected (->> (g/complete-tag {:pulls pulls})
+                                         (conventional/parse-changes config)
+                                         :changes
+                                         count))
     pulls 4
     (concat (revert pulls) pulls) 0
     (concat (revert (drop 1 pulls)) pulls) 1
