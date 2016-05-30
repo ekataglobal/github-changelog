@@ -56,7 +56,21 @@
        :pull-request pull
        :issues (parse-issues config pull)})))
 
+(defn reverted-ids [pulls]
+  (->> (map :revert-pull (seq pulls))
+       (remove nil?)
+       (set)))
+
+(defn filter-reverted [pulls {:keys [revert-pull pull-request] :as pull}]
+  (let [reverted-pulls (reverted-ids pulls)
+        pull-id (get-in pull [:pull-request :number])]
+    (if (reverted-pulls pull-id)
+      pulls
+      (conj pulls pull))))
+
 (defn parse-changes [config {:keys [pulls] :as tag}]
   (->> (map (partial parse-pull config) pulls)
        (remove nil?)
+       (reduce filter-reverted [])
+       (remove :revert-pull)
        (assoc tag :changes)))
