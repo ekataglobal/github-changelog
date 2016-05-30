@@ -57,7 +57,7 @@
        :issues (parse-issues config pull)})))
 
 (defn reverted-ids [pulls]
-  (->> (map :revert-pull (seq pulls))
+  (->> (map :revert-pull pulls)
        (remove nil?)
        (set)))
 
