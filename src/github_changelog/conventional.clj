@@ -45,8 +45,6 @@
       (if (starts-with? prefix revert-prefix)
         (parse-int pull-id)))))
 
-(parse-revert {:user "a" :repo "b"} {:title "Revert " :body "Reverts a/b#1"})
-
 (defn parse-pull [config {:keys [title] :as pull}]
   (if-let [pull-id (parse-revert config pull)]
     {:revert-pull pull-id
