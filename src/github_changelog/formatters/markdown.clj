@@ -66,7 +66,7 @@
 
 (defmethod highlight-fn :major [_] (comp markdown/h2 markdown/emphasis))
 (defmethod highlight-fn :minor [_] markdown/h2)
-(defmethod highlight-fn :patch [_] (comp  markdown/h3 markdown/emphasis))
+(defmethod highlight-fn :patch [_] (comp markdown/h3 markdown/emphasis))
 (defmethod highlight-fn :pre-release [_] markdown/h3)
 (defmethod highlight-fn :default [_] (comp markdown/h4 markdown/emphasis))
 
