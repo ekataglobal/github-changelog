@@ -1,6 +1,6 @@
 (ns github-changelog.semver
   (:require [clj-semver.core :as semver]
-            [clojure.string :refer [replace-first]]))
+            [clojure.string :refer [starts-with?]]))
 
 (def newer? semver/newer?)
 
@@ -9,8 +9,10 @@
        (catch java.lang.AssertionError _e nil)))
 
 (defn extract [tag-name prefix]
-  (let [pattern (re-pattern (str "^" prefix))]
-    (parse (replace-first tag-name pattern ""))))
+  (parse
+   (if (starts-with? tag-name prefix)
+    (subs tag-name (count prefix))
+    tag-name)))
 
 (defn get-type [{:keys [minor patch pre-release build]}]
   (cond
