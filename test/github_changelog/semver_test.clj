@@ -7,18 +7,23 @@
              [version-examples :refer :all]]))
 
 (deftest extract
-  (testing "with a v prefix"
-    (are [version] (clj-semver/valid? (semver/extract version))
+  (testing "with 'v' prefix"
+    (are [version] (clj-semver/valid? (semver/extract version "v"))
       "v0.0.1"
       "v0.9.3-pre0"
       "v1.0.1"))
-  (testing "without a v prefix"
-    (are [version] (clj-semver/valid? (semver/extract version))
+  (testing "without a prefix"
+    (are [version] (clj-semver/valid? (semver/extract version "v"))
       "0.0.1"
       "0.9.3-pre0"
       "1.0.1"))
+  (testing "with 'rel' prefix"
+    (are [version] (clj-semver/valid? (semver/extract version "pre"))
+      "pre0.0.1"
+      "pre0.9.3-pre0"
+      "pre1.0.1"))
   (testing "invalid tags"
-    (are [version] (nil? (semver/extract version))
+    (are [version] (nil? (semver/extract version "v"))
       "something"
       "foobar"
       "versions")))
