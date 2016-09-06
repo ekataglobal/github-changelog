@@ -17,7 +17,7 @@
       "0.0.1"
       "0.9.3-pre0"
       "1.0.1"))
-  (testing "with 'rel' prefix"
+  (testing "with 'pre' prefix"
     (are [version] (clj-semver/valid? (semver/extract version "pre"))
       "pre0.0.1"
       "pre0.9.3-pre0"
