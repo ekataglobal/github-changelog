@@ -11,8 +11,8 @@
 (defn extract [tag-name prefix]
   (parse
    (if (starts-with? tag-name prefix)
-    (subs tag-name (count prefix))
-    tag-name)))
+     (subs tag-name (count prefix))
+     tag-name)))
 
 (defn get-type [{:keys [minor patch pre-release build]}]
   (cond
