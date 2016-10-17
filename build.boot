@@ -1,4 +1,4 @@
-(def +version+ "0.1.0-SNAPSHOT")
+(def project 'github-changelog)
 
 (set-env!
  :source-paths #{"src/"}
@@ -12,27 +12,25 @@
    [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
    [org.clojure/tools.cli "0.3.5"]
    ; testing
+   [degree9/boot-semver "1.3.6" :scope "test"]
    [org.clojure/test.check "0.9.0" :scope "test"]
    [clj-http-fake "1.0.2" :scope "test"]
    [adzerk/boot-test "1.1.1" :scope "test"]
    [tolitius/boot-check "0.1.1" :scope "test"]
-   [boot/core "2.5.5" :scope "provided"]
-   [adzerk/bootlaces "0.1.13" :scope "test"]])
+   [boot/core "2.5.5" :scope "provided"]])
 
 (require
  '[adzerk.boot-test :as boot-test]
  '[tolitius.boot-check :as check]
- '[adzerk.bootlaces :refer :all])
-
-(bootlaces! +version+)
+ '[degree9.boot-semver :refer :all])
 
 (task-options!
- pom {:project 'github-changelog
-      :version +version+
+ pom {:project project
+      :version (get-version)
       :description "GitHub changelog"
-      :url "https://github.com/raszi/github-changelog"
+      :url "https://github.com/whitepages/github-changelog"
       :license {"MIT" "http://choosealicense.com/licenses/mit/"}}
- jar {:file "github-changelog.jar"
+ jar {:file (format "%s-%s.jar" project (get-version))
       :main 'github-changelog.cli}
  aot {:namespace #{'github-changelog.cli}})
 
@@ -49,7 +47,7 @@
    (testing-helper)
    (check/with-bikeshed)
    (check/with-eastwood)
-   (check/with-yagni)
+   (check/with-yagni :options {:entry-points ["github-changelog.cli/-main"]})
    (check/with-kibit)))
 
 (deftask dev []
@@ -77,6 +75,7 @@
 (deftask uberjar
   []
   (comp
+   (version :include true)
    (uber)
    (aot)
    (pom)
