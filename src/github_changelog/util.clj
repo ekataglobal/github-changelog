@@ -1,7 +1,7 @@
 (ns github-changelog.util
-  (:require [clojure.string :refer [join ends-with?]]))
+  (:require [clojure.string :as str]))
 
-(defn str-map [f & sqs] (join (apply map f sqs)))
+(defn str-map [f & sqs] (str/join (apply map f sqs)))
 
 (defn extract-params [query-string]
   (into {} (for [[_ k v] (re-seq #"([^&=]+)=([^&]+)" query-string)]
@@ -10,6 +10,6 @@
 (defn strip-trailing
   ([s] (strip-trailing s "/"))
   ([s end]
-   (if (ends-with? s end)
-     (recur (join (drop-last s)) end)
+   (if (str/ends-with? s end)
+     (recur (str/join (drop-last s)) end)
      s)))
