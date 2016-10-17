@@ -2,8 +2,7 @@
   (:require [clojure.test :refer :all]
             [github-changelog
              [conventional :as conventional]
-             [schema-generators :as g]]
-            [clojure.test.check.generators :as gen]))
+             [schema-generators :as g]]))
 
 (def repo-url "https://github.company.com/user/repo")
 (def jira-url "http://dev.clojure.org/jira/")
@@ -48,7 +47,8 @@
 (def pulls (map #(g/complete-valid-pull {:number %}) (range 1 5)))
 
 (defn revert [pulls]
-  (->> (map :number pulls)
+  (->> pulls
+       (map :number)
        (map #(assoc (revert-pull config %) :number (* 10 %)))))
 
 (deftest parse-changes

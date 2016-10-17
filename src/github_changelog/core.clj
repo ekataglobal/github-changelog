@@ -23,8 +23,9 @@
 
 (defn load-tags [config]
   (let [git-repo (git/clone config)
-        tags (git/tags git-repo)]
-    (map (partial assoc-commits git-repo) (parse-tags tags (:tag-prefix config)))))
+        tags     (git/tags git-repo)
+        prefix   (get config :tag-prefix "v")]
+    (map (partial assoc-commits git-repo) (parse-tags tags prefix))))
 
 (defn find-pull [pulls sha]
   (first (filter #(= (:sha %) sha) pulls)))

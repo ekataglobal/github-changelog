@@ -9,9 +9,9 @@
 
 (def cli-options
   [["-l" "--last LAST" "Generate changes only for the last n tags"
-     :parse-fn #(Integer/parseInt %)
-     :validate [#(< 0 %) "Must be a positive number"]]
-    ["-h" "--help"]])
+    :parse-fn #(Integer/parseInt %)
+    :validate [pos? "Must be a positive number"]]
+   ["-h" "--help"]])
 
 (defn- join-lines [lines]
   (str/join \newline (flatten lines)))
@@ -42,11 +42,11 @@
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        {:keys [help last]} options]
+        {:keys [help last]}                        options]
     (cond
-      help (exit 0 (usage summary))
+      help               (exit 0 (usage summary))
       (empty? arguments) (exit 1 (usage summary))
-      errors (exit 1 (error-msg errors)))
+      errors             (exit 1 (error-msg errors)))
 
     (doseq [config-file arguments]
       (println (generate config-file last)))
