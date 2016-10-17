@@ -1,6 +1,6 @@
 (ns github-changelog.semver
   (:require [clj-semver.core :as semver]
-            [clojure.string :refer [starts-with?]]))
+            [clojure.string :as str]))
 
 (def newer? semver/newer?)
 
@@ -10,7 +10,7 @@
 
 (defn extract [tag-name prefix]
   (parse
-   (if (starts-with? tag-name prefix)
+   (if (str/starts-with? tag-name prefix)
      (subs tag-name (count prefix))
      tag-name)))
 
