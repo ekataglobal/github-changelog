@@ -42,11 +42,11 @@
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        {:keys [help last]} options]
+        {:keys [help last]}                        options]
     (cond
-      help (exit 0 (usage summary))
+      help               (exit 0 (usage summary))
       (empty? arguments) (exit 1 (usage summary))
-      errors (exit 1 (error-msg errors)))
+      errors             (exit 1 (error-msg errors)))
 
     (doseq [config-file arguments]
       (println (generate config-file last)))
