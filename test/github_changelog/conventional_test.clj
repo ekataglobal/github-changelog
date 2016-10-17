@@ -2,8 +2,7 @@
   (:require [clojure.test :refer :all]
             [github-changelog
              [conventional :as conventional]
-             [schema-generators :as g]]
-            [clojure.test.check.generators :as gen]))
+             [schema-generators :as g]]))
 
 (def repo-url "https://github.company.com/user/repo")
 (def jira-url "http://dev.clojure.org/jira/")
