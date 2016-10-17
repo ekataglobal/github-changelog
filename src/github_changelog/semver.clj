@@ -19,5 +19,5 @@
     (= [0 0 nil nil] [minor patch pre-release build]) :major
     (= [0 nil nil] [patch pre-release build]) :minor
     (= [nil nil] [pre-release build]) :patch
-    (= nil build) :pre-release
+    (nil? build) :pre-release
     :else :build))

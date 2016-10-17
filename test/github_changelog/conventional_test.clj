@@ -48,7 +48,8 @@
 (def pulls (map #(g/complete-valid-pull {:number %}) (range 1 5)))
 
 (defn revert [pulls]
-  (->> (map :number pulls)
+  (->> pulls
+       (map :number)
        (map #(assoc (revert-pull config %) :number (* 10 %)))))
 
 (deftest parse-changes

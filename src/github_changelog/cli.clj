@@ -9,9 +9,9 @@
 
 (def cli-options
   [["-l" "--last LAST" "Generate changes only for the last n tags"
-     :parse-fn #(Integer/parseInt %)
-     :validate [#(< 0 %) "Must be a positive number"]]
-    ["-h" "--help"]])
+    :parse-fn #(Integer/parseInt %)
+    :validate [pos? "Must be a positive number"]]
+   ["-h" "--help"]])
 
 (defn- join-lines [lines]
   (str/join \newline (flatten lines)))
