@@ -5,8 +5,8 @@
  :dependencies
  '[[org.clojure/clojure "1.8.0"]
    [clj-jgit "0.8.9"]
-   [clj-http "3.0.0"]
-   [cheshire "5.6.1"]
+   [clj-http "3.3.0"]
+   [cheshire "5.6.3"]
    [throttler "1.0.0"]
    [org.slf4j/slf4j-nop "1.7.21"]
    [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
@@ -15,9 +15,8 @@
    [degree9/boot-semver "1.3.6" :scope "test"]
    [org.clojure/test.check "0.9.0" :scope "test"]
    [clj-http-fake "1.0.2" :scope "test"]
-   [adzerk/boot-test "1.1.1" :scope "test"]
-   [tolitius/boot-check "0.1.1" :scope "test"]
-   [boot/core "2.5.5" :scope "provided"]])
+   [adzerk/boot-test "1.1.2" :scope "test"]
+   [tolitius/boot-check "0.1.3" :scope "test"]])
 
 (require
  '[adzerk.boot-test :as boot-test]
