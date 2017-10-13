@@ -5,12 +5,14 @@
              [string :as str]]
             [clojure.tools.cli :refer [parse-opts]]
             [github-changelog.core :refer [changelog]]
-            [github-changelog.formatters.markdown :refer [format-tags]]))
+            [github-changelog.formatters.markdown :refer [format-tags]]
+            [github-changelog.semver :refer [newer?]]))
 
 (def cli-options
   [["-l" "--last LAST" "Generate changes only for the last n tags"
     :parse-fn #(Integer/parseInt %)
     :validate [pos? "Must be a positive number"]]
+   ["-s" "--since TAG", "Generate changes only after TAG tag"]
    ["-h" "--help"]])
 
 (defn- join-lines [lines]
@@ -29,9 +31,10 @@
 (defn- read-config [file]
   (edn/read-string (slurp file)))
 
-(defn- generate [file last]
+(defn- generate [file last since]
   (let [all-tags (changelog (read-config file))
-        tags (if last (take last all-tags) all-tags)]
+        filtered-tags (if since (filter #(newer? (:version %) since) all-tags) all-tags)
+        tags (if last (take last filtered-tags) filtered-tags)]
     (format-tags tags)))
 
 (defn- usage [options-summary]
@@ -42,13 +45,13 @@
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        {:keys [help last]}                        options]
+        {:keys [help last since]}                  options]
     (cond
       help               (exit 0 (usage summary))
       (empty? arguments) (exit 1 (usage summary))
       errors             (exit 1 (error-msg errors)))
 
     (doseq [config-file arguments]
-      (println (generate config-file last)))
+      (println (generate config-file last since)))
 
     (exit 0 nil)))
