@@ -2,45 +2,63 @@
   (:require [clojure.string :refer [join]]
             [clojure.test.check.generators :as gen]))
 
+(def string-std (gen/not-empty gen/string-alphanumeric))
+
 (def hexadecimal (gen/elements "0123456789ABCDEF"))
 
 (def sha (gen/fmap join (gen/vector hexadecimal 40)))
 
-(def issue (gen/tuple gen/string gen/string))
+(def issue (gen/tuple string-std string-std))
 
-(defn complete
-  ([gen] #(complete % gen))
-  ([partial-datum gen]
-   (merge (gen/generate gen) partial-datum)))
+(def revert-title (gen/fmap (partial format "Revert %s") string-std))
 
-(defmacro defgen [fn-name & body]
+(def revert-body (gen/fmap (partial apply format "Reverts %s/%s#%d")
+                           (gen/tuple string-std string-std gen/nat)))
+
+(def string-title (gen/fmap (partial apply format "%s(%s): %s")
+                            (gen/tuple string-std string-std string-std)))
+
+(defn complete [gen partial-datum]
+  (merge (gen/generate gen) partial-datum))
+
+(defmacro defgen [fn-name kv]
   `(do
-     (def ~fn-name (gen/hash-map ~@body))
-     (def ~(symbol (str "complete-" fn-name)) (complete ~fn-name))))
+     (def ~fn-name (apply gen/hash-map (flatten (seq ~kv))))
+     (def ~(symbol (str "complete-" fn-name)) (partial complete ~fn-name))))
+
+(def pull-data
+  {:title    string-std
+   :number   gen/nat
+   :sha      sha
+   :body     string-std
+   :html_url string-std})
 
 (defgen config
-  :user gen/string
-  :repo gen/string)
+  {:user string-std
+   :repo string-std})
 
 (defgen semver
-  :major gen/nat
-  :minor gen/nat
-  :patch gen/nat)
+  {:major gen/nat
+   :minor gen/nat
+   :patch gen/nat})
 
 (defgen pull
-  :title (gen/not-empty gen/string-alphanumeric)
-  :number gen/nat
-  :sha sha
-  :body gen/string
-  :html_url gen/string)
+  pull-data)
+
+(defgen valid-pull
+  (merge pull-data {:title string-title}))
+
+(defgen revert-pull
+  (merge pull-data  {:title revert-title
+                     :body  revert-body}))
 
 (defgen change
-  :type gen/string
-  :scope gen/string
-  :subject gen/string
-  :pull-request pull
-  :issues (gen/vector issue))
+  {:type         gen/string-ascii
+   :scope        gen/string-ascii
+   :subject      gen/string-ascii
+   :pull-request pull
+   :issues       (gen/vector issue)})
 
 (defgen tag
-  :name (gen/not-empty gen/string-alphanumeric)
-  :sha sha)
+  {:name string-std
+   :sha  sha})
