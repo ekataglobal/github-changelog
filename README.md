@@ -88,7 +88,7 @@ Distributed under [MIT license](http://choosealicense.com/licenses/mit/).
 
 [Leiningen]: http://leiningen.org/
 [Maven]: http://maven.apache.org/
-[Commit Message Format]: https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#type
+[Commit Message Format]: https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#commit-message-format
 [edn]: https://github.com/edn-format/edn
 [access token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 [GitHub Enterprise API]: https://developer.github.com/v3/enterprise/
