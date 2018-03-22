@@ -1,7 +1,7 @@
 (ns github-changelog.formatters.markdown
   (:require [clojure.string :refer [join]]
             [github-changelog
-             [markdown :as markdown]
+             [markdown :as md]
              [semver :refer [get-type]]
              [util :refer [str-map]]]))
 
@@ -20,24 +20,24 @@
 (defmethod translate-type :default [x] x)
 
 (defn- format-type [type]
-  (markdown/h4 (translate-type type)))
+  (md/h4 (translate-type type)))
 
 (defn- format-scope [scope]
   (when (seq scope)
-    (markdown/emphasis (str scope ":"))))
+    (md/emphasis (str scope ":"))))
 
 (defn- format-pull-request [{:keys [number html_url]}]
-  (str " " (markdown/link (str "#" number) html_url)))
+  (str " " (md/link (str "#" number) html_url)))
 
 (defn- format-change [{:keys [subject pull-request issues]}]
   (str
    subject
    (format-pull-request pull-request)
    (if-let [issues (seq issues)]
-     (str ", closes " (join ", " (map (partial apply markdown/link) issues))))))
+     (str ", closes " (join ", " (map (partial apply md/link) issues))))))
 
 (defn- format-entries [changes]
-  (join (map markdown/li changes)))
+  (join (map md/li changes)))
 
 (defmulti format-grouped-changes (comp count second))
 
@@ -64,11 +64,11 @@
 
 (defmulti highlight-fn get-type)
 
-(defmethod highlight-fn :major [_] (comp markdown/h2 markdown/emphasis))
-(defmethod highlight-fn :minor [_] markdown/h2)
-(defmethod highlight-fn :patch [_] (comp markdown/h3 markdown/emphasis))
-(defmethod highlight-fn :pre-release [_] markdown/h3)
-(defmethod highlight-fn :default [_] (comp markdown/h4 markdown/emphasis))
+(defmethod highlight-fn :major [_] (comp md/h2 md/emphasis))
+(defmethod highlight-fn :minor [_] md/h2)
+(defmethod highlight-fn :patch [_] (comp md/h3 md/emphasis))
+(defmethod highlight-fn :pre-release [_] md/h3)
+(defmethod highlight-fn :default [_] (comp md/h4 md/emphasis))
 
 (defn- format-version [version name]
   ((highlight-fn version) name))
