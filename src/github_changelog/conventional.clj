@@ -1,5 +1,5 @@
 (ns github-changelog.conventional
-  (:require [clojure.string :refer [join starts-with?]]
+  (:require [clojure.string :as str]
             [github-changelog.util :refer [strip-trailing]]))
 
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
@@ -10,7 +10,7 @@
   ([pattern closing-words]
    (re-pattern
     (format "(?i:%s) %s"
-            (join \| closing-words)
+            (str/join \| closing-words)
             pattern))))
 
 (def angular-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
@@ -39,10 +39,10 @@
   (apply concat ((juxt jira-issues github-issues) config pull)))
 
 (defn parse-revert [{:keys [user repo]} {:keys [title body]}]
-  (if (starts-with? title "Revert ")
+  (if (str/starts-with? title "Revert ")
     (let [revert-prefix (format "Reverts %s/%s#" user repo)
-          [prefix pull-id] (map join (split-at (count revert-prefix) body))]
-      (if (starts-with? prefix revert-prefix)
+          [prefix pull-id] (map str/join (split-at (count revert-prefix) body))]
+      (if (str/starts-with? prefix revert-prefix)
         (parse-int pull-id)))))
 
 (defn parse-pull [config {:keys [title] :as pull}]

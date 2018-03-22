@@ -1,12 +1,12 @@
 (ns github-changelog.dependencies.bundler-test
-  (:require [clojure.java.io :refer [file]]
+  (:require [clojure.java.io :as io]
             [clojure.test :refer :all]
-            [github-changelog.dependencies.bundler :as bundler]))
+            [github-changelog.dependencies.bundler :as sut]))
 
 (defn- test-parse [path]
-  (->> (file "test/fixtures" path)
+  (->> (io/file "test/fixtures" path)
        .getCanonicalPath
-       bundler/parse))
+       sut/parse))
 
 (deftest parse
   (testing "with an empty file"

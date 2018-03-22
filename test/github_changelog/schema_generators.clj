@@ -1,12 +1,12 @@
 (ns github-changelog.schema-generators
-  (:require [clojure.string :refer [join]]
+  (:require [clojure.string :as str]
             [clojure.test.check.generators :as gen]))
 
 (def string-std (gen/not-empty gen/string-alphanumeric))
 
 (def hexadecimal (gen/elements "0123456789ABCDEF"))
 
-(def sha (gen/fmap join (gen/vector hexadecimal 40)))
+(def sha (gen/fmap str/join (gen/vector hexadecimal 40)))
 
 (def issue (gen/tuple string-std string-std))
 

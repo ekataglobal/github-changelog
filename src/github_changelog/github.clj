@@ -1,17 +1,17 @@
 (ns github-changelog.github
   (:require [clj-http.client :as http]
-            [clojure.string :refer [split]]
+            [clojure.string :as str]
             [github-changelog
-             [defaults :refer [defaults]]
-             [util :refer [extract-params strip-trailing]]]
-            [throttler.core :refer [throttle-fn]]))
+             [defaults :as defaults]
+             [util :as util]]
+            [throttler.core :as throttler]))
 
 (defn parse-pull [pull]
   (assoc pull :sha (get-in pull [:head :sha])))
 
 (defn pulls-url [{:keys [github-api user repo]
-                  :or   {github-api (:github-api defaults)}}]
-  (format "%s/repos/%s/%s/pulls" (strip-trailing github-api) user repo))
+                  :or   {github-api (:github-api defaults/config)}}]
+  (format "%s/repos/%s/%s/pulls" (util/strip-trailing github-api) user repo))
 
 (defn- make-request
   ([config] (make-request config {}))
@@ -23,9 +23,9 @@
 
 (defn- last-page-number [links]
   (some-> (get-in links [:last :href])
-          (split #"\?")
+          (str/split #"\?")
           second
-          extract-params
+          util/extract-params
           :page
           Long/parseLong))
 
@@ -39,7 +39,7 @@
 (defn- call-api-fn [config]
   (let [rate-limit (get config :rate-limit 5)
         end-point (pulls-url config)]
-    (throttle-fn (partial http/get end-point) rate-limit :second)))
+    (throttler/throttle-fn (partial http/get end-point) rate-limit :second)))
 
 (defn- get-pulls [config]
   (let [call-api (call-api-fn config)

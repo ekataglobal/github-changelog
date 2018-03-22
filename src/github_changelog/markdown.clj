@@ -1,11 +1,11 @@
 (ns github-changelog.markdown
-  (:require [clojure.string :refer [join split-lines]]))
+  (:require [clojure.string :as str]))
 
 (defn- block-item [body]
   (str \newline body \newline \newline))
 
 (defn- header [n body]
-  (block-item (str \newline (join (repeat n "#")) " " body)))
+  (block-item (str \newline (str/join (repeat n "#")) " " body)))
 
 (def h1 (partial header 1))
 (def h2 (partial header 2))
@@ -21,7 +21,7 @@
 (defn emphasis [text] (format "**%s**" text))
 
 (defn li [body]
-  (let [lines (split-lines body)
+  (let [lines (str/split-lines body)
         first-line (str "* " (first lines))
         rest-lines (mapv (partial str "  ") (rest lines))]
-    (str \newline (join \newline (into [first-line] rest-lines)))))
+    (str \newline (str/join \newline (into [first-line] rest-lines)))))
