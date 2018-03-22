@@ -59,8 +59,8 @@
        (->> (group-by :scope changes)
             (map map-formatted)
             (map format-grouped-changes)
-            flatten
-            format-entries)))
+            (flatten)
+            (format-entries))))
 
 (defmulti highlight-fn get-type)
 

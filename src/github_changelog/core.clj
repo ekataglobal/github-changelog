@@ -16,7 +16,7 @@
   (->> (map (partial assoc-semver prefix) tags)
        (filter :version)
        (sort-by :version semver/newer?)
-       assoc-ranges))
+       (assoc-ranges)))
 
 (defn assoc-commits [git {:keys [from sha] :as tag}]
   (assoc tag :commits (git/commits git from sha)))

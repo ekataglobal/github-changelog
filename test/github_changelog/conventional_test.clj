@@ -54,8 +54,8 @@
 (deftest parse-changes
   (are [pulls expected] (= expected (->> (g/complete-tag {:pulls pulls})
                                          (sut/parse-changes config)
-                                         :changes
-                                         count))
+                                         (:changes)
+                                         (count)))
     pulls 4
     (concat (revert pulls) pulls) 0
     (concat (revert (drop 1 pulls)) pulls) 1
