@@ -1,21 +1,21 @@
 (ns github-changelog.git
   (:require [clj-jgit
              [porcelain :as git]
-             [util :refer [name-from-uri]]]
+             [util :as jgit-util]]
             [clojure.string :as string]
             [github-changelog
-             [defaults :refer [defaults]]
-             [util :refer [strip-trailing]]])
+             [defaults :as defaults]
+             [util :as util]])
   (:import java.io.FileNotFoundException
            org.eclipse.jgit.api.Git
            [org.eclipse.jgit.lib Ref Repository]
            org.eclipse.jgit.revwalk.RevCommit))
 
 (defn gen-url [{:keys [github user repo]
-                :or   {github (:github defaults)}}]
-  (format "%s/%s/%s.git" (strip-trailing github) user repo))
+                :or   {github (:github defaults/config)}}]
+  (format "%s/%s/%s.git" (util/strip-trailing github) user repo))
 
-(def git-path name-from-uri)
+(def git-path jgit-util/name-from-uri)
 
 (defn- clone-or-load [uri dir]
   (try
@@ -30,7 +30,7 @@
 (defn clone [{:keys [git-url dir update?]
               :or   {git-url (gen-url config)
                      dir     (git-path git-url)
-                     update? (:update? defaults)}
+                     update? (:update? defaults/config)}
               :as config}]
   (cond-> (clone-or-load git-url dir)
     update? refresh))

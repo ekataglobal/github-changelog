@@ -1,11 +1,11 @@
 (ns github-changelog.util-test
   (:require [clojure.test :refer :all]
-            [github-changelog.util :as util]))
+            [github-changelog.util :as sut]))
 
 (deftest strip-trailing
-  (is (= "something" (util/strip-trailing "something///")))
-  (is (= "foobar" (util/strip-trailing "foobar" "!!"))))
+  (is (= "something" (sut/strip-trailing "something///")))
+  (is (= "foobar" (sut/strip-trailing "foobar" "!!"))))
 
 (deftest extract-params
-  (is (= {} (util/extract-params "")))
-  (is (= {:a "1" :b "2"} (util/extract-params "a=1&b=2"))))
+  (is (= {} (sut/extract-params "")))
+  (is (= {:a "1" :b "2"} (sut/extract-params "a=1&b=2"))))

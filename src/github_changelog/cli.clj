@@ -3,9 +3,9 @@
   (:require [clojure
              [edn :as edn]
              [string :as str]]
-            [clojure.tools.cli :refer [parse-opts]]
+            [clojure.tools.cli :as cli]
             [github-changelog.core :as core]
-            [github-changelog.formatters.markdown :refer [format-tags]]))
+            [github-changelog.formatters.markdown :as md]))
 
 (def cli-options
   [["-l" "--last LAST" "Generate changes only for the last n tags"
@@ -33,7 +33,7 @@
 (defn- generate [file options]
   (let [all-tags (core/changelog (read-config file))
         tags     (core/filter-tags all-tags options)]
-    (format-tags tags)))
+    (md/format-tags tags)))
 
 (defn- usage [options-summary]
   (join-lines ["Usage: program-name [options] <config.edn> ..."
@@ -42,7 +42,7 @@
                options-summary]))
 
 (defn -main [& args]
-  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
+  (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-options)
         {:keys [help]}                             options]
     (cond
       help               (exit 0 (usage summary))
