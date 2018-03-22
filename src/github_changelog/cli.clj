@@ -4,9 +4,8 @@
              [edn :as edn]
              [string :as str]]
             [clojure.tools.cli :refer [parse-opts]]
-            [github-changelog.core :refer [changelog]]
-            [github-changelog.formatters.markdown :refer [format-tags]]
-            [github-changelog.semver :refer [newer?]]))
+            [github-changelog.core :as core]
+            [github-changelog.formatters.markdown :refer [format-tags]]))
 
 (def cli-options
   [["-l" "--last LAST" "Generate changes only for the last n tags"
@@ -31,10 +30,9 @@
 (defn- read-config [file]
   (edn/read-string (slurp file)))
 
-(defn- generate [file {:keys [last since]}]
-  (let [all-tags      (changelog (read-config file))
-        filtered-tags (if since (filter #(newer? (:version %) since) all-tags) all-tags)
-        tags          (if last (take last filtered-tags) filtered-tags)]
+(defn- generate [file options]
+  (let [all-tags (core/changelog (read-config file))
+        tags     (core/filter-tags all-tags options)]
     (format-tags tags)))
 
 (defn- usage [options-summary]
