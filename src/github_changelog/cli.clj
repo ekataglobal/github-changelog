@@ -31,11 +31,10 @@
 (defn- read-config [file]
   (edn/read-string (slurp file)))
 
-(defn- generate [file options]
-  (let [{:keys [last since]} options
-        all-tags (changelog (read-config file))
+(defn- generate [file {:keys [last since]}]
+  (let [all-tags      (changelog (read-config file))
         filtered-tags (if since (filter #(newer? (:version %) since) all-tags) all-tags)
-        tags (if last (take last filtered-tags) filtered-tags)]
+        tags          (if last (take last filtered-tags) filtered-tags)]
     (format-tags tags)))
 
 (defn- usage [options-summary]
