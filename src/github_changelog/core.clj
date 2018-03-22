@@ -40,3 +40,8 @@
   (->> (load-tags config)
        (map (partial assoc-pulls (github/fetch-pulls config)))
        (map (partial conventional/parse-changes config))))
+
+(defn filter-tags [tags {:keys [last since]}]
+  (cond->> tags
+    since (filter #(semver/newer? (:version %) since))
+    last  (take last)))
