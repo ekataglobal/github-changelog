@@ -5,8 +5,8 @@
 
 (defn- test-parse [path]
   (->> (io/file "test/fixtures" path)
-       .getCanonicalPath
-       sut/parse))
+       (.getCanonicalPath)
+       (sut/parse)))
 
 (deftest parse
   (testing "with an empty file"
