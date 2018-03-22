@@ -31,8 +31,9 @@
 (defn- read-config [file]
   (edn/read-string (slurp file)))
 
-(defn- generate [file last since]
-  (let [all-tags (changelog (read-config file))
+(defn- generate [file options]
+  (let [{:keys [last since]} options
+        all-tags (changelog (read-config file))
         filtered-tags (if since (filter #(newer? (:version %) since) all-tags) all-tags)
         tags (if last (take last filtered-tags) filtered-tags)]
     (format-tags tags)))
@@ -45,13 +46,13 @@
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)
-        {:keys [help last since]}                  options]
+        {:keys [help]}                             options]
     (cond
       help               (exit 0 (usage summary))
       (empty? arguments) (exit 1 (usage summary))
       errors             (exit 1 (error-msg errors)))
 
     (doseq [config-file arguments]
-      (println (generate config-file last since)))
+      (println (generate config-file options)))
 
     (exit 0 nil)))
