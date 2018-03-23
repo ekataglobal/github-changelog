@@ -28,7 +28,9 @@
                errors]))
 
 (defn- read-config [file]
-  (edn/read-string (slurp file)))
+  (-> (if (= file "-") *in* file)
+      (slurp)
+      (edn/read-string)))
 
 (defn- generate [file options]
   (let [all-tags (core/changelog (read-config file))
@@ -36,20 +38,20 @@
     (md/format-tags tags)))
 
 (defn- usage [options-summary]
-  (join-lines ["Usage: program-name [options] <config.edn> ..."
+  (join-lines ["Usage: program-name [options] <config.edn>"
                ""
                "Options:"
                options-summary]))
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-options)
-        {:keys [help]}                             options]
+        {:keys [help]}                             options
+        config-file                                (first arguments)]
     (cond
       help               (exit 0 (usage summary))
       (empty? arguments) (exit 1 (usage summary))
       errors             (exit 1 (error-msg errors)))
 
-    (doseq [config-file arguments]
-      (println (generate config-file options)))
+    (println (generate config-file options))
 
     (exit 0 nil)))
