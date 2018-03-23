@@ -47,6 +47,12 @@ Then start with:
 This will clone the user/repo repository from GitHub into the current directory
 and will generate the changelog for it.
 
+You could also pass in a configuration on stdin if you set the config filename to `-`.
+
+Here is an example usage:
+
+    $ java -jar github-changelog.jar - < config.edn
+
 ### Config options
 
 | key | description | required |
