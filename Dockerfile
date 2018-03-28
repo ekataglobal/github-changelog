@@ -6,9 +6,8 @@ ENV BOOT_CLOJURE_VERSION=1.8.0
 WORKDIR /usr/local/github-changelog
 
 COPY . .
-RUN cd /usr/local/github-changelog && boot uberjar
 
-RUN /bin/bash -c 'source /usr/local/github-changelog/version.properties && mv /usr/local/github-changelog/target/github-changelog-$VERSION.jar /usr/local/github-changelog/github-changelog.jar'
+RUN /bin/bash -c 'source version.properties && boot uberjar && mv target/github-changelog-$VERSION.jar github-changelog.jar'
 
 FROM openjdk:jre-alpine
 
