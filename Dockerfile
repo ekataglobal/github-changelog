@@ -8,7 +8,7 @@ WORKDIR /usr/local/github-changelog
 COPY . .
 RUN cd /usr/local/github-changelog && boot uberjar
 
-RUN /bin/bash -c 'source /usr/local/github-changelog/version.properties && cp /usr/local/github-changelog/target/github-changelog-$VERSION.jar /usr/local/github-changelog/github-changelog.jar'
+RUN /bin/bash -c 'source /usr/local/github-changelog/version.properties && mv /usr/local/github-changelog/target/github-changelog-$VERSION.jar /usr/local/github-changelog/github-changelog.jar'
 
 FROM openjdk:jre-alpine
 
