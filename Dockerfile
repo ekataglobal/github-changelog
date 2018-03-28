@@ -5,7 +5,7 @@ ENV BOOT_CLOJURE_VERSION=1.8.0
 
 RUN boot uber
 
-FROM openjdk:8-jdk-alpine
+FROM openjdk:jre-alpine
 
 ARG VERSION
 
