@@ -1,10 +1,14 @@
-FROM openjdk:latest
+FROM adzerk/boot-clj:latest as builder
+
+ENV BOOT_VERSION=2.7.2
+ENV BOOT_CLOJURE_VERSION=1.8.0
+
+RUN boot uber
+
+FROM openjdk:8-jdk-alpine
 
 ARG VERSION
 
 WORKDIR /usr/local/github-changelog
-
-RUN apt-get update
-RUN apt-get install --assume-yes ca-certificates curl
 
 COPY target/github-changelog-$VERSION.jar ./github-changelog.jar
