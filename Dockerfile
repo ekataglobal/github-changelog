@@ -14,3 +14,5 @@ FROM openjdk:jre-alpine
 WORKDIR /usr/local/github-changelog
 
 COPY --from=builder /usr/local/github-changelog/github-changelog.jar .
+
+ENTRYPOINT ["java", "-jar", "github-changelog.jar"]
