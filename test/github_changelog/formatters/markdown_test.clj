@@ -38,8 +38,8 @@
 (def expected-scoped-changes (str (md/h4 "Features")
                                   (md/li (str/join [expected-scope expected-changes]))))
 
-(deftest format-changes
+(deftest format-change-group
   (testing "scopeless changes"
-    (is (= expected-scopeless-changes (sut/format-changes ["feat" [(change "") (change "")]]))))
+    (is (= expected-scopeless-changes (sut/format-change-group ["feat" [(change "") (change "")]]))))
   (testing "scoped changes"
-    (is (= expected-scoped-changes (sut/format-changes ["feat" [(change) (change)]])))))
+    (is (= expected-scoped-changes (sut/format-change-group ["feat" [(change) (change)]])))))

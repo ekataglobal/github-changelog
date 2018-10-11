@@ -54,7 +54,7 @@
 (defn- map-formatted [[scope changes]]
   [(format-scope scope) (map format-change changes)])
 
-(defn format-changes [[type changes]]
+(defn format-change-group [[type changes]]
   (str (format-type type)
        (->> (group-by :scope changes)
             (map map-formatted)
@@ -73,11 +73,16 @@
 (defn- format-version [version name]
   ((highlight-fn version) name))
 
+(defn format-changes [changes]
+  (str-map format-change-group (group-by :type changes)))
+
 (defn format-tag [{:keys [version name changes]}]
   (str (format-version version name)
-       (str-map format-changes (group-by :type changes))))
+       (format-changes changes)))
 
 (defn format-tags
   "Generates a markdown version from the changes"
-  [tags]
-  (str-map format-tag tags))
+  [tags {:keys [collapse-tags]}]
+  (if collapse-tags
+    (format-changes (mapcat :changes tags))
+    (str-map format-tag tags)))
