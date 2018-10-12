@@ -41,7 +41,8 @@
        (map (partial assoc-pulls (github/fetch-pulls config)))
        (map (partial conventional/parse-changes config))))
 
-(defn filter-tags [tags {:keys [last since]}]
+(defn filter-tags [tags {:keys [last since until]}]
   (cond->> tags
     since (filter #(semver/newer? (:version %) since))
+    until (filter #(not (semver/newer? (:version %) until)))
     last  (take last)))

@@ -8,4 +8,5 @@
     (are [expected options] (= expected (sut/filter-tags tags options))
       tags                                    {}
       [{:version "1.3.0"} {:version "1.2.0"}] {:last 2}
-      [{:version "1.3.0"}]                    {:last 2 :since "1.2.0"})))
+      [{:version "1.3.0"}]                    {:last 2 :since "1.2.0"}
+      [{:version "1.2.0"} {:version "1.1.0"}] {:since "1.0.0" :until "1.2.0"})))

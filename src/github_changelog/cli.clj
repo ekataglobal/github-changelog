@@ -12,6 +12,8 @@
     :parse-fn #(Integer/parseInt %)
     :validate [pos? "Must be a positive number"]]
    ["-s" "--since TAG", "Generate changes only after TAG tag"]
+   ["-u" "--until TAG", "Generate changes only until (including) TAG tag"]
+   ["-c" "--collapse-tags", "Do not include tags, only group by change type"]
    ["-h" "--help"]])
 
 (defn- join-lines [lines]
@@ -35,7 +37,7 @@
 (defn- generate [file options]
   (let [all-tags (core/changelog (read-config file))
         tags     (core/filter-tags all-tags options)]
-    (md/format-tags tags)))
+    (md/format-tags tags options)))
 
 (defn- usage [options-summary]
   (join-lines ["Usage: program-name [options] <config.edn>"
