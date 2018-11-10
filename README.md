@@ -91,7 +91,7 @@ A more complete config example:
 
 ## Copyright and License
 
-Copyright © 2015-2016 Whitepages Inc.
+Copyright © 2015-2018 Whitepages Inc.
 
 Distributed under [MIT license](http://choosealicense.com/licenses/mit/).
 
