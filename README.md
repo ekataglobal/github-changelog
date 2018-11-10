@@ -15,7 +15,7 @@ Pull-request based conventional changelog generator for GitHub projects which fo
 
 ## Usage
 
-### Command Line Interface
+### Jar
 
 It should be started with a [edn] config file
 with the following content:
@@ -38,6 +38,10 @@ You could also pass in a configuration on stdin if you set the config filename t
 Here is an example usage:
 
     $ java -jar github-changelog.jar - < config.edn
+
+### Docker image
+
+    $ cat config.edn | docker run -i --rm whitepages/github-changelog -
 
 ### Config options
 
