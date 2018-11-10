@@ -10,25 +10,8 @@ Pull-request based conventional changelog generator for GitHub projects which fo
 
 ## Releases and Dependency Information
 
-* Releases are published to TODO_LINK
-
-* Latest stable release is TODO_LINK
-
-* All released versions TODO_LINK
-
-[Leiningen] dependency information:
-
-    [github-changelog "0.1.0-SNAPSHOT"]
-
-[Maven] dependency information:
-
-    <dependency>
-      <groupId>github-changelog</groupId>
-      <artifactId>github-changelog</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-    </dependency>
-
-
+* Releases are published to [GitHub](https://github.com/whitepages/github-changelog/releases)
+* Docker images automatically built at [Docker Hub](https://hub.docker.com/r/whitepages/github-changelog/)
 
 ## Usage
 
@@ -95,8 +78,6 @@ Copyright © 2015-2018 Whitepages Inc.
 
 Distributed under [MIT license](http://choosealicense.com/licenses/mit/).
 
-[Leiningen]: http://leiningen.org/
-[Maven]: http://maven.apache.org/
 [Commit Message Format]: https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#commit-message-format
 [edn]: https://github.com/edn-format/edn
 [access token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
