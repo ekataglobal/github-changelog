@@ -24,7 +24,7 @@ with the following content:
 {:user       "user"
  :repo       "repo"
  :token      "0123456789abcdef0123456789abcdef01234567"}
-``` 
+```
 
 Then start with:
 
