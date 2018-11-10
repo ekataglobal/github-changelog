@@ -71,9 +71,9 @@ A more complete config example:
 ```
 
 
-## Change Log
+## Changes and example output
 
-* Version 0.1.0-SNAPSHOT
+Can be found here [CHANGELOG.md](CHANGELOG.md)
 
 
 ## Copyright and License
