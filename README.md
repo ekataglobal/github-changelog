@@ -1,35 +1,21 @@
 # GitHub changelog
 
 [![Continuous Integration status](https://api.travis-ci.org/whitepages/github-changelog.svg?branch=master)](http://travis-ci.org/whitepages/github-changelog)
+[![Docker Build Status](https://img.shields.io/docker/build/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/whitepages/github-changelog/)
+[![Docker pulls](https://img.shields.io/docker/pulls/whitepages/github-changelog.svg)](https://hub.docker.com/r/whitepages/github-changelog/)
+[![GitHub license](https://img.shields.io/github/license/whitepages/github-changelog.svg)](https://github.com/whitepages/github-changelog/blob/master/LICENSE)
 
 Pull-request based conventional changelog generator for GitHub projects which follow the AngularJS [Commit Message Format].
 
 
 ## Releases and Dependency Information
 
-* Releases are published to TODO_LINK
-
-* Latest stable release is TODO_LINK
-
-* All released versions TODO_LINK
-
-[Leiningen] dependency information:
-
-    [github-changelog "0.1.0-SNAPSHOT"]
-
-[Maven] dependency information:
-
-    <dependency>
-      <groupId>github-changelog</groupId>
-      <artifactId>github-changelog</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-    </dependency>
-
-
+* Releases are published to [GitHub](https://github.com/whitepages/github-changelog/releases)
+* Docker images automatically built at [Docker Hub](https://hub.docker.com/r/whitepages/github-changelog/)
 
 ## Usage
 
-### Command Line Interface
+### Jar
 
 It should be started with a [edn] config file
 with the following content:
@@ -38,7 +24,7 @@ with the following content:
 {:user       "user"
  :repo       "repo"
  :token      "0123456789abcdef0123456789abcdef01234567"}
-``` 
+```
 
 Then start with:
 
@@ -52,6 +38,10 @@ You could also pass in a configuration on stdin if you set the config filename t
 Here is an example usage:
 
     $ java -jar github-changelog.jar - < config.edn
+
+### Docker image
+
+    $ cat config.edn | docker run -i --rm whitepages/github-changelog -
 
 ### Config options
 
@@ -81,19 +71,17 @@ A more complete config example:
 ```
 
 
-## Change Log
+## Changes and example output
 
-* Version 0.1.0-SNAPSHOT
+Can be found here [CHANGELOG.md](CHANGELOG.md)
 
 
 ## Copyright and License
 
-Copyright © 2015-2016 Whitepages Inc.
+Copyright © 2015-2018 Whitepages Inc.
 
 Distributed under [MIT license](http://choosealicense.com/licenses/mit/).
 
-[Leiningen]: http://leiningen.org/
-[Maven]: http://maven.apache.org/
 [Commit Message Format]: https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#commit-message-format
 [edn]: https://github.com/edn-format/edn
 [access token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
