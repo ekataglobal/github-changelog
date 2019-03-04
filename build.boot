@@ -3,20 +3,20 @@
 (set-env!
  :source-paths #{"src/"}
  :dependencies
- '[[org.clojure/clojure "1.8.0"]
+ '[[org.clojure/clojure "1.10.0"]
    [clj-jgit "0.8.10"]
-   [clj-http "3.8.0"]
-   [cheshire "5.8.0"]
+   [org.martinklepsch/clj-http-lite "0.4.1"]
+   [metosin/jsonista "0.2.2"]
+   [org.clojure/core.async "0.4.490"] ; clojure spec fixed
    [throttler "1.0.0"]
    [org.slf4j/slf4j-nop "1.7.25"]
    [grimradical/clj-semver "0.3.0" :exclusions [org.clojure/clojure]]
-   [org.clojure/tools.cli "0.3.5"]
-   ; testing
+   [org.clojure/tools.cli "0.4.1"]
    [degree9/boot-semver "1.4.3" :scope "test"]
    [org.clojure/test.check "0.9.0" :scope "test"]
    [clj-http-fake "1.0.3" :scope "test"]
    [adzerk/boot-test "1.2.0" :scope "test"]
-   [tolitius/boot-check "0.1.9" :scope "test"]])
+   [tolitius/boot-check "0.1.12" :scope "test"]])
 
 (require
  '[adzerk.boot-test :as boot-test]
