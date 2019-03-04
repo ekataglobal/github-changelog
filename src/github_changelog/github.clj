@@ -37,15 +37,14 @@
 (defn- make-requests [config links]
   (map #(make-request config {:page %}) (gen-pages links)))
 
-(defn- issue-request-fn [endpoint]
-  (fn [request]
-    (let [response (http/get endpoint request)]
-      (update response :body j/read-value))))
+(defn- issue-request [endpoint request]
+  (let [response (http/get endpoint request)]
+    (update response :body j/read-value)))
 
 (defn- call-api-fn [config]
-  (let [rate-limit (get config :rate-limit 5)
-        end-point (pulls-url config)]
-    (throttler/throttle-fn (issue-request-fn end-point) rate-limit :second)))
+  (let [ratelimit (get config :rate-limit 5)
+        endpoint  (pulls-url config)]
+    (throttler/throttle-fn (partial issue-request endpoint) ratelimit :second)))
 
 (defn- get-pulls [config]
   (let [call-api (call-api-fn config)
