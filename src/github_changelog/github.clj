@@ -38,8 +38,7 @@
   (map #(make-request config {:page %}) (gen-pages links)))
 
 (defn- issue-request [endpoint request]
-  (let [response (http/get endpoint request)]
-    (update response :body j/read-value)))
+  (update (http/get endpoint request) :body j/read-value))
 
 (defn- call-api-fn [config]
   (let [ratelimit (get config :rate-limit 5)
