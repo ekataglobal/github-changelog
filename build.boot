@@ -14,7 +14,6 @@
    [org.clojure/tools.cli "0.4.1"]
    [degree9/boot-semver "1.4.3" :scope "test"]
    [org.clojure/test.check "0.9.0" :scope "test"]
-   [clj-http-fake "1.0.3" :scope "test"]
    [adzerk/boot-test "1.2.0" :scope "test"]
    [tolitius/boot-check "0.1.12" :scope "test"]])
 
