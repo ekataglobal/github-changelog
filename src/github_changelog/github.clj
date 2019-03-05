@@ -1,9 +1,10 @@
 (ns github-changelog.github
-  (:require [clj-http.client :as http]
+  (:require [clj-http.lite.client :as http]
             [clojure.string :as str]
             [github-changelog
              [defaults :as defaults]
              [util :as util]]
+            [jsonista.core :as j]
             [throttler.core :as throttler]))
 
 (defn parse-pull [pull]
@@ -36,10 +37,13 @@
 (defn- make-requests [config links]
   (map #(make-request config {:page %}) (gen-pages links)))
 
+(defn- issue-request [endpoint request]
+  (update (http/get endpoint request) :body j/read-value))
+
 (defn- call-api-fn [config]
-  (let [rate-limit (get config :rate-limit 5)
-        end-point (pulls-url config)]
-    (throttler/throttle-fn (partial http/get end-point) rate-limit :second)))
+  (let [ratelimit (get config :rate-limit 5)
+        endpoint  (pulls-url config)]
+    (throttler/throttle-fn (partial issue-request endpoint) ratelimit :second)))
 
 (defn- get-pulls [config]
   (let [call-api (call-api-fn config)

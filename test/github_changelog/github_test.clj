@@ -1,11 +1,11 @@
 (ns github-changelog.github-test
-  (:require [cheshire.core :refer [generate-string]]
-            [clj-http.fake :refer [with-fake-routes-in-isolation]]
+  (:require [clj-http.lite.client :as http]
             [clojure.test :refer :all]
             [clojure.test.check.generators :as gen]
             [github-changelog
              [github :as sut]
-             [schema-generators :as sgen]]))
+             [schema-generators :as sgen]]
+            [jsonista.core :as j]))
 
 (def config (sgen/complete-config {:user "raszi"
                                    :repo "changelog-test"}))
@@ -31,26 +31,35 @@
         pull (sut/parse-pull (sample-pull sha))]
     (is (= sha (:sha pull)))))
 
-(defn- mocked-response-fn
-  ([body] (mocked-response-fn body {}))
-  ([body options]
-   (let [body-str (generate-string body)]
-     (fn [_req] (merge {:status 200 :headers {} :body body-str} options)))))
+(defn- matching-response [request [rule response]]
+  (when (every? (fn [[key value]] (= value (get request key))) rule)
+    response))
+
+(defn- mocked-response-fn [rules]
+  (fn [request]
+    (if-let [response (some (partial matching-response request) rules)]
+      response
+      (throw (Exception. "No matching rules")))))
+
+(defn- mock-response
+  ([body] (mock-response body {}))
+  ([body opts]
+   (let [body-str (j/write-value-as-string body)]
+     (merge {:status 200 :headers {} :body body-str} opts))))
 
 (deftest fetch-pulls
   (testing "without multiple pages"
-    (let [body [(sample-pull)]]
-      (with-fake-routes-in-isolation
-        {{:address api-endpoint :query-params {:state "closed"}} (mocked-response-fn body)}
+    (let [response (mock-response [(sample-pull)])]
+      (with-redefs [http/request (mocked-response-fn {{:url api-endpoint :query-params {:state "closed"}} response})]
         (let [result (sut/fetch-pulls config)]
           (is (= 1 (count result)))))))
 
   (testing "with multiple pages"
-    (let [first-body (repeatedly 10 sample-pull)
-          links {:last {:href "?page=2"}}
-          second-body (repeatedly 10 sample-pull)]
-      (with-fake-routes-in-isolation
-        {{:address api-endpoint :query-params {:state "closed"}} (mocked-response-fn first-body {:links links})
-         {:address api-endpoint :query-params {:state "closed" :page "2"}} (mocked-response-fn second-body)}
+    (let [links       {:last {:href "?page=2"}}
+          first-resp  (mock-response (repeatedly 10 sample-pull) {:links links})
+          second-resp (mock-response (repeatedly 10 sample-pull))]
+      (with-redefs [http/request (mocked-response-fn
+                                  {{:url api-endpoint :query-params {:state "closed"}}         first-resp
+                                   {:url api-endpoint :query-params {:state "closed" :page 2}} second-resp})]
         (let [result (sut/fetch-pulls config)]
           (is (= 20 (count result))))))))
