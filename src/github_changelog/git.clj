@@ -1,61 +1,72 @@
 (ns github-changelog.git
-  (:require [clj-jgit
-             [porcelain :as git]
-             [util :as jgit-util]]
-            [clojure.string :as string]
+  (:require [clojure.java.shell :as shell]
+            [clojure.string :as str]
             [github-changelog
              [defaults :as defaults]
-             [util :as util]])
-  (:import java.io.FileNotFoundException
-           org.eclipse.jgit.api.Git
-           [org.eclipse.jgit.lib Ref Repository]
-           org.eclipse.jgit.revwalk.RevCommit))
+             [fs :as fs]
+             [util :as util]]))
 
 (defn gen-url [{:keys [github user repo]
                 :or   {github (:github defaults/config)}}]
   (format "%s/%s/%s.git" (util/strip-trailing github) user repo))
 
-(def git-path jgit-util/name-from-uri)
+(defn name-from-uri [uri]
+  (second (re-find #"/([^/]*?)(?:\.git)?$" uri)))
 
-(defn- clone-or-load [uri dir]
-  (try
-    (git/load-repo dir)
-    (catch FileNotFoundException _
-      (git/git-clone uri dir))))
+(defn exec [& args]
+  (let [[_cmd opts] (split-with string? args)
+        exit-codes  (get (apply hash-map opts) :exit-codes #{0})
+        return      (apply shell/sh args)]
+    (if (exit-codes (:exit return))
+      return
+      (throw (ex-info "Command execution failed" {:cmd args :return return})))))
 
-(defn- refresh [^Repository repo]
-  (git/git-fetch-all repo)
+(defn clone
+  ([uri] (clone uri (name-from-uri uri)))
+  ([uri dir]
+   (exec "git" "clone" uri dir)
+   dir))
+
+(defn git-dir? [dir]
+  (when (and (fs/dir? dir) (fs/dir? (fs/as-file dir ".git")))
+    (let [exit (:exit (shell/sh "git" "status" :dir dir))]
+      (zero? exit))))
+
+(defn clone-or-load [uri dir]
+  (if (git-dir? dir) dir (clone uri dir)))
+
+(defn refresh [repo]
+  (exec "git" "pull" "origin" :dir repo)
   repo)
 
-(defn clone [{:keys [git-url dir update?]
-              :or   {git-url (gen-url config)
-                     dir     (git-path git-url)
-                     update? (:update? defaults/config)}
-              :as config}]
+(defn init [{:keys [git-url dir update?] :or {git-url (gen-url config)
+                                              dir     (name-from-uri git-url)
+                                              update? (:update? defaults/config)}
+             :as   config}]
   (cond-> (clone-or-load git-url dir)
     update? refresh))
 
-(defn- get-merge-sha [^Repository repo ^Ref tag]
-  (let [peeled (.peel repo tag)]
-    (.name (if-let [peeled-id (.getPeeledObjectId peeled)] peeled-id (.getObjectId peeled)))))
+;; (defn- get-merge-sha [^Repository repo ^Ref tag]
+;;   (let [peeled (.peel repo tag)]
+;;     (.name (if-let [peeled-id (.getPeeledObjectId peeled)] peeled-id (.getObjectId peeled)))))
 
-(defn- map-tag-name [^Ref tag]
-  (string/replace (.getName tag) #"^refs/tags/" ""))
+(defn- map-tag-name [tag]
+  (str/replace tag #"^refs/tags/" ""))
 
-(defn- map-tag [^Repository repo ^Ref tag]
-  {:name (map-tag-name tag)
-   :sha (get-merge-sha repo tag)})
+(defn- map-tag [line]
+  (let [[sha tag] (str/split line #" " 2)]
+    {:name (map-tag-name tag)
+     :sha  sha}))
 
-(defn tags [^Git git]
-  (let [repo (.getRepository git)
-        tags (.. git tagList call)]
-    (map (partial map-tag repo) tags)))
+(defn- split-lines [lines]
+  (some-> lines str/trim not-empty str/split-lines))
 
-(defn- get-commit-sha [^RevCommit log]
-  (.name log))
+(defn tags [dir]
+  (->> (exec "git" "show-ref" "--tags" :exit-codes #{0 1} :dir dir)
+       (:out)
+       (split-lines)
+       (map map-tag)))
 
-(defn commits [^Git git from until]
-  (map get-commit-sha
-       (if (nil? from)
-         (git/git-log git until)
-         (git/git-log git from until))))
+(defn commits [dir from until]
+  (let [commit (if (nil? until) from (format "%s..%s" from until))]
+    (split-lines (exec "git" "rev-list" commit :dir dir))))

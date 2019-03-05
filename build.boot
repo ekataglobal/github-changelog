@@ -4,7 +4,6 @@
  :source-paths #{"src/"}
  :dependencies
  '[[org.clojure/clojure "1.9.0"]
-   [clj-jgit "0.8.10"]
    [org.martinklepsch/clj-http-lite "0.4.1"]
    [metosin/jsonista "0.2.2"]
    [org.clojure/core.async "0.4.490"] ; clojure spec fixed
