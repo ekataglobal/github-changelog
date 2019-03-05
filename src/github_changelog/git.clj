@@ -67,8 +67,15 @@
        (split-lines)
        (map map-tag)))
 
+(defn initial-commit [dir]
+  (-> (exec "git" "rev-list" "--max-parents=0" "HEAD" :dir dir)
+      :out
+      str/trim))
+
 (defn commits [dir from until]
-  (let [commit (format "%s..%s" from (or until "HEAD"))]
+  (let [commit (format "%s..%s"
+                       (or from (initial-commit dir))
+                       (or until "HEAD"))]
     (-> (exec "git" "rev-list" commit :dir dir)
         :out
         split-lines)))
