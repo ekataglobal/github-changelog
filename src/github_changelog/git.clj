@@ -68,5 +68,7 @@
        (map map-tag)))
 
 (defn commits [dir from until]
-  (let [commit (if (nil? until) from (format "%s..%s" from until))]
-    (split-lines (exec "git" "rev-list" commit :dir dir))))
+  (let [commit (format "%s..%s" from (or until "HEAD"))]
+    (-> (exec "git" "rev-list" commit :dir dir)
+        :out
+        split-lines)))

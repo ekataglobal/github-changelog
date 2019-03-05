@@ -3,7 +3,8 @@
             [clojure.test :refer :all]
             [github-changelog
              [fs :as fs]
-             [git :as sut]])
+             [git :as sut]]
+            [clojure.string :as str])
   (:import java.util.UUID))
 
 (def config {:user "user" :repo "repo"})
@@ -84,3 +85,11 @@
     (is (= 1 (tag-fn)))
     (add-tag repo)
     (is (= 2 (tag-fn)))))
+
+(deftest commits
+  (let [[repo]    (init-repo)
+        initial   (str/trim (:out (shell/sh "git" "rev-list" "--max-parents=0" "HEAD" :dir repo)))
+        commit-fn #(count (sut/commits repo initial nil))]
+    (is (zero? (commit-fn)))
+    (add-file repo)
+    (is (= 1 (commit-fn)))))
