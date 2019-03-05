@@ -1,7 +1,8 @@
 (ns github-changelog.core-test
   (:require [clojure.test :refer :all]
-            [github-changelog.core :as sut]
-            [github-changelog.git-helper :as gh]))
+            [github-changelog
+             [core :as sut]
+             [git-helper :as gh]]))
 
 (deftest filter-tags
   (let [versions ["1.3.0" "1.2.0" "1.1.0" "1.0.0" "0.5.0" "0.2.0" "0.1.0"]
