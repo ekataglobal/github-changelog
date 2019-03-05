@@ -3,7 +3,7 @@
 (set-env!
  :source-paths #{"src/"}
  :dependencies
- '[[org.clojure/clojure "1.10.0"]
+ '[[org.clojure/clojure "1.9.0"]
    [clj-jgit "0.8.10"]
    [org.martinklepsch/clj-http-lite "0.4.1"]
    [metosin/jsonista "0.2.2"]
