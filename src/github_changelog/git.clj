@@ -46,10 +46,6 @@
   (cond-> (clone-or-load git-url dir)
     update? refresh))
 
-;; (defn- get-merge-sha [^Repository repo ^Ref tag]
-;;   (let [peeled (.peel repo tag)]
-;;     (.name (if-let [peeled-id (.getPeeledObjectId peeled)] peeled-id (.getObjectId peeled)))))
-
 (defn- map-tag-name [tag]
   (str/replace tag #"^refs/tags/" ""))
 
