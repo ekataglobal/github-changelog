@@ -4,8 +4,6 @@
            [java.nio.file Files FileVisitResult Path SimpleFileVisitor]
            java.nio.file.attribute.FileAttribute))
 
-(set! *warn-on-reflection* true)
-
 (def empty-file-attrs (into-array FileAttribute []))
 
 (defn tmp []
