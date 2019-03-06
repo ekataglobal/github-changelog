@@ -20,6 +20,16 @@
 (deftest gen-url
   (is (= "https://github.com/user/repo.git" (sut/gen-url config))))
 
+(deftest git-dir?
+  (let [[git-dir] (gh/init-repo)
+        tmp-dir   (fs/tmp-dir)]
+    (try
+      (is (sut/git-dir? git-dir))
+      (is (not (sut/git-dir? tmp-dir)))
+      (finally
+        (fs/rm-dir git-dir)
+        (fs/rm-dir tmp-dir)))))
+
 (deftest clone
   (let [[base file] (gh/init-repo)
         work        (fs/tmp-dir nil "github-changelog-clone_")

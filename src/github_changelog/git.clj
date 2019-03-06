@@ -29,8 +29,9 @@
 
 (defn git-dir? [dir]
   (when (and (fs/dir? dir) (fs/dir? (fs/as-file dir ".git")))
-    (let [exit (:exit (shell/sh "git" "status" :dir dir))]
-      (zero? exit))))
+    (-> (shell/sh "git" "status" :dir dir)
+        :exit
+        zero?)))
 
 (defn clone-or-load [uri dir]
   (if (git-dir? dir) dir (clone uri dir)))
