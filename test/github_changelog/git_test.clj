@@ -34,49 +34,63 @@
   (let [[base file] (gh/init-repo)
         work        (fs/tmp-dir nil "github-changelog-clone_")
         repo        (sut/clone base work)]
-    (is (sut/git-dir? repo))
-    (is (fs/file? (fs/as-file work file)))
-    (fs/rm-dir base)
-    (fs/rm-dir work)))
+    (try
+      (is (sut/git-dir? repo))
+      (is (fs/file? (fs/as-file work file)))
+      (finally
+        (fs/rm-dir base)
+        (fs/rm-dir work)))))
 
 (deftest clone-or-load
   (testing "with an existing repo"
     (let [[base] (gh/init-repo)]
-      (sut/clone-or-load base base)
-      (is (sut/git-dir? base))
-      (fs/rm-dir base)))
+      (try
+        (sut/clone-or-load base base)
+        (is (sut/git-dir? base))
+        (finally
+          (fs/rm-dir base)))))
   (testing "with a non-existing repo"
     (let [[base file] (gh/init-repo)
           other       (fs/tmp-dir)]
-      (sut/clone-or-load base other)
-      (is (sut/git-dir? other))
-      (is (fs/file? (fs/as-file other file)))
-      (fs/rm-dir base)
-      (fs/rm-dir other))))
+      (try
+        (sut/clone-or-load base other)
+        (is (sut/git-dir? other))
+        (is (fs/file? (fs/as-file other file)))
+        (finally
+          (fs/rm-dir base)
+          (fs/rm-dir other))))))
 
 (deftest refresh
   (let [[base] (gh/init-repo)
         other  (fs/tmp-dir nil "github-changelog-clone_")
         _      (sut/clone-or-load base other)
         name   (gh/add-file base)]
-    (is (not (fs/exists? (fs/as-file other name))))
-    (sut/refresh other)
-    (is (fs/exists? (fs/as-file other name)))
-    (fs/rm-dir base)
-    (fs/rm-dir other)))
+    (try
+      (is (not (fs/exists? (fs/as-file other name))))
+      (sut/refresh other)
+      (is (fs/exists? (fs/as-file other name)))
+      (finally
+        (fs/rm-dir base)
+        (fs/rm-dir other)))))
 
 (deftest tags
   (let [[repo] (gh/init-repo)
         tag-fn #(count (sut/tags repo))]
-    (is (zero? (tag-fn)))
-    (gh/add-tag repo)
-    (is (= 1 (tag-fn)))
-    (gh/add-tag repo)
-    (is (= 2 (tag-fn)))))
+    (try
+      (is (zero? (tag-fn)))
+      (gh/add-tag repo)
+      (is (= 1 (tag-fn)))
+      (gh/add-tag repo)
+      (is (= 2 (tag-fn)))
+      (finally
+        (fs/rm-dir repo)))))
 
 (deftest commits
   (let [[repo]    (gh/init-repo)
         commit-fn #(count (sut/commits repo nil nil))]
-    (is (zero? (commit-fn)))
-    (gh/add-file repo)
-    (is (= 1 (commit-fn)))))
+    (try
+      (is (zero? (commit-fn)))
+      (gh/add-file repo)
+      (is (= 1 (commit-fn)))
+      (finally
+        (fs/rm-dir repo)))))

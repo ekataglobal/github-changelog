@@ -39,14 +39,18 @@
 (deftest tmp-dir
   (testing "without arguments"
     (let [dir (sut/tmp-dir)]
-      (dir-tests dir)
-      (sut/rm dir)))
+      (try
+        (dir-tests dir)
+        (finally
+          (sut/rm dir)))))
   (testing "with prefix"
     (let [dir  (sut/tmp-dir nil "github-changelog_")
           name (sut/basename dir)]
-      (dir-tests dir)
-      (is (str/starts-with? name "github-changelog_"))
-      (sut/rm dir))))
+      (try
+        (dir-tests dir)
+        (is (str/starts-with? name "github-changelog_"))
+        (finally
+          (sut/rm dir))))))
 
 (deftest dir?
   (is (sut/dir? (System/getProperty "java.io.tmpdir")))
