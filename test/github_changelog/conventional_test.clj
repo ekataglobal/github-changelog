@@ -1,5 +1,7 @@
 (ns github-changelog.conventional-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure
+             [string :as str]
+             [test :refer :all]]
             [github-changelog
              [conventional :as sut]
              [schema-generators :as g]]))
@@ -8,17 +10,31 @@
 (def jira-url "http://dev.clojure.org/jira/")
 (def config (g/complete-config {:jira jira-url}))
 
+(def jira-id "JIRA-1")
+(def jira-issue-url (str jira-url "browse/" jira-id))
+
+(defn generate-pull [body]
+  (g/complete-pull {:body body :base {:repo {:html_url repo-url}}}))
+
 (deftest parse-issue
   (testing "with a JIRA issue"
-    (let [pull (g/complete-pull {:body "Fixes JIRA-1"})
-          jira-issue-url "http://dev.clojure.org/jira/browse/JIRA-1"]
+    (let [body (format "Fixes %s" jira-id)
+          pull (generate-pull body)]
       (is (= [["JIRA-1" jira-issue-url]] (sut/parse-issues config pull)))))
   (testing "with a GitHub issue"
-    (let [pull (g/complete-pull {:body "Fixes #1" :base {:repo {:html_url repo-url}}})]
+    (let [pull (generate-pull "Fixes #1")]
       (is (= [["#1" (str repo-url "/issues/1")]] (sut/parse-issues config pull))))))
 
 (defn revert-pull [{:keys [user repo]} pull-id]
   (g/complete-revert-pull {:body (format "Reverts %s/%s#%d" user repo pull-id)}))
+
+(deftest parse-issues
+  (let [related (format "Related to [%s](%s)" jira-id jira-issue-url)
+        fixes   (format "Fixes #1")
+        body    (str/join '\n [related fixes])
+        pull    (generate-pull body)]
+    (is (= [[jira-id jira-issue-url]
+             ["#1" "https://github.company.com/user/repo/issues/1"]] (sut/parse-issues config pull)))))
 
 (deftest parse-pull
   (testing "with a revert"
