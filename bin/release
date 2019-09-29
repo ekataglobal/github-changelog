@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+case "${1}" in
+  major|minor|patch)
+    clj -A:release ${1}
+    ;;
+  *)
+    echo $'Usage: ${0} {major|minor|patch}' >&2
+    exit 1
+esac
+
+clj -A:metav -m "metav.spit" "-o" "target" "-f" "json"
+ARTIFACT_ID=$(cat target/meta.json | jq -r '."module-name"')
+ARTIFACT_VERSION=$(cat target/meta.json | jq -r '."version"')
+ARTIFACT_TAG=$(cat target/meta.json | jq -r '."tag"')
+JAR_FILENAME="$ARTIFACT_TAG.jar"
+
+clojure -A:depstar -m hf.depstar.uberjar ${JAR_FILENAME}
