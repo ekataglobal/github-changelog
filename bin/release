@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
+
 case "${1}" in
   major|minor|patch)
-    clj -A:release ${1}
+    clj -A:metav -m "metav.release" ${1}
     ;;
   *)
     echo $'Usage: ${0} {major|minor|patch}' >&2

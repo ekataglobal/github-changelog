@@ -13,8 +13,5 @@
                      :extra-deps  {org.clojure/test.check        {:mvn/version "0.9.0"}
                                    lambdaisland/kaocha           {:mvn/version "0.0-541"}
                                    lambdaisland/kaocha-cloverage {:mvn/version "0.0-41"}}}
-           :release {:extra-deps {metav {:mvn/version "1.5.4"}}
-                     :main-opts  ["-m" "metav.release"]}
-           :spit    {:extra-deps {metav {:mvn/version "1.5.4"}}
-                     :main-opts  ["-m" "metav.spit"]}
+           :metav   {:extra-deps {metav {:mvn/version "1.5.4"}}}
            :depstar {:extra-deps {seancorfield/depstar {:mvn/version "0.3.3"}}}}}
