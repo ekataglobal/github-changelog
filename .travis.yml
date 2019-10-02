@@ -5,7 +5,7 @@ jdk:
 install:
   - mkdir -p ~/bin
   - export PATH=~/bin:$PATH
-  - curl -O https://download.clojure.org/install/linux-install-1.10.1.469.sh -o ~/bin/linux-install
+  - curl https://download.clojure.org/install/linux-install-1.10.1.469.sh -o ~/bin/linux-install
   - chmod +x ~/bin/linux-install
   - ./bin/linux-install
 script: ./bin/kaocha
