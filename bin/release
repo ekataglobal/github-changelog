@@ -17,4 +17,4 @@ ARTIFACT_VERSION=$(cat target/meta.json | jq -r '."version"')
 ARTIFACT_TAG=$(cat target/meta.json | jq -r '."tag"')
 JAR_FILENAME="$ARTIFACT_TAG.jar"
 
-clojure -A:depstar -m "hf.depstar.uberjar" ${JAR_FILENAME}
+./build ${JAR_FILENAME}

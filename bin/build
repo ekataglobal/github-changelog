@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+
+clojure -A:uberdeps -m "uberdeps.uberjar" --target ${1}

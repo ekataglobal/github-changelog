@@ -9,9 +9,9 @@
            grimradical/clj-semver          {:mvn/version "0.3.0"
                                             :exclusions  [org.clojure/clojure]}
            org.clojure/tools.cli           {:mvn/version "0.4.1"}}
- :aliases {:test    {:extra-paths ["test"]
-                     :extra-deps  {org.clojure/test.check        {:mvn/version "0.9.0"}
-                                   lambdaisland/kaocha           {:mvn/version "0.0-541"}
-                                   lambdaisland/kaocha-cloverage {:mvn/version "0.0-41"}}}
-           :metav   {:extra-deps {metav {:mvn/version "1.5.4"}}}
-           :depstar {:extra-deps {seancorfield/depstar {:mvn/version "0.3.3"}}}}}
+ :aliases {:test     {:extra-paths ["test"]
+                      :extra-deps  {org.clojure/test.check        {:mvn/version "0.9.0"}
+                                    lambdaisland/kaocha           {:mvn/version "0.0-541"}
+                                    lambdaisland/kaocha-cloverage {:mvn/version "0.0-41"}}}
+           :metav    {:extra-deps {metav {:mvn/version "1.5.4"}}}
+           :uberdeps {:extra-deps {uberdeps {:mvn/version "0.1.4"}}}}}
