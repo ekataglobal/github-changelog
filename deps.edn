@@ -1,0 +1,17 @@
+{:paths   ["src"]
+ :deps    {org.clojure/clojure             {:mvn/version "1.10.1"}
+           clj-jgit                        {:mvn/version "0.8.10"}
+           org.martinklepsch/clj-http-lite {:mvn/version "0.4.1"}
+           metosin/jsonista                {:mvn/version "0.2.4"}
+           org.clojure/core.async          {:mvn/version "0.4.500"} ; clojure spec fixed
+           throttler                       {:mvn/version "1.0.0"}
+           org.slf4j/slf4j-nop             {:mvn/version "1.7.28"}
+           grimradical/clj-semver          {:mvn/version "0.3.0"
+                                            :exclusions  [org.clojure/clojure]}
+           org.clojure/tools.cli           {:mvn/version "0.4.2"}}
+ :aliases {:test     {:extra-paths ["test"]
+                      :extra-deps  {org.clojure/test.check        {:mvn/version "0.9.0"}
+                                    lambdaisland/kaocha           {:mvn/version "0.0-541"}
+                                    lambdaisland/kaocha-cloverage {:mvn/version "0.0-41"}}}
+           :metav    {:extra-deps {metav {:mvn/version "1.5.4"}}}
+           :uberdeps {:extra-deps {uberdeps {:mvn/version "0.1.4"}}}}}
