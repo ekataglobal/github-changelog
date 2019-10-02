@@ -2,4 +2,4 @@
 
 set -e
 
-clojure -A:uberdeps -m "uberdeps.uberjar" --target ${1}
+clj -A:uberdeps -m "uberdeps.uberjar" --target ${1}
