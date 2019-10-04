@@ -40,9 +40,10 @@
   (exec "git" "pull" "origin" :dir repo)
   repo)
 
-(defn init [{:keys [git-url dir update?] :or {git-url (gen-url config)
-                                              dir     (name-from-uri git-url)
-                                              update? (:update? defaults/config)}
+(defn init [{:keys [git-url dir update?]
+             :or   {git-url (gen-url config)
+                    dir     (name-from-uri git-url)
+                    update? (:update? defaults/config)}
              :as   config}]
   (cond-> (clone-or-load git-url dir)
     update? refresh))

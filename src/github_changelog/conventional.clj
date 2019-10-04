@@ -65,7 +65,7 @@
 
 (defn filter-reverted [pulls pull]
   (let [reverted-pulls (reverted-ids pulls)
-        pull-id (get-in pull [:pull-request :number])]
+        pull-id        (get-in pull [:pull-request :number])]
     (if (reverted-pulls pull-id)
       pulls
       (conj pulls pull))))

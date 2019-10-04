@@ -53,12 +53,12 @@
     (throttler/throttle-fn (partial issue-request endpoint) ratelimit :second)))
 
 (defn- get-pulls [config]
-  (let [call-api (call-api-fn config)
-        first-request (make-request config)
-        first-response (call-api first-request)
+  (let [call-api                        (call-api-fn config)
+        first-request                   (make-request config)
+        first-response                  (call-api first-request)
         {links :links first-body :body} first-response
-        rest-requests (make-requests config links)
-        rest-responses (pmap call-api rest-requests)]
+        rest-requests                   (make-requests config links)
+        rest-responses                  (pmap call-api rest-requests)]
     (into first-body (flatten (map :body rest-responses)))))
 
 (defn fetch-pulls [config]

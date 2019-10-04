@@ -21,7 +21,7 @@
 (defn emphasis [text] (format "**%s**" text))
 
 (defn li [body]
-  (let [lines (str/split-lines body)
+  (let [lines      (str/split-lines body)
         first-line (str "* " (first lines))
         rest-lines (mapv (partial str "  ") (rest lines))]
     (str \newline (str/join \newline (into [first-line] rest-lines)))))
