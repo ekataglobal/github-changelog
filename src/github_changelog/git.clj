@@ -30,8 +30,8 @@
 (defn git-dir? [dir]
   (when (and (fs/dir? dir) (fs/dir? (fs/as-file dir ".git")))
     (-> (shell/sh "git" "status" :dir dir)
-        :exit
-        zero?)))
+        (:exit)
+        (zero?))))
 
 (defn clone-or-load [uri dir]
   (if (git-dir? dir) dir (clone uri dir)))
@@ -75,5 +75,5 @@
                        (or from (initial-commit dir))
                        (or until "HEAD"))]
     (-> (exec "git" "rev-list" commit :dir dir)
-        :out
-        split-lines)))
+        (:out)
+        (split-lines))))
