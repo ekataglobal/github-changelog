@@ -41,10 +41,10 @@
   (apply concat ((juxt jira-issues github-issues) config pull)))
 
 (defn parse-revert [{:keys [user repo]} {:keys [title body]}]
-  (if (str/starts-with? title "Revert ")
-    (let [revert-prefix (format "Reverts %s/%s#" user repo)
+  (when (str/starts-with? title "Revert ")
+    (let [revert-prefix    (format "Reverts %s/%s#" user repo)
           [prefix pull-id] (map str/join (split-at (count revert-prefix) body))]
-      (if (str/starts-with? prefix revert-prefix)
+      (when (str/starts-with? prefix revert-prefix)
         (parse-int pull-id)))))
 
 (defn parse-pull [config {:keys [title] :as pull}]
@@ -63,7 +63,7 @@
        (remove nil?)
        (set)))
 
-(defn filter-reverted [pulls {:keys [revert-pull pull-request] :as pull}]
+(defn filter-reverted [pulls pull]
   (let [reverted-pulls (reverted-ids pulls)
         pull-id (get-in pull [:pull-request :number])]
     (if (reverted-pulls pull-id)
