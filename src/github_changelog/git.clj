@@ -67,8 +67,8 @@
 
 (defn initial-commit [dir]
   (-> (exec "git" "rev-list" "--max-parents=0" "HEAD" :dir dir)
-      :out
-      str/trim))
+      (:out)
+      (str/trim)))
 
 (defn commits [dir from until]
   (let [commit (format "%s..%s"
