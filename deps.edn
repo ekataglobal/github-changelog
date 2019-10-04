@@ -1,6 +1,5 @@
 {:paths   ["src"]
  :deps    {org.clojure/clojure             {:mvn/version "1.10.1"}
-           clj-jgit                        {:mvn/version "0.8.10"}
            org.martinklepsch/clj-http-lite {:mvn/version "0.4.1"}
            metosin/jsonista                {:mvn/version "0.2.4"}
            org.clojure/core.async          {:mvn/version "0.4.500"} ; clojure spec fixed

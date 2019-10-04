@@ -28,7 +28,7 @@ with the following content:
 
 Then start with:
 
-    $ java -jar github-changelog.jar config.edn
+    $ java -cp github-changelog.jar clojure.main -m github-changelog.cli config.edn
 
 This will clone the user/repo repository from GitHub into the current directory
 and will generate the changelog for it.
@@ -37,7 +37,7 @@ You could also pass in a configuration on stdin if you set the config filename t
 
 Here is an example usage:
 
-    $ java -jar github-changelog.jar - < config.edn
+    $ java -cp github-changelog.jar clojure.main -m github-changelog.cli - < config.edn
 
 ### Docker image
 
@@ -78,7 +78,7 @@ Can be found here [CHANGELOG.md](CHANGELOG.md)
 
 ## Copyright and License
 
-Copyright © 2015-2018 Whitepages Inc.
+Copyright © 2015-2019 Whitepages Inc.
 
 Distributed under [MIT license](http://choosealicense.com/licenses/mit/).
 

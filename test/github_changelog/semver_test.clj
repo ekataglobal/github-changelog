@@ -30,7 +30,7 @@
 
 (deftest newer?
   (let [high (sgen/complete-semver {:major 1})
-        low (sgen/complete-semver {:major 0})]
+        low  (sgen/complete-semver {:major 0})]
     (is (sut/newer? high low))
     (is (not (sut/newer? low high)))))
 

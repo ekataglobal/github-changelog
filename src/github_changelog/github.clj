@@ -5,7 +5,8 @@
              [defaults :as defaults]
              [util :as util]]
             [jsonista.core :as j]
-            [throttler.core :as throttler]))
+            [throttler.core :as throttler])
+  (:import com.fasterxml.jackson.databind.ObjectMapper))
 
 (defn parse-pull [pull]
   (assoc pull :sha (get-in pull [:head :sha])))
@@ -37,8 +38,14 @@
 (defn- make-requests [config links]
   (map #(make-request config {:page %}) (gen-pages links)))
 
+(def ^ObjectMapper mapper
+  (j/object-mapper {:decode-key-fn true}))
+
+(defn parse-json [str]
+  (j/read-value str mapper))
+
 (defn- issue-request [endpoint request]
-  (update (http/get endpoint request) :body j/read-value))
+  (update (http/get endpoint request) :body parse-json))
 
 (defn- call-api-fn [config]
   (let [ratelimit (get config :rate-limit 5)
@@ -46,12 +53,12 @@
     (throttler/throttle-fn (partial issue-request endpoint) ratelimit :second)))
 
 (defn- get-pulls [config]
-  (let [call-api (call-api-fn config)
-        first-request (make-request config)
-        first-response (call-api first-request)
+  (let [call-api                        (call-api-fn config)
+        first-request                   (make-request config)
+        first-response                  (call-api first-request)
         {links :links first-body :body} first-response
-        rest-requests (make-requests config links)
-        rest-responses (pmap call-api rest-requests)]
+        rest-requests                   (make-requests config links)
+        rest-responses                  (pmap call-api rest-requests)]
     (into first-body (flatten (map :body rest-responses)))))
 
 (defn fetch-pulls [config]

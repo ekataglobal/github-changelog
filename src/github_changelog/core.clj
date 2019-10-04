@@ -18,11 +18,11 @@
        (sort-by :version semver/newer?)
        (assoc-ranges)))
 
-(defn assoc-commits [git {:keys [from sha] :as tag}]
-  (assoc tag :commits (git/commits git from sha)))
+(defn assoc-commits [git-repo {:keys [from sha] :as tag}]
+  (assoc tag :commits (git/commits git-repo from sha)))
 
 (defn load-tags [config]
-  (let [git-repo (git/clone config)
+  (let [git-repo (git/init config)
         tags     (git/tags git-repo)
         prefix   (get config :tag-prefix "v")]
     (map (partial assoc-commits git-repo) (parse-tags tags prefix))))

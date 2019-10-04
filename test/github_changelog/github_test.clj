@@ -47,11 +47,15 @@
    (let [body-str (j/write-value-as-string body)]
      (merge {:status 200 :headers {} :body body-str} opts))))
 
+(defn- valid-pull? [pr]
+  (and (every? keyword? (keys pr)) (:sha pr)))
+
 (deftest fetch-pulls
   (testing "without multiple pages"
     (let [response (mock-response [(sample-pull)])]
       (with-redefs [http/request (mocked-response-fn {{:url api-endpoint :query-params {:state "closed"}} response})]
         (let [result (sut/fetch-pulls config)]
+          (is (every? valid-pull? result))
           (is (= 1 (count result)))))))
 
   (testing "with multiple pages"
@@ -62,4 +66,5 @@
                                   {{:url api-endpoint :query-params {:state "closed"}}         first-resp
                                    {:url api-endpoint :query-params {:state "closed" :page 2}} second-resp})]
         (let [result (sut/fetch-pulls config)]
+          (is (every? valid-pull? result))
           (is (= 20 (count result))))))))
