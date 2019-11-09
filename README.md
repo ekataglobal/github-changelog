@@ -49,7 +49,7 @@ Here is an example usage:
 |---------------|------------------------------------------------------------------|----------|
 | `:user`       | Username for the repo                                            | ✓        |
 | `:repo`       | Repository name                                                  | ✓        |
-| `:token`      | GitHub [access token] to reach the API                           | ✓        |
+| `:token`      | GitHub [access token] to reach the API                           | ✗        |
 | `:github`     | GitHub URL                                                       | ✗        |
 | `:github-api` | URL for [GitHub Enterprise API]                                  | ✗        |
 | `:jira`       | JIRA URL if you're using that for issue tracking                 | ✗        |
