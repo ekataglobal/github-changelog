@@ -36,10 +36,11 @@
                            "Authorization" "token abcdef"}}
            (#'sut/make-request {:token "abcdef"} {:param1 ::value1 :param2 ::value2}))))
   (testing "without token"
-    (is (= {:as :json
+    (is (= {:as           :json
             :query-params {:param1 ::value1
                            :param2 ::value2
-                           :state  "closed"}}
+                           :state  "closed"}
+            :headers      {"User-Agent" "GitHub-Changelog"}}
            (#'sut/make-request {} {:param1 ::value1 :param2 ::value2})))))
 
 (deftest parse-pull
