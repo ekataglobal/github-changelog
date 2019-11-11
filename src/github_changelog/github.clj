@@ -15,11 +15,11 @@
                   :or   {github-api (:github-api defaults/config)}}]
   (format "%s/repos/%s/%s/pulls" (util/strip-trailing github-api) user repo))
 
-(defn- headers [token]
+(defn headers [token]
   (cond-> {"User-Agent" "GitHub-Changelog"}
     token (assoc "Authorization" (str "token " token))))
 
-(defn- make-request
+(defn make-request
   ([config] (make-request config {}))
   ([{oauth-token :token} params]
    {:as           :json

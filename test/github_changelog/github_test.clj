@@ -34,14 +34,14 @@
                            :state  "closed"}
             :headers      {"User-Agent"    "GitHub-Changelog"
                            "Authorization" "token abcdef"}}
-           (#'sut/make-request {:token "abcdef"} {:param1 ::value1 :param2 ::value2}))))
+           (sut/make-request {:token "abcdef"} {:param1 ::value1 :param2 ::value2}))))
   (testing "without token"
     (is (= {:as           :json
             :query-params {:param1 ::value1
                            :param2 ::value2
                            :state  "closed"}
             :headers      {"User-Agent" "GitHub-Changelog"}}
-           (#'sut/make-request {} {:param1 ::value1 :param2 ::value2})))))
+           (sut/make-request {} {:param1 ::value1 :param2 ::value2})))))
 
 (deftest parse-pull
   (let [sha (gen/generate sgen/sha)
