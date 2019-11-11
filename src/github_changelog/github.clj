@@ -15,13 +15,16 @@
                   :or   {github-api (:github-api defaults/config)}}]
   (format "%s/repos/%s/%s/pulls" (util/strip-trailing github-api) user repo))
 
-(defn- make-request
+(defn headers [token]
+  (cond-> {"User-Agent" "GitHub-Changelog"}
+    token (assoc "Authorization" (str "token " token))))
+
+(defn make-request
   ([config] (make-request config {}))
   ([{oauth-token :token} params]
    {:as           :json
     :query-params (merge {:state "closed"} params)
-    :headers      {"User-Agent"    "GitHub-Changelog"
-                   "Authorization" (str "token " oauth-token)}}))
+    :headers      (headers oauth-token)}))
 
 (defn- last-page-number [links]
   (some-> (get-in links [:last :href])

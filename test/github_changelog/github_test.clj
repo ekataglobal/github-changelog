@@ -26,6 +26,23 @@
     (let [alter-config (merge config {:github-api "http://enterprise.example.com/api/v3/"})]
       (is (= "http://enterprise.example.com/api/v3/repos/raszi/changelog-test/pulls" (sut/pulls-url alter-config))))))
 
+(deftest make-request
+  (testing "with token"
+    (is (= {:as           :json
+            :query-params {:param1 ::value1
+                           :param2 ::value2
+                           :state  "closed"}
+            :headers      {"User-Agent"    "GitHub-Changelog"
+                           "Authorization" "token abcdef"}}
+           (sut/make-request {:token "abcdef"} {:param1 ::value1 :param2 ::value2}))))
+  (testing "without token"
+    (is (= {:as           :json
+            :query-params {:param1 ::value1
+                           :param2 ::value2
+                           :state  "closed"}
+            :headers      {"User-Agent" "GitHub-Changelog"}}
+           (sut/make-request {} {:param1 ::value1 :param2 ::value2})))))
+
 (deftest parse-pull
   (let [sha (gen/generate sgen/sha)
         pull (sut/parse-pull (sample-pull sha))]
