@@ -1,11 +1,15 @@
 (ns github-changelog.github-test
-  (:require [clj-http.lite.client :as http]
+  (:require [clj-http.client :as http]
             [clojure.test :refer :all]
             [clojure.test.check.generators :as gen]
             [github-changelog
              [github :as sut]
              [schema-generators :as sgen]]
             [jsonista.core :as j]))
+
+(deftest http-get
+  (is (= {:href "https://api.github.com/gists?page=2"}
+         (get-in (http/get "https://api.github.com/gists") [:links :next]))))
 
 (def config (sgen/complete-config {:user "raszi"
                                    :repo "changelog-test"}))
@@ -28,16 +32,14 @@
 
 (deftest make-request
   (testing "with token"
-    (is (= {:as           :json
-            :query-params {:param1 ::value1
+    (is (= {:query-params {:param1 ::value1
                            :param2 ::value2
                            :state  "closed"}
             :headers      {"User-Agent"    "GitHub-Changelog"
                            "Authorization" "token abcdef"}}
            (sut/make-request {:token "abcdef"} {:param1 ::value1 :param2 ::value2}))))
   (testing "without token"
-    (is (= {:as           :json
-            :query-params {:param1 ::value1
+    (is (= {:query-params {:param1 ::value1
                            :param2 ::value2
                            :state  "closed"}
             :headers      {"User-Agent" "GitHub-Changelog"}}

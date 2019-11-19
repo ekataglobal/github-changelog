@@ -1,5 +1,5 @@
 (ns github-changelog.github
-  (:require [clj-http.lite.client :as http]
+  (:require [clj-http.client :as http]
             [clojure.string :as str]
             [github-changelog
              [defaults :as defaults]
@@ -22,8 +22,7 @@
 (defn make-request
   ([config] (make-request config {}))
   ([{oauth-token :token} params]
-   {:as           :json
-    :query-params (merge {:state "closed"} params)
+   {:query-params (merge {:state "closed"} params)
     :headers      (headers oauth-token)}))
 
 (defn- last-page-number [links]
