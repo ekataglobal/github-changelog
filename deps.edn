@@ -1,13 +1,14 @@
 {:paths   ["src"]
- :deps    {org.clojure/clojure    {:mvn/version "1.10.1"}
-           clj-http               {:mvn/version "3.10.0"}
-           metosin/jsonista       {:mvn/version "0.2.4"}
-           org.clojure/core.async {:mvn/version "0.4.500"} ; clojure spec fixed
-           throttler              {:mvn/version "1.0.0"}
-           org.slf4j/slf4j-nop    {:mvn/version "1.7.28"}
-           grimradical/clj-semver {:mvn/version "0.3.0"
-                                   :exclusions  [org.clojure/clojure]}
-           org.clojure/tools.cli  {:mvn/version "0.4.2"}}
+ :deps    {org.clojure/clojure             {:mvn/version "1.10.1"}
+           org.martinklepsch/clj-http-lite {:git/url "https://github.com/imrekoszo/clj-http-lite"
+                                            :sha "4f0ffb121837dfbceb2ac71e43d663459b7a1b22"}
+           metosin/jsonista                {:mvn/version "0.2.4"}
+           org.clojure/core.async          {:mvn/version "0.4.500"} ; clojure spec fixed
+           throttler                       {:mvn/version "1.0.0"}
+           org.slf4j/slf4j-nop             {:mvn/version "1.7.28"}
+           grimradical/clj-semver          {:mvn/version "0.3.0"
+                                            :exclusions  [org.clojure/clojure]}
+           org.clojure/tools.cli           {:mvn/version "0.4.2"}}
  :aliases {:test     {:extra-paths ["test"]
                       :extra-deps  {org.clojure/test.check        {:mvn/version "0.9.0"}
                                     lambdaisland/kaocha           {:mvn/version "0.0-541"}

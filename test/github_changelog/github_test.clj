@@ -1,5 +1,5 @@
 (ns github-changelog.github-test
-  (:require [clj-http.client :as http]
+  (:require [clj-http.lite.client :as http]
             [clojure.test :refer :all]
             [clojure.test.check.generators :as gen]
             [github-changelog
