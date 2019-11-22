@@ -1,5 +1,5 @@
 (ns github-changelog.github
-  (:require [clj-http.client :as http]
+  (:require [clj-http.lite.client :as http]
             [clojure.string :as str]
             [github-changelog
              [defaults :as defaults]
