@@ -9,7 +9,7 @@
 
 (deftest http-get
   (is (= {:href "https://api.github.com/gists?page=2"}
-         (get-in (http/get "https://api.github.com/gists") [:links :next]))))
+         (get-in (http/get "http://www.mocky.io/v2/5dd82f43310000b77b055dbc") [:links :next]))))
 
 (def config (sgen/complete-config {:user "raszi"
                                    :repo "changelog-test"}))
