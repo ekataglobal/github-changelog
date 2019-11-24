@@ -7,6 +7,10 @@
              [schema-generators :as sgen]]
             [jsonista.core :as j]))
 
+(deftest http-get
+  (is (= {:href "https://api.github.com/gists?page=2"}
+         (get-in (http/get "http://www.mocky.io/v2/5dd82f43310000b77b055dbc") [:links :next]))))
+
 (def config (sgen/complete-config {:user "raszi"
                                    :repo "changelog-test"}))
 
@@ -28,16 +32,14 @@
 
 (deftest make-request
   (testing "with token"
-    (is (= {:as           :json
-            :query-params {:param1 ::value1
+    (is (= {:query-params {:param1 ::value1
                            :param2 ::value2
                            :state  "closed"}
             :headers      {"User-Agent"    "GitHub-Changelog"
                            "Authorization" "token abcdef"}}
            (sut/make-request {:token "abcdef"} {:param1 ::value1 :param2 ::value2}))))
   (testing "without token"
-    (is (= {:as           :json
-            :query-params {:param1 ::value1
+    (is (= {:query-params {:param1 ::value1
                            :param2 ::value2
                            :state  "closed"}
             :headers      {"User-Agent" "GitHub-Changelog"}}

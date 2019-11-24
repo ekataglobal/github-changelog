@@ -22,8 +22,7 @@
 (defn make-request
   ([config] (make-request config {}))
   ([{oauth-token :token} params]
-   {:as           :json
-    :query-params (merge {:state "closed"} params)
+   {:query-params (merge {:state "closed"} params)
     :headers      (headers oauth-token)}))
 
 (defn- last-page-number [links]
