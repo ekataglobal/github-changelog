@@ -1,18 +1,30 @@
 (ns github-changelog.github
   (:require [clj-http.lite.client :as http]
+            [clojure.spec.alpha :as s]
             [clojure.string :as str]
-            [github-changelog
-             [defaults :as defaults]
-             [util :as util]]
+            [github-changelog.config :as config]
+            [github-changelog.spec :as spec]
+            [github-changelog.util :as util]
             [jsonista.core :as j]
             [throttler.core :as throttler])
   (:import com.fasterxml.jackson.databind.ObjectMapper))
 
-(defn parse-pull [pull]
-  (assoc pull :sha (get-in pull [:head :sha])))
+(s/def ::head (s/keys :req-un [::spec/sha]))
+(s/def ::number pos-int?)
+(s/def ::title string?)
+(s/def ::body string?)
+
+(s/def ::pull (s/keys :req-un [::head ::number ::title ::body]))
+
+(defn get-sha [pull]
+  (get-in pull [:head :sha]))
+
+(s/fdef get-sha
+  :args (s/cat :pull ::pull)
+  :ret ::spec/sha)
 
 (defn pulls-url [{:keys [github-api user repo]
-                  :or   {github-api (:github-api defaults/config)}}]
+                  :or   {github-api (:github-api config/defaults)}}]
   (format "%s/repos/%s/%s/pulls" (util/strip-trailing github-api) user repo))
 
 (defn headers [token]
@@ -54,7 +66,7 @@
         endpoint  (pulls-url config)]
     (throttler/throttle-fn (partial issue-request endpoint) ratelimit :second)))
 
-(defn- get-pulls [config]
+(defn fetch-pulls [config]
   (let [call-api                        (call-api-fn config)
         first-request                   (make-request config)
         first-response                  (call-api first-request)
@@ -62,6 +74,3 @@
         rest-requests                   (make-requests config links)
         rest-responses                  (pmap call-api rest-requests)]
     (into first-body (flatten (map :body rest-responses)))))
-
-(defn fetch-pulls [config]
-  (map parse-pull (get-pulls config)))

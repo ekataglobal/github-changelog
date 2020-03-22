@@ -1,13 +1,25 @@
 (ns github-changelog.git
   (:require [clojure.java.shell :as shell]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
             [clojure.string :as str]
-            [github-changelog
-             [defaults :as defaults]
-             [fs :as fs]
-             [util :as util]]))
+            [github-changelog.config :as config]
+            [github-changelog.fs :as fs]
+            [github-changelog.spec :as spec]
+            [github-changelog.util :as util]))
+
+(s/def ::repo ::spec/non-blank-string)
+(s/def ::dir ::spec/non-blank-string)
+
+(s/def ::name ::spec/non-blank-string)
+
+(s/def ::tag
+  (s/keys :req-un [::name ::spec/sha]))
+
+(s/def ::commit ::spec/sha)
 
 (defn gen-url [{:keys [github user repo]
-                :or   {github (:github defaults/config)}}]
+                :or   {github (:github config/defaults)}}]
   (format "%s/%s/%s.git" (util/strip-trailing github) user repo))
 
 (defn name-from-uri [uri]
@@ -29,7 +41,7 @@
 
 (defn git-dir? [dir]
   (when (and (fs/dir? dir) (fs/dir? (fs/as-file dir ".git")))
-    (-> (shell/sh "git" "status" :dir dir)
+    (-> (exec  "git" "status" :exit-codes #{0 128} :dir dir)
         (:exit)
         (zero?))))
 
@@ -43,7 +55,7 @@
 (defn init [{:keys [git-url dir update?]
              :or   {git-url (gen-url config)
                     dir     (name-from-uri git-url)
-                    update? (:update? defaults/config)}
+                    update? (:update? config/defaults)}
              :as   config}]
   (cond-> (clone-or-load git-url dir)
     update? refresh))
@@ -77,3 +89,7 @@
     (-> (exec "git" "rev-list" commit :dir dir)
         (:out)
         (split-lines))))
+
+(s/fdef commits
+  :args (s/cat :dir ::dir :from ::commit :until ::commit)
+  :ret (s/* ::commit))

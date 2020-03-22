@@ -1,12 +1,12 @@
 (ns github-changelog.git-test
-  (:require [clojure
-             [string :as str]
-             [test :refer :all]]
-            [clojure.java.shell :as shell]
-            [github-changelog
-             [fs :as fs]
-             [git :as sut]
-             [git-helper :as gh]]))
+  (:require [clojure.test :refer [are deftest is testing]]
+            [github-changelog.fs :as fs]
+            [github-changelog.git :as sut]
+            [github-changelog.git-helper :as gh]
+            [github-changelog.semver :as semver]
+            [clojure.spec.alpha :as s]
+            [github-changelog.spec :as spec]
+            [clojure.spec.gen.alpha :as gen]))
 
 (def config {:user "user" :repo "repo"})
 

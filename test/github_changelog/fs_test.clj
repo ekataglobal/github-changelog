@@ -1,8 +1,7 @@
 (ns github-changelog.fs-test
-  (:require [clojure.java.io :as io]
-            [clojure.test :refer :all]
-            [github-changelog.fs :as sut]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.test :refer [deftest is testing]]
+            [github-changelog.fs :as sut]))
 
 (defn- file-tests [file]
   (is (string? file))

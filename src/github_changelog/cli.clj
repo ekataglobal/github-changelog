@@ -1,8 +1,7 @@
 (ns github-changelog.cli
   (:gen-class)
-  (:require [clojure
-             [edn :as edn]
-             [string :as str]]
+  (:require [clojure.edn :as edn]
+            [clojure.string :as str]
             [clojure.tools.cli :as cli]
             [github-changelog.core :as core]
             [github-changelog.formatters.markdown :as md]))

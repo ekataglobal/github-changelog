@@ -1,9 +1,8 @@
 (ns github-changelog.formatters.markdown
-  (:require [clojure.string :refer [join]]
-            [github-changelog
-             [markdown :as md]
-             [semver :refer [get-type]]
-             [util :refer [str-map]]]))
+  (:require [clojure.string :as str]
+            [github-changelog.markdown :as md]
+            [github-changelog.semver :as semver]
+            [github-changelog.util :as util]))
 
 (defmulti translate-type identity)
 
@@ -34,10 +33,10 @@
    subject
    (format-pull-request pull-request)
    (if-let [issues (seq issues)]
-     (str ", closes " (join ", " (map (partial apply md/link) issues))))))
+     (str ", closes " (str/join ", " (map (partial apply md/link) issues))))))
 
 (defn- format-entries [changes]
-  (join (map md/li changes)))
+  (str/join (map md/li changes)))
 
 (defmulti format-grouped-changes (comp count second))
 
@@ -62,7 +61,7 @@
             (flatten)
             (format-entries))))
 
-(defmulti highlight-fn get-type)
+(defmulti highlight-fn semver/get-type)
 
 (defmethod highlight-fn :major [_] (comp md/h2 md/emphasis))
 (defmethod highlight-fn :minor [_] md/h2)
@@ -74,7 +73,7 @@
   ((highlight-fn version) name))
 
 (defn format-changes [changes]
-  (str-map format-change-group (group-by :type changes)))
+  (util/str-map format-change-group (group-by :type changes)))
 
 (defn format-tag [{:keys [version name changes]}]
   (str (format-version version name)
@@ -85,4 +84,4 @@
   [tags {:keys [collapse-tags]}]
   (if collapse-tags
     (format-changes (mapcat :changes tags))
-    (str-map format-tag tags)))
+    (util/str-map format-tag tags)))
