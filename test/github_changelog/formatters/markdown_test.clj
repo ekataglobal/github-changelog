@@ -31,14 +31,15 @@
                 :scope        scope
                 :subject      "new something"
                 :pull-request pull
-                :issues       []}))))
+                :issues       [["1" "http://example.com/issue/1"]]}))))
 
-(def expected-change (str "new something " (md/link "#1" "http://example.com/")))
+(def expected-change (str "new something " (md/link "#1" "http://example.com/")
+                          ", closes " (md/link "1" "http://example.com/issue/1")))
 
 (def expected-changes (str/join (map md/li [expected-change expected-change])))
 
 (def expected-scopeless-changes (str (md/h4 "Features")
-                                  expected-changes))
+                                     expected-changes))
 
 (def expected-scope (md/emphasis "scope:"))
 (def expected-scoped-changes (str (md/h4 "Features")
