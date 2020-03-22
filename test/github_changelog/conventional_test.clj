@@ -22,11 +22,8 @@
 (def jira-id "JIRA-1")
 (def jira-issue-url (str jira-url "browse/" jira-id))
 
-(def pull-gen
-  (s/gen ::github/pull {::github/title sut/title-gen}))
-
 (defn sample-pull [overrides]
-  (-> (rand-nth (gen/sample pull-gen))
+  (-> (spec/sample ::github/pull {::github/title sut/title-gen})
       (assoc-in [:base :repo :html_url] github-url)
       (merge overrides)))
 
