@@ -4,9 +4,7 @@
             [clojure.string :as str]
             [github-changelog.config :as config]
             [github-changelog.core-spec :as core-spec]
-            [github-changelog.git :as git]
             [github-changelog.github :as github]
-            [github-changelog.semver :as semver]
             [github-changelog.spec :as spec]
             [github-changelog.util :refer [strip-trailing]]))
 

@@ -1,7 +1,5 @@
 (ns github-changelog.conventional-test
-  (:require [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]
-            [clojure.string :as str]
+  (:require [clojure.string :as str]
             [clojure.test :refer [are deftest is testing]]
             [github-changelog.config :as config]
             [github-changelog.conventional :as sut]

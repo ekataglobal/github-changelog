@@ -2,11 +2,7 @@
   (:require [clojure.test :refer [are deftest is testing]]
             [github-changelog.fs :as fs]
             [github-changelog.git :as sut]
-            [github-changelog.git-helper :as gh]
-            [github-changelog.semver :as semver]
-            [clojure.spec.alpha :as s]
-            [github-changelog.spec :as spec]
-            [clojure.spec.gen.alpha :as gen]))
+            [github-changelog.git-helper :as gh]))
 
 (def config {:user "user" :repo "repo"})
 

@@ -1,7 +1,6 @@
 (ns github-changelog.git
   (:require [clojure.java.shell :as shell]
             [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]
             [clojure.string :as str]
             [github-changelog.config :as config]
             [github-changelog.fs :as fs]
