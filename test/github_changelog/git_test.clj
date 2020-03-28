@@ -81,6 +81,22 @@
       (finally
         (fs/rm-dir repo)))))
 
+(deftest initial-commit
+  (let [single-initial-commit? #(= 40 (count (sut/initial-commit %)))]
+    (testing "single initial commit"
+      (let [[repo] (gh/init-repo)]
+        (try
+          (is (single-initial-commit? repo))
+        (finally
+          (fs/rm-dir repo)))))
+    (testing "multiple initial commits present in the repository"
+      (let [[repo] (gh/init-repo)]
+        (try
+          (gh/merge-orphan-branch repo)
+          (is (single-initial-commit? repo))
+        (finally
+          (fs/rm-dir repo)))))))
+
 (deftest commits
   (let [[repo]    (gh/init-repo)
         commit-fn #(count (sut/commits repo nil nil))]

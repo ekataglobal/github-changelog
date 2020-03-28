@@ -26,3 +26,10 @@
   ([repo tag]
    (shell/sh "git" "tag" tag :dir repo)
    tag))
+
+(defn merge-orphan-branch [repo]
+  (let [branch "orphan"]
+    (shell/sh "git" "checkout" "--orphan" branch :dir repo)
+    (add-file repo)
+    (shell/sh "git" "checkout" "master" :dir repo)
+    (shell/sh "git" "merge" "--allow-unrelated-histories" branch :dir repo)))
