@@ -40,13 +40,13 @@
 (defn find-pull [pulls sha]
   (first (filter #(= (github/get-sha %) sha) pulls)))
 
-(defn ^:no-gen assoc-pulls [pulls {:keys [commits] :as tag}]
+(defn assoc-pulls [pulls {:keys [commits] :as tag}]
   (->> commits
        (keep (partial find-pull pulls))
        (assoc tag :pulls)))
 
 (s/fdef assoc-pulls
-  :args (s/cat :pulls (s/* ::github/pull) :tag ::core-spec/tag)
+  :args (s/cat :pulls (s/coll-of ::github/pull) :tag ::core-spec/tag)
   :ret ::core-spec/tag-with-pulls)
 
 (defn ^:no-gen collect-tags [config]
