@@ -42,8 +42,7 @@
 
 (defn ^:no-gen assoc-pulls [pulls {:keys [commits] :as tag}]
   (->> commits
-       (map (partial find-pull pulls))
-       (remove nil?)
+       (keep (partial find-pull pulls))
        (assoc tag :pulls)))
 
 (s/fdef assoc-pulls
