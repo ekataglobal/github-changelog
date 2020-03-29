@@ -5,10 +5,10 @@
             [clojure.string :as str]
             [github-changelog.spec :as spec]))
 
-(defn- map->str [m]
-  (cond-> (->> (map m [:major :minor :patch]) (str/join \.))
-    (:pre-release m) (str "-" (:pre-release m))
-    (:build m) (str "+" (:build m))))
+(defn- map->str [{:keys [major minor patch pre-release build]}]
+  (cond-> (str/join \. [major minor patch])
+    pre-release (str "-" pre-release)
+    build (str "+" build)))
 
 (s/def ::major nat-int?)
 (s/def ::minor nat-int?)
