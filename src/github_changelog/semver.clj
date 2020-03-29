@@ -40,7 +40,8 @@
 
 (s/def ::types #{:major :minor :patch :pre-release :build})
 
-(def newer? semver/newer?)
+;; TODO: https://github.com/grimradical/clj-semver/issues/7
+(def ^:no-gen newer? semver/newer?)
 
 (s/fdef newer?
   :args (s/cat :a ::version-or-string :b ::version-or-string)
