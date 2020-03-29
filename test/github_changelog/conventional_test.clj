@@ -53,7 +53,7 @@
       1
       2
       5))
-  (testing "with a correct formats"
+  (testing "with correct formats"
     (are [title] (not= nil (sut/parse-pull config (sample-pull {:title title})))
       "feat(scope): enhance this and that"
       "fix(scope): do not fail on invalid input"
@@ -62,7 +62,7 @@
     (are [title] (nil? (sut/parse-pull config (sample-pull {:title title})))
       "this is just a PR"
       "does not follow the rules"))
-  (testing "with a full test"
+  (testing "with full test"
     (let [pull (sample-pull {:title "feat(the scope): subject line" :body "Fixes #1, Closes JIRA-2"})
           change (sut/parse-pull config pull)]
       (is (= "feat" (:type change)))
