@@ -110,8 +110,7 @@
       (conj pulls pull))))
 
 (defn ^:no-gen parse-changes [config {:keys [pulls] :as tag}]
-  (->> (map (partial parse-pull config) pulls)
-       (remove nil?)
+  (->> (keep (partial parse-pull config) pulls)
        (reduce filter-reverted [])
        (remove :revert-pull)
        (assoc tag :changes)))
