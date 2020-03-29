@@ -98,9 +98,7 @@
        :issues       (parse-issues config pull)})))
 
 (defn reverted-ids [pulls]
-  (->> (map :revert-pull pulls)
-       (remove nil?)
-       (set)))
+  (set (keep :revert-pull pulls)))
 
 (defn filter-reverted [pulls pull]
   (let [reverted-pulls (reverted-ids pulls)
