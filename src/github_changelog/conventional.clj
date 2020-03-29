@@ -90,8 +90,7 @@
   (if-let [pull-id (parse-revert config pull)]
     {:revert-pull  pull-id
      :pull-request pull}
-    ;; TODO - when-let?
-    (if-let [[_ type scope subject] (re-find angular-pattern title)]
+    (when-let [[_ type scope subject] (re-find angular-pattern title)]
       {:type         type
        :scope        scope
        :subject      subject
