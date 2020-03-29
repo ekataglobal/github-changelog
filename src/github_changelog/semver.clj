@@ -10,9 +10,13 @@
     pre-release (str "-" pre-release)
     build (str "+" build)))
 
-(s/def ::major nat-int?)
-(s/def ::minor nat-int?)
-(s/def ::patch nat-int?)
+(def nat-int (s/with-gen
+               nat-int?
+               #(gen/int)))
+
+(s/def ::major nat-int)
+(s/def ::minor nat-int)
+(s/def ::patch nat-int)
 
 (s/def ::pre-release (s/with-gen
                        (s/nilable ::spec/non-blank-string)
@@ -45,6 +49,7 @@
 (def valid? semver/valid?)
 
 (s/fdef valid?
+  :args (s/cat :v any?)
   :ret boolean?)
 
 (defn parse [version]
@@ -93,10 +98,10 @@
 
 (def overrides
   {::major       #(s/gen pos-int?)
-   ::minor       #(s/gen zero?)
-   ::patch       #(s/gen zero?)
-   ::pre-release #(s/gen nil?)
-   ::build       #(s/gen nil?)})
+   ::minor       #(gen/return 0)
+   ::patch       #(gen/return 0)
+   ::pre-release #(gen/return nil)
+   ::build       #(gen/return nil)})
 
 (defn- version-gen [overrides]
   #(s/gen ::version overrides))
@@ -129,6 +134,8 @@
 (comment
   (s/exercise ::version-string)
   (s/exercise ::version)
+
+  (s/exercise ::major)
 
   (s/exercise ::major-version)
   (s/exercise ::minor-version)

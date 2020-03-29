@@ -83,7 +83,7 @@
       (split-lines)
       (first)))
 
-(defn commits [dir from until]
+(defn ^:no-gen commits [dir from until]
   (let [commit (format "%s..%s"
                        (or from (initial-commit dir))
                        (or until "HEAD"))]

@@ -26,7 +26,7 @@
 (defn map-commits [tags git-repo]
   (map (partial assoc-commits git-repo) tags))
 
-(defn load-tags [config]
+(defn ^:no-gen load-tags [config]
   (let [git-repo (git/init config)
         prefix   (get config :tag-prefix "v")]
     (-> (git/tags git-repo)
@@ -40,7 +40,7 @@
 (defn find-pull [pulls sha]
   (first (filter #(= (github/get-sha %) sha) pulls)))
 
-(defn assoc-pulls [pulls {:keys [commits] :as tag}]
+(defn ^:no-gen assoc-pulls [pulls {:keys [commits] :as tag}]
   (->> commits
        (map (partial find-pull pulls))
        (remove nil?)
@@ -50,17 +50,16 @@
   :args (s/cat :pulls (s/* ::github/pull) :tag ::core-spec/tag)
   :ret ::core-spec/tag-with-pulls)
 
-(defn collect-tags [config]
+(defn ^:no-gen collect-tags [config]
   (let [pulls (github/fetch-pulls config)]
     (->> (load-tags config)
          (map (partial assoc-pulls pulls)))))
 
 (s/fdef collect-tags
-  :args (s/cat :config ::config/confg-map)
+  :args (s/cat :config ::config/config-map)
   :ret (s/* ::core-spec/tag-with-pulls))
 
-
-(defn changelog
+(defn ^:no-gen changelog
   "Fetches the changelog"
   [config]
   (->> (collect-tags config)

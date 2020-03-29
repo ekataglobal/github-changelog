@@ -2,4 +2,4 @@
 {:plugins [:kaocha.plugin/profiling
            :kaocha.plugin/print-invocations
            :kaocha.plugin/cloverage
-           #_:kaocha.plugin.alpha/spec-test-check]}
+           :kaocha.plugin.alpha/spec-test-check]}
