@@ -1,7 +1,6 @@
 (ns github-changelog.markdown-test
-  (:require [clojure
-             [string :as str]
-             [test :refer :all]]
+  (:require [clojure.string :as str]
+            [clojure.test :refer [deftest is]]
             [github-changelog.markdown :as sut]))
 
 (deftest h1

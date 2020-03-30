@@ -1,0 +1,5 @@
+#kaocha/v1
+{:plugins [:kaocha.plugin/profiling
+           :kaocha.plugin/print-invocations
+           :kaocha.plugin/cloverage
+           :kaocha.plugin.alpha/spec-test-check]}

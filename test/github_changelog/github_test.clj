@@ -1,27 +1,33 @@
 (ns github-changelog.github-test
   (:require [clj-http.lite.client :as http]
-            [clojure.test :refer :all]
-            [clojure.test.check.generators :as gen]
-            [github-changelog
-             [github :as sut]
-             [schema-generators :as sgen]]
+            [clojure.spec.alpha :as s]
+            [clojure.string :as str]
+            [clojure.test :refer [deftest is testing]]
+            [github-changelog.config :as config]
+            [github-changelog.github :as sut]
+            [github-changelog.spec :as spec]
             [jsonista.core :as j]))
 
 (deftest http-get
   (is (= {:href "https://api.github.com/gists?page=2"}
          (get-in (http/get "http://www.mocky.io/v2/5dd82f43310000b77b055dbc") [:links :next]))))
 
-(def config (sgen/complete-config {:user "raszi"
-                                   :repo "changelog-test"}))
+(def config
+  (-> (spec/sample ::config/config-map)
+      (assoc
+       :user "raszi"
+       :repo "changelog-test")
+      (dissoc :github :github-api)))
 
 (def api-endpoint "https://api.github.com/repos/raszi/changelog-test/pulls")
 
 (defn- sample-pull
-  ([] (sample-pull (gen/generate sgen/sha)))
+  ([] (sample-pull nil))
   ([sha]
-   (sgen/complete-pull
-    {:head {:sha sha}
-     :base {:repo {:html_url ""}}})))
+   (let [pull (spec/sample ::sut/pull)]
+     (if sha
+       (assoc-in pull [:head :sha] sha)
+       pull))))
 
 (deftest pulls-url
   (testing "with default API endpoint"
@@ -45,10 +51,9 @@
             :headers      {"User-Agent" "GitHub-Changelog"}}
            (sut/make-request {} {:param1 ::value1 :param2 ::value2})))))
 
-(deftest parse-pull
-  (let [sha (gen/generate sgen/sha)
-        pull (sut/parse-pull (sample-pull sha))]
-    (is (= sha (:sha pull)))))
+(deftest get-sha
+  (let [pull (spec/sample ::sut/pull)]
+    (is (not (str/blank? (sut/get-sha pull))))))
 
 (defn- matching-response [request [rule response]]
   (when (every? (fn [[key value]] (= value (get request key))) rule)
@@ -67,7 +72,7 @@
      (merge {:status 200 :headers {} :body body-str} opts))))
 
 (defn- valid-pull? [pr]
-  (and (every? keyword? (keys pr)) (:sha pr)))
+  (s/conform ::sut/pull pr))
 
 (deftest fetch-pulls
   (testing "without multiple pages"

@@ -1,7 +1,7 @@
 # GitHub changelog
 
 [![Continuous Integration status](https://api.travis-ci.org/whitepages/github-changelog.svg?branch=master)](http://travis-ci.org/whitepages/github-changelog)
-[![Docker Build Status](https://img.shields.io/docker/build/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/whitepages/github-changelog/)
+[![Docker Build Status](https://img.shields.io/docker/build/whitepages/github-changelog.svg)](https://hub.docker.com/r/whitepages/github-changelog/)
 [![Docker pulls](https://img.shields.io/docker/pulls/whitepages/github-changelog.svg)](https://hub.docker.com/r/whitepages/github-changelog/)
 [![GitHub license](https://img.shields.io/github/license/whitepages/github-changelog.svg)](https://github.com/whitepages/github-changelog/blob/master/LICENSE)
 

@@ -1,5 +1,5 @@
 (ns github-changelog.util-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is]]
             [github-changelog.util :as sut]))
 
 (deftest strip-trailing

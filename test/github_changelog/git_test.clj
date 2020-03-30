@@ -1,12 +1,10 @@
 (ns github-changelog.git-test
-  (:require [clojure
-             [string :as str]
-             [test :refer :all]]
-            [clojure.java.shell :as shell]
-            [github-changelog
-             [fs :as fs]
-             [git :as sut]
-             [git-helper :as gh]]))
+  (:require [clojure.spec.alpha :as s]
+            [clojure.test :refer [are deftest is testing]]
+            [github-changelog.fs :as fs]
+            [github-changelog.git :as sut]
+            [github-changelog.git-helper :as gh]
+            [github-changelog.spec :as spec]))
 
 (def config {:user "user" :repo "repo"})
 
@@ -86,7 +84,7 @@
         (fs/rm-dir repo)))))
 
 (deftest initial-commit
-  (let [single-initial-commit? #(= 40 (count (sut/initial-commit %)))]
+  (letfn [(single-initial-commit? [x] (s/conform ::spec/sha x))]
     (testing "single initial commit"
       (let [[repo] (gh/init-repo)]
         (try

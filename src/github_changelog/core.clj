@@ -1,9 +1,11 @@
 (ns github-changelog.core
-  (:require [github-changelog
-             [conventional :as conventional]
-             [git :as git]
-             [github :as github]
-             [semver :as semver]]))
+  (:require [clojure.spec.alpha :as s]
+            [github-changelog.config :as config]
+            [github-changelog.conventional :as conventional]
+            [github-changelog.core-spec :as core-spec]
+            [github-changelog.git :as git]
+            [github-changelog.github :as github]
+            [github-changelog.semver :as semver]))
 
 (defn assoc-semver [prefix {:keys [name] :as tag}]
   (assoc tag :version (semver/extract name prefix)))
@@ -21,25 +23,50 @@
 (defn assoc-commits [git-repo {:keys [from sha] :as tag}]
   (assoc tag :commits (git/commits git-repo from sha)))
 
-(defn load-tags [config]
+(defn map-commits [tags git-repo]
+  (map (partial assoc-commits git-repo) tags))
+
+(defn ^:no-gen load-tags [config]
   (let [git-repo (git/init config)
-        tags     (git/tags git-repo)
         prefix   (get config :tag-prefix "v")]
-    (map (partial assoc-commits git-repo) (parse-tags tags prefix))))
+    (-> (git/tags git-repo)
+        (parse-tags prefix)
+        (map-commits git-repo))))
+
+(s/fdef load-tags
+  :args (s/cat :config ::config/config-map)
+  :ret (s/* ::core-spec/tag))
 
 (defn find-pull [pulls sha]
-  (first (filter #(= (:sha %) sha) pulls)))
+  (first (filter #(= (github/get-sha %) sha) pulls)))
 
 (defn assoc-pulls [pulls {:keys [commits] :as tag}]
-  (let [related-pulls (remove nil? (map (partial find-pull pulls) commits))]
-    (assoc tag :pulls related-pulls)))
+  (->> commits
+       (keep (partial find-pull pulls))
+       (assoc tag :pulls)))
 
-(defn changelog
+(s/fdef assoc-pulls
+  :args (s/cat :pulls (s/coll-of ::github/pull) :tag ::core-spec/tag)
+  :ret ::core-spec/tag-with-pulls)
+
+(defn ^:no-gen collect-tags [config]
+  (let [pulls (github/fetch-pulls config)]
+    (->> (load-tags config)
+         (map (partial assoc-pulls pulls)))))
+
+(s/fdef collect-tags
+  :args (s/cat :config ::config/config-map)
+  :ret (s/* ::core-spec/tag-with-pulls))
+
+(defn ^:no-gen changelog
   "Fetches the changelog"
   [config]
-  (->> (load-tags config)
-       (map (partial assoc-pulls (github/fetch-pulls config)))
+  (->> (collect-tags config)
        (map (partial conventional/parse-changes config))))
+
+(s/fdef changelog
+  :args (s/cat :config ::config/config-map)
+  :ret (s/* ::conventional/tag-with-changes))
 
 (defn filter-tags [tags {:keys [last since until]}]
   (cond->> tags
