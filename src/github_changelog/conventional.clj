@@ -9,7 +9,18 @@
             [github-changelog.util :refer [strip-trailing]]))
 
 ; https://help.github.com/articles/closing-issues-via-commit-messages/
-(def close-keywords #{"close" "closes" "closed" "fix" "fixes" "fixed" "resolve" "resolves" "resolved" "related to" "relates to"})
+(def close-keywords
+  #{"close:?"
+    "closes:?"
+    "closed:?"
+    "fix:?"
+    "fixes:?"
+    "fixed:?"
+    "resolve:?"
+    "resolves:?"
+    "resolved:?"
+    "related[\\s-]to:?"
+    "relates[\\s-]to:?"})
 
 (def angular-pattern #"^(\w*)(?:\((.*)\))?\: (.*)$")
 

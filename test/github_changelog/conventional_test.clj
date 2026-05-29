@@ -27,9 +27,22 @@
 
 (deftest parse-issue
   (testing "with a JIRA issue"
-    (let [body (format "Fixes %s" jira-id)
+    (let [body "
+close JIRA-1
+closes JIRA-2
+fix JIRA-3
+Fixes JIRA-4
+resolve JIRA-5
+resolves JIRA-6
+resolved JIRA-7
+related to JIRA-8
+Relates to JIRA-9
+fix: JIRA-10
+Relates-to: JIRA-11
+related-to JIRA-12"
           pull (sample-pull {:body body})]
-      (is (= [["JIRA-1" jira-issue-url]] (sut/parse-issues config pull)))))
+      (is (= (mapv #(vector (str "JIRA-" (inc %)) (str jira-url "browse/JIRA-" (inc %))) (range 12))
+             (sut/parse-issues config pull)))))
   (testing "with a GitHub issue"
     (let [pull (sample-pull {:body "Fixes #1"})]
       (is (= [["#1" (str github-url "/issues/1")]] (sut/parse-issues config pull))))))
