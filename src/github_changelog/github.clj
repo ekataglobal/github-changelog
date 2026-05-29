@@ -5,9 +5,8 @@
             [github-changelog.config :as config]
             [github-changelog.spec :as spec]
             [github-changelog.util :as util]
-            [jsonista.core :as j]
-            [throttler.core :as throttler])
-  (:import com.fasterxml.jackson.databind.ObjectMapper))
+            [babashka.json :as j]
+            [throttler.core :as throttler]))
 
 (s/def ::head (s/keys :req-un [::spec/sha]))
 (s/def ::number pos-int?)
@@ -52,11 +51,8 @@
 (defn- make-requests [config links]
   (map #(make-request config {:page %}) (gen-pages links)))
 
-(def ^ObjectMapper mapper
-  (j/object-mapper {:decode-key-fn true}))
-
 (defn parse-json [str]
-  (j/read-value str mapper))
+  (j/read-str str))
 
 (defn- issue-request [endpoint request]
   (update (http/get endpoint request) :body parse-json))
