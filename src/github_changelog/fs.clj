@@ -1,7 +1,8 @@
 (ns github-changelog.fs
-  (:require [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [babashka.fs :as fs])
   (:import java.io.File
-           [java.nio.file Files FileVisitResult Path SimpleFileVisitor]
+           [java.nio.file Files Path]
            java.nio.file.attribute.FileAttribute))
 
 (def empty-file-attrs (into-array FileAttribute []))
@@ -45,15 +46,6 @@
 (defn dir? [file]
   (.isDirectory (as-file file)))
 
-(def recursive-delete
-  (proxy [SimpleFileVisitor] []
-    (visitFile [path _attrs]
-      (Files/delete path)
-      FileVisitResult/CONTINUE)
-    (postVisitDirectory [path _exc]
-      (Files/delete path)
-      FileVisitResult/CONTINUE)))
-
 (defn rm
   "Deletes file"
   [file]
@@ -62,4 +54,4 @@
 (defn rm-dir
   "Deletes directory recursively"
   [dir]
-  (Files/walkFileTree (as-path dir) recursive-delete))
+  (fs/delete-tree dir))

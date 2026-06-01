@@ -6,11 +6,11 @@
             [github-changelog.config :as config]
             [github-changelog.github :as sut]
             [github-changelog.spec :as spec]
-            [jsonista.core :as j]))
+            [babashka.json :as j]))
 
 (deftest http-get
   (is (= {:href "https://api.github.com/gists?page=2"}
-         (get-in (http/get "http://www.mocky.io/v2/5dd82f43310000b77b055dbc") [:links :next]))))
+         (get-in (http/get "https://api.github.com/gists") [:links :next]))))
 
 (def config
   (-> (spec/sample ::config/config-map)
@@ -68,7 +68,7 @@
 (defn- mock-response
   ([body] (mock-response body {}))
   ([body opts]
-   (let [body-str (j/write-value-as-string body)]
+   (let [body-str (j/write-str body)]
      (merge {:status 200 :headers {} :body body-str} opts))))
 
 (defn- valid-pull? [pr]
