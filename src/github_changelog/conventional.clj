@@ -81,7 +81,7 @@
 
 (def github-pattern (fixes-pattern "(#\\d+)"))
 
-(defn- parse-int [x] (Integer. (re-find #"[0-9]+" x)))
+(defn- parse-int [x] (Integer. ^String (re-find #"[0-9]+" x)))
 
 (defn github-issues [_ pull]
   (let [base (str (get-in pull [:base :repo :html_url]) "/issues/")]
