@@ -1,7 +1,6 @@
 (ns github-changelog.git-test
   (:require [clojure.spec.alpha :as s]
             [clojure.test :refer [are deftest is testing]]
-            [github-changelog.fs :as fs]
             [github-changelog.git :as sut]
             [github-changelog.git-helper :as gh]
             [github-changelog.spec :as spec]
@@ -30,12 +29,12 @@
         (test-fs/rm-dir tmp-dir)))))
 
 (deftest clone
-  (let [[base file] (gh/init-repo)
-        work        (test-fs/tmp-dir nil "github-changelog-clone_")
-        repo        (sut/clone base work)]
+  (let [[base] (gh/init-repo)
+        work   (test-fs/tmp-dir nil "github-changelog-clone_")
+        repo   (sut/clone base work)]
     (try
       (is (sut/git-dir? repo))
-      (is (test-fs/file? (fs/as-file work file)))
+      (is (= 1 (gh/commit-count repo)))
       (finally
         (test-fs/rm-dir base)
         (test-fs/rm-dir work)))))
@@ -49,12 +48,12 @@
         (finally
           (test-fs/rm-dir base)))))
   (testing "with a non-existing repo"
-    (let [[base file] (gh/init-repo)
-          other       (test-fs/tmp-dir)]
+    (let [[base] (gh/init-repo)
+          other  (test-fs/tmp-dir)]
       (try
         (sut/clone-or-load base other)
         (is (sut/git-dir? other))
-        (is (test-fs/file? (fs/as-file other file)))
+        (is (= 1 (gh/commit-count other)))
         (finally
           (test-fs/rm-dir base)
           (test-fs/rm-dir other))))))
@@ -63,11 +62,11 @@
   (let [[base] (gh/init-repo)
         other  (test-fs/tmp-dir nil "github-changelog-clone_")
         _      (sut/clone-or-load base other)
-        name   (gh/add-file base)]
+        _      (gh/add-file base)]
     (try
-      (is (not (test-fs/exists? (fs/as-file other name))))
+      (is (= 1 (gh/commit-count other)))
       (sut/refresh other)
-      (is (test-fs/exists? (fs/as-file other name)))
+      (is (= 2 (gh/commit-count other)))
       (finally
         (test-fs/rm-dir base)
         (test-fs/rm-dir other)))))

@@ -1,5 +1,6 @@
 (ns github-changelog.git-helper
   (:require [clojure.java.shell :as shell]
+            [clojure.string :as str]
             [github-changelog.test-fs :as test-fs])
   (:import java.util.UUID))
 
@@ -33,3 +34,11 @@
     (add-file repo)
     (shell/sh "git" "checkout" "master" :dir repo)
     (shell/sh "git" "merge" "--allow-unrelated-histories" branch :dir repo)))
+
+(defn commit-count [repo]
+  (shell/with-sh-dir repo
+    (-> (shell/sh "git" "rev-list" "HEAD" "--count")
+        (:out)
+        (str/split-lines)
+        (first)
+        (parse-long))))
