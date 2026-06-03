@@ -51,13 +51,12 @@
   (exec "git" "pull" "origin" :dir repo)
   repo)
 
-(defn init [{:keys [git-url dir update?]
-             :or   {git-url (gen-url config)
-                    dir     (name-from-uri git-url)
-                    update? (:update? config/defaults)}
-             :as   config}]
-  (cond-> (clone-or-load git-url dir)
-    update? refresh))
+(defn init [config]
+  (let [git-url (:git-url config (gen-url config))
+        dir     (:dir config (name-from-uri git-url))
+        update? (:update? config (:update? config/defaults))]
+    (cond-> (clone-or-load git-url dir)
+      update? refresh)))
 
 (defn- map-tag-name [tag]
   (str/replace tag #"^refs/tags/" ""))
