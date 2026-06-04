@@ -12,11 +12,13 @@
 
 (defn assoc-ranges [tags]
   (let [previous-shas (concat (map :sha (rest tags)) [nil])]
-    (map #(assoc %1 :from %2) tags previous-shas)))
+    (mapv #(assoc %1 :from %2) tags previous-shas)))
 
 (defn parse-tags [tags prefix]
-  (->> (map (partial assoc-semver prefix) tags)
-       (filter :version)
+  (->> tags
+       (into []
+             (comp (map #(assoc-semver prefix %))
+                   (filter :version)))
        (sort-by :version semver/newer?)
        (assoc-ranges)))
 
@@ -24,7 +26,7 @@
   (assoc tag :commits (git/commits git-repo from sha)))
 
 (defn map-commits [tags git-repo]
-  (map (partial assoc-commits git-repo) tags))
+  (mapv #(assoc-commits git-repo %) tags))
 
 (defn ^:no-gen load-tags [config]
   (let [git-repo (git/init config)
@@ -37,12 +39,22 @@
   :args (s/cat :config ::config/config-map)
   :ret (s/* ::core-spec/tag))
 
+(let [first-rf
+      (fn first-rf
+        ([x] x)
+        ([_ x] (reduced x)))]
+  (defn xfirst
+    "Process coll through the specified xform and returns the first value
+  or nil if there aren't any."
+    [xform coll]
+    (transduce xform first-rf nil coll)))
+
 (defn find-pull [pulls sha]
-  (first (filter #(= (github/get-sha %) sha) pulls)))
+  (xfirst (filter #(= (github/get-sha %) sha)) pulls))
 
 (defn assoc-pulls [pulls {:keys [commits] :as tag}]
   (->> commits
-       (keep (partial find-pull pulls))
+       (into [] (keep #(find-pull pulls %)))
        (assoc tag :pulls)))
 
 (s/fdef assoc-pulls
@@ -52,7 +64,7 @@
 (defn ^:no-gen collect-tags [config]
   (let [pulls (github/fetch-pulls config)]
     (->> (load-tags config)
-         (map (partial assoc-pulls pulls)))))
+         (mapv #(assoc-pulls pulls %)))))
 
 (s/fdef collect-tags
   :args (s/cat :config ::config/config-map)
@@ -62,7 +74,7 @@
   "Fetches the changelog"
   [config]
   (->> (collect-tags config)
-       (map (partial conventional/parse-changes config))))
+       (mapv #(conventional/parse-changes config %))))
 
 (s/fdef changelog
   :args (s/cat :config ::config/config-map)

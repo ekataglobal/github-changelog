@@ -16,7 +16,7 @@
 (s/def ::pull (s/keys :req-un [::head ::number ::title ::body]))
 
 (defn get-sha [pull]
-  (get-in pull [:head :sha]))
+  (-> pull :head :sha))
 
 (s/fdef get-sha
   :args (s/cat :pull ::pull)
@@ -49,7 +49,7 @@
     (range 2 (inc last-page))))
 
 (defn- make-requests [config links]
-  (map #(make-request config {:page %}) (gen-pages links)))
+  (mapv #(make-request config {:page %}) (gen-pages links)))
 
 (defn parse-json [str]
   (j/read-str str))
@@ -60,7 +60,7 @@
 (defn- call-api-fn [config]
   (let [ratelimit (get config :rate-limit 5)
         endpoint  (pulls-url config)]
-    (throttler/throttle-fn (partial issue-request endpoint) ratelimit :second)))
+    (throttler/throttle-fn #(issue-request endpoint %) ratelimit :second)))
 
 (defn fetch-pulls [config]
   (let [call-api                        (call-api-fn config)
@@ -69,4 +69,4 @@
         {links :links first-body :body} first-response
         rest-requests                   (make-requests config links)
         rest-responses                  (pmap call-api rest-requests)]
-    (into first-body (flatten (map :body rest-responses)))))
+    (into first-body (flatten (mapv :body rest-responses)))))
