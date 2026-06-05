@@ -1,5 +1,6 @@
 (ns github-changelog.core
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.core.async :as async]
+            [clojure.spec.alpha :as s]
             [github-changelog.config :as config]
             [github-changelog.conventional :as conventional]
             [github-changelog.core-spec :as core-spec]
@@ -27,7 +28,9 @@
   (assoc tag :commits (git/commits git-repo from sha)))
 
 (defn map-commits [tags git-repo]
-  (mapv #(assoc-commits git-repo %) tags))
+  (->> tags
+       (mapv (fn async-assoc-commits [tag] (async/io-thread (assoc-commits git-repo tag))))
+       (mapv async/<!!)))
 
 (defn ^:no-gen load-tags [config]
   (let [git-repo (git/init config)
