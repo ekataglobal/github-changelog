@@ -35,8 +35,8 @@
     (is (= 2 (tags-fn)))))
 
 (deftest assoc-pulls
-  (let [pulls (s/exercise ::github/pull)
-        shas  (map github/get-sha pulls)
+  (let [pulls (mapv first (s/exercise ::github/pull))
+        shas  (mapv github/get-sha pulls)
         tag   (-> (spec/sample ::core-spec/tag) (assoc :commits shas))]
     (is (= (count pulls) (count (:pulls (sut/assoc-pulls pulls tag)))))))
 
