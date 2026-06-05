@@ -5,7 +5,8 @@
             [github-changelog.core-spec :as core-spec]
             [github-changelog.git :as git]
             [github-changelog.github :as github]
-            [github-changelog.semver :as semver]))
+            [github-changelog.semver :as semver]
+            [github-changelog.spec :as spec]))
 
 (defn assoc-semver [prefix {:keys [name] :as tag}]
   (assoc tag :version (semver/extract name prefix)))
@@ -39,32 +40,20 @@
   :args (s/cat :config ::config/config-map)
   :ret (s/* ::core-spec/tag))
 
-(let [first-rf
-      (fn first-rf
-        ([x] x)
-        ([_ x] (reduced x)))]
-  (defn xfirst
-    "Process coll through the specified xform and returns the first value
-  or nil if there aren't any."
-    [xform coll]
-    (transduce xform first-rf nil coll)))
-
-(defn find-pull [pulls sha]
-  (xfirst (filter #(= (github/get-sha %) sha)) pulls))
-
-(defn assoc-pulls [pulls {:keys [commits] :as tag}]
+(defn assoc-pulls [sha->pull {:keys [commits] :as tag}]
   (->> commits
-       (into [] (keep #(find-pull pulls %)))
+       (keep #(sha->pull %))
        (assoc tag :pulls)))
 
 (s/fdef assoc-pulls
-  :args (s/cat :pulls (s/coll-of ::github/pull) :tag ::core-spec/tag)
+  :args (s/cat :pulls (s/map-of ::spec/sha ::github/pull) :tag ::core-spec/tag)
   :ret ::core-spec/tag-with-pulls)
 
 (defn ^:no-gen collect-tags [config]
-  (let [pulls (github/fetch-pulls config)]
+  (let [pulls (github/fetch-pulls config)
+        sha->pull (into {} (map #(vector (github/get-sha %) %)) pulls)]
     (->> (load-tags config)
-         (mapv #(assoc-pulls pulls %)))))
+         (mapv #(assoc-pulls sha->pull %)))))
 
 (s/fdef collect-tags
   :args (s/cat :config ::config/config-map)
