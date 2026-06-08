@@ -1,12 +1,13 @@
 (ns github-changelog.git-helper
   (:require [clojure.java.shell :as shell]
-            [github-changelog.fs :as fs])
+            [clojure.string :as str]
+            [github-changelog.test-fs :as test-fs])
   (:import java.util.UUID))
 
 (defn init-repo []
-  (let [dir  (fs/tmp-dir nil "github-changelog-repo_")
-        file (fs/tmp-file dir)
-        name (fs/basename file)]
+  (let [dir  (test-fs/tmp-dir nil "github-changelog-repo_")
+        file (test-fs/tmp-file dir)
+        name (test-fs/basename file)]
     (shell/with-sh-dir dir
       (shell/sh "git" "init" ".")
       (shell/sh "git" "add" name)
@@ -14,8 +15,8 @@
     [dir name]))
 
 (defn add-file [repo]
-  (let [file (fs/tmp-file repo)
-        name (fs/basename file)]
+  (let [file (test-fs/tmp-file repo)
+        name (test-fs/basename file)]
     (shell/with-sh-dir repo
       (shell/sh "git" "add" name)
       (shell/sh "git" "commit" "-m" (format "%s addded" name)))
@@ -33,3 +34,11 @@
     (add-file repo)
     (shell/sh "git" "checkout" "master" :dir repo)
     (shell/sh "git" "merge" "--allow-unrelated-histories" branch :dir repo)))
+
+(defn commit-count [repo]
+  (shell/with-sh-dir repo
+    (-> (shell/sh "git" "rev-list" "HEAD" "--count")
+        (:out)
+        (str/split-lines)
+        (first)
+        (parse-long))))

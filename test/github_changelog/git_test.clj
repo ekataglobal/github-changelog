@@ -1,10 +1,10 @@
 (ns github-changelog.git-test
   (:require [clojure.spec.alpha :as s]
             [clojure.test :refer [are deftest is testing]]
-            [github-changelog.fs :as fs]
             [github-changelog.git :as sut]
             [github-changelog.git-helper :as gh]
-            [github-changelog.spec :as spec]))
+            [github-changelog.spec :as spec]
+            [github-changelog.test-fs :as test-fs]))
 
 (def config {:user "user" :repo "repo"})
 
@@ -20,24 +20,24 @@
 
 (deftest git-dir?
   (let [[git-dir] (gh/init-repo)
-        tmp-dir   (fs/tmp-dir)]
+        tmp-dir   (test-fs/tmp-dir)]
     (try
       (is (sut/git-dir? git-dir))
       (is (not (sut/git-dir? tmp-dir)))
       (finally
-        (fs/rm-dir git-dir)
-        (fs/rm-dir tmp-dir)))))
+        (test-fs/rm-dir git-dir)
+        (test-fs/rm-dir tmp-dir)))))
 
 (deftest clone
-  (let [[base file] (gh/init-repo)
-        work        (fs/tmp-dir nil "github-changelog-clone_")
-        repo        (sut/clone base work)]
+  (let [[base] (gh/init-repo)
+        work   (test-fs/tmp-dir nil "github-changelog-clone_")
+        repo   (sut/clone base work)]
     (try
       (is (sut/git-dir? repo))
-      (is (fs/file? (fs/as-file work file)))
+      (is (= 1 (gh/commit-count repo)))
       (finally
-        (fs/rm-dir base)
-        (fs/rm-dir work)))))
+        (test-fs/rm-dir base)
+        (test-fs/rm-dir work)))))
 
 (deftest clone-or-load
   (testing "with an existing repo"
@@ -46,30 +46,30 @@
         (sut/clone-or-load base base)
         (is (sut/git-dir? base))
         (finally
-          (fs/rm-dir base)))))
+          (test-fs/rm-dir base)))))
   (testing "with a non-existing repo"
-    (let [[base file] (gh/init-repo)
-          other       (fs/tmp-dir)]
+    (let [[base] (gh/init-repo)
+          other  (test-fs/tmp-dir)]
       (try
         (sut/clone-or-load base other)
         (is (sut/git-dir? other))
-        (is (fs/file? (fs/as-file other file)))
+        (is (= 1 (gh/commit-count other)))
         (finally
-          (fs/rm-dir base)
-          (fs/rm-dir other))))))
+          (test-fs/rm-dir base)
+          (test-fs/rm-dir other))))))
 
 (deftest refresh
   (let [[base] (gh/init-repo)
-        other  (fs/tmp-dir nil "github-changelog-clone_")
+        other  (test-fs/tmp-dir nil "github-changelog-clone_")
         _      (sut/clone-or-load base other)
-        name   (gh/add-file base)]
+        _      (gh/add-file base)]
     (try
-      (is (not (fs/exists? (fs/as-file other name))))
+      (is (= 1 (gh/commit-count other)))
       (sut/refresh other)
-      (is (fs/exists? (fs/as-file other name)))
+      (is (= 2 (gh/commit-count other)))
       (finally
-        (fs/rm-dir base)
-        (fs/rm-dir other)))))
+        (test-fs/rm-dir base)
+        (test-fs/rm-dir other)))))
 
 (deftest tags
   (let [[repo] (gh/init-repo)
@@ -81,7 +81,7 @@
       (gh/add-tag repo)
       (is (= 2 (tag-fn)))
       (finally
-        (fs/rm-dir repo)))))
+        (test-fs/rm-dir repo)))))
 
 (deftest initial-commit
   (letfn [(single-initial-commit? [x] (s/conform ::spec/sha x))]
@@ -90,14 +90,14 @@
         (try
           (is (single-initial-commit? repo))
         (finally
-          (fs/rm-dir repo)))))
+          (test-fs/rm-dir repo)))))
     (testing "multiple initial commits present in the repository"
       (let [[repo] (gh/init-repo)]
         (try
           (gh/merge-orphan-branch repo)
           (is (single-initial-commit? repo))
         (finally
-          (fs/rm-dir repo)))))))
+          (test-fs/rm-dir repo)))))))
 
 (deftest commits
   (let [[repo]    (gh/init-repo)
@@ -107,4 +107,4 @@
       (gh/add-file repo)
       (is (= 1 (commit-fn)))
       (finally
-        (fs/rm-dir repo)))))
+        (test-fs/rm-dir repo)))))

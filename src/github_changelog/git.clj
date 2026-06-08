@@ -35,12 +35,12 @@
 (defn clone
   ([uri] (clone uri (name-from-uri uri)))
   ([uri dir]
-   (exec "git" "clone" uri dir)
+   (exec "git" "clone" "--single-branch" "--bare" "--filter=tree:0" "--origin=origin" uri dir)
    dir))
 
 (defn git-dir? [dir]
-  (when (and (fs/dir? dir) (fs/dir? (fs/as-file dir ".git")))
-    (-> (exec  "git" "status" :exit-codes #{0 128} :dir dir)
+  (when (fs/dir? dir)
+    (-> (exec  "git" "rev-parse" "--is-inside-git-dir" :exit-codes #{0 128} :dir dir)
         (:exit)
         (zero?))))
 
@@ -48,16 +48,19 @@
   (if (git-dir? dir) dir (clone uri dir)))
 
 (defn refresh [repo]
-  (exec "git" "pull" "origin" :dir repo)
+  (let [branch-name (-> (exec "git" "branch" "--show-current" :dir repo)
+                        (:out)
+                        (str/split-lines)
+                        (first))]
+    (exec "git" "fetch" "origin" (format "%s:%s" branch-name branch-name) :dir repo))
   repo)
 
-(defn init [{:keys [git-url dir update?]
-             :or   {git-url (gen-url config)
-                    dir     (name-from-uri git-url)
-                    update? (:update? config/defaults)}
-             :as   config}]
-  (cond-> (clone-or-load git-url dir)
-    update? refresh))
+(defn init [config]
+  (let [git-url (:git-url config (gen-url config))
+        dir     (:dir config (name-from-uri git-url))
+        update? (:update? config (:update? config/defaults))]
+    (cond-> (clone-or-load git-url dir)
+      update? refresh)))
 
 (defn- map-tag-name [tag]
   (str/replace tag #"^refs/tags/" ""))

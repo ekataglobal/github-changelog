@@ -1,5 +1,6 @@
 (ns github-changelog.github
   (:require [clj-http.lite.client :as http]
+            [clojure.core.async :as async]
             [clojure.spec.alpha :as s]
             [clojure.string :as str]
             [github-changelog.config :as config]
@@ -16,7 +17,7 @@
 (s/def ::pull (s/keys :req-un [::head ::number ::title ::body]))
 
 (defn get-sha [pull]
-  (get-in pull [:head :sha]))
+  (-> pull :head :sha))
 
 (s/fdef get-sha
   :args (s/cat :pull ::pull)
@@ -48,9 +49,6 @@
   (when-let [last-page (last-page-number links)]
     (range 2 (inc last-page))))
 
-(defn- make-requests [config links]
-  (map #(make-request config {:page %}) (gen-pages links)))
-
 (defn parse-json [str]
   (j/read-str str))
 
@@ -60,13 +58,15 @@
 (defn- call-api-fn [config]
   (let [ratelimit (get config :rate-limit 5)
         endpoint  (pulls-url config)]
-    (throttler/throttle-fn (partial issue-request endpoint) ratelimit :second)))
+    (throttler/throttle-fn #(issue-request endpoint %) ratelimit :second)))
 
 (defn fetch-pulls [config]
   (let [call-api                        (call-api-fn config)
         first-request                   (make-request config)
         first-response                  (call-api first-request)
         {links :links first-body :body} first-response
-        rest-requests                   (make-requests config links)
-        rest-responses                  (pmap call-api rest-requests)]
-    (into first-body (flatten (map :body rest-responses)))))
+        rest-requests                   (->> (gen-pages links)
+                                             (eduction (map #(make-request config {:page %})))
+                                             (mapv (fn async-call-api [request] (async/io-thread (call-api request)))))
+        rest-responses                  (mapv async/<!! rest-requests)]
+    (into first-body (mapcat :body) rest-responses)))

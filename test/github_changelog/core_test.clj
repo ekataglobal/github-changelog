@@ -35,10 +35,10 @@
     (is (= 2 (tags-fn)))))
 
 (deftest assoc-pulls
-  (let [pulls (s/exercise ::github/pull)
-        shas  (map github/get-sha pulls)
-        tag   (-> (spec/sample ::core-spec/tag) (assoc :commits shas))]
-    (is (= (count pulls) (count (:pulls (sut/assoc-pulls pulls tag)))))))
+  (let [pulls     (mapv first (s/exercise ::github/pull))
+        sha->pull (into {} (map #(vector (github/get-sha %) %)) pulls)
+        tag       (-> (spec/sample ::core-spec/tag) (assoc :commits (keys sha->pull)))]
+    (is (= (count pulls) (count (:pulls (sut/assoc-pulls sha->pull tag)))))))
 
 (defn- sample-tag []
   (-> (spec/sample ::git/tag)

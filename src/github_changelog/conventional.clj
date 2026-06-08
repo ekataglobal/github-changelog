@@ -69,31 +69,33 @@
   (->> (:body pull)
        (str)
        (re-seq pattern)
-       (map second)
-       (map #(vector % (link-fn %)))))
+       (into []
+             (comp
+              (map second)
+              (map #(vector % (link-fn %)))))))
 
 (def jira-pattern (fixes-pattern "\\[?([A-Z]+-\\d+)\\]?"))
 
 (defn jira-issues [{:keys [jira]} pull]
   (when (seq jira)
     (let [base (str (strip-trailing jira) "/browse/")]
-      (collect-issues pull jira-pattern (partial str base)))))
+      (collect-issues pull jira-pattern #(str base %)))))
 
 (def github-pattern (fixes-pattern "(#\\d+)"))
 
-(defn- parse-int [x] (Integer. (re-find #"[0-9]+" x)))
+(defn- parse-int [x] (Integer. ^String (re-find #"[0-9]+" x)))
 
 (defn github-issues [_ pull]
-  (let [base (str (get-in pull [:base :repo :html_url]) "/issues/")]
+  (let [base (str (-> pull :base :repo :html_url) "/issues/")]
     (collect-issues pull github-pattern #(str base (parse-int %)))))
 
 (defn parse-issues [config pull]
-  (apply concat ((juxt jira-issues github-issues) config pull)))
+  (into [] cat ((juxt jira-issues github-issues) config pull)))
 
 (defn parse-revert [{:keys [user repo]} {:keys [title body]}]
   (when (str/starts-with? title "Revert ")
     (let [revert-prefix    (format "Reverts %s/%s#" user repo)
-          [prefix pull-id] (map str/join (split-at (count revert-prefix) body))]
+          [prefix pull-id] (mapv str/join (split-at (count revert-prefix) body))]
       (when (str/starts-with? prefix revert-prefix)
         (parse-int pull-id)))))
 
@@ -109,19 +111,19 @@
        :issues       (parse-issues config pull)})))
 
 (defn reverted-ids [pulls]
-  (set (keep :revert-pull pulls)))
+  (into #{} (keep :revert-pull) pulls))
 
 (defn filter-reverted [pulls pull]
   (let [reverted-pulls (reverted-ids pulls)
-        pull-id        (get-in pull [:pull-request :number])]
+        pull-id        (-> pull :pull-request :number)]
     (if (reverted-pulls pull-id)
       pulls
       (conj pulls pull))))
 
 (defn ^:no-gen parse-changes [config {:keys [pulls] :as tag}]
-  (->> (keep (partial parse-pull config) pulls)
-       (reduce filter-reverted [])
-       (remove :revert-pull)
+  (->> pulls
+       (transduce (keep #(parse-pull config %)) (completing filter-reverted) [])
+       (into [] (remove :revert-pull))
        (assoc tag :changes)))
 
 (s/fdef parse-changes

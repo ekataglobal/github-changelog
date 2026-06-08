@@ -2,7 +2,7 @@
  :deps    {org.clojure/clojure           {:mvn/version "1.12.5"}
            org.clj-commons/clj-http-lite {:mvn/version "1.0.13"}
            org.babashka/json             {:mvn/version "0.1.6"}
-           org.clojure/core.async        {:mvn/version "1.9.865"}
+           org.clojure/core.async        {:mvn/version "1.10.870-alpha2"}
            throttler/throttler           {:mvn/version "1.0.0"}
            org.slf4j/slf4j-nop           {:mvn/version "1.7.30"}
            grimradical/clj-semver        {:mvn/version "0.3.0"
